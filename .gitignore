@@ -39,6 +39,7 @@ data/
 # IDE / editor
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 
