@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import csv
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 import html
 from html.parser import HTMLParser
@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 import re
 from typing import Any, Iterable, Mapping
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlencode, urljoin, urlparse
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 
@@ -38,6 +38,7 @@ ALLOWED_LIVE_HOSTS = {
     "nvd.nist.gov",
     "sanctionslistservice.ofac.treas.gov",
     "api.github.com",
+    "api.msrc.microsoft.com",
     "www.openwall.com",
     "www.reddit.com",
     "reddit.com",
@@ -45,6 +46,12 @@ ALLOWED_LIVE_HOSTS = {
     "api.gdeltproject.org",
     "earthquake.usgs.gov",
     "www.gdacs.org",
+    "unit42.paloaltonetworks.com",
+    "blog.talosintelligence.com",
+    "cloud.google.com",
+    "docs.cloud.google.com",
+    "www.cert.europa.eu",
+    "cert.europa.eu",
 }
 
 JSON_COLLECTORS = {
@@ -59,6 +66,7 @@ JSON_COLLECTORS = {
     "reliefweb_disasters",
     "gdelt_articles",
     "geojson_features",
+    "microsoft_msrc_updates",
     "sanitized_json",
 }
 
@@ -123,6 +131,8 @@ def collect_entry(
         records = collect_github_advisories(data, entry)
     elif collector == "github_commits":
         records = collect_github_commits(data, entry)
+    elif collector == "microsoft_msrc_updates":
+        records = collect_microsoft_msrc_updates(data, entry)
     elif collector == "reddit_listing":
         records = collect_reddit_listing(data, entry)
     elif collector == "reliefweb_disasters":
@@ -614,6 +624,60 @@ def collect_github_commits(data: Any, entry: CatalogEntry) -> list[SanitizedReco
     return records
 
 
+def collect_microsoft_msrc_updates(data: Any, entry: CatalogEntry) -> list[SanitizedRecord]:
+    """Collect Microsoft MSRC update-list metadata without CVRF document bodies."""
+
+    if not isinstance(data, Mapping):
+        raise ValueError(f"{entry.name}: MSRC updates JSON must be an object")
+    values = data.get("value", [])
+    if not isinstance(values, list):
+        raise ValueError(f"{entry.name}: MSRC value must be a list")
+
+    records: list[SanitizedRecord] = []
+    for item in sorted(values, key=_msrc_sort_key, reverse=True):
+        if not isinstance(item, Mapping):
+            continue
+        update_id = _safe_label(item.get("ID") or item.get("Alias"), fallback="MSRC update")
+        title = _safe_label(item.get("DocumentTitle"), fallback="Microsoft security update")
+        severity = _safe_label(item.get("Severity"), fallback="unspecified severity")
+        current = _date_string(item.get("CurrentReleaseDate")) or _date_string(item.get("InitialReleaseDate")) or _today()
+        initial = _date_string(item.get("InitialReleaseDate"))
+        link = _safe_url(item.get("CvrfUrl")) or entry.url
+        vector_class = _vector_from_terms(" ".join([update_id, title, severity]))
+        initial_phrase = f"; initial release {initial}" if initial and initial != current else ""
+        summary = (
+            f"Microsoft MSRC public update metadata: {update_id} / {title}; "
+            f"current release {current}{initial_phrase}; severity {severity}. "
+            "Only update-list metadata is retained; CVRF bodies, product matrices, "
+            "exploitability notes, and remediation details are omitted."
+        )
+        _append_record(
+            records,
+            {
+                "record_id": stable_id("microsoft_msrc", update_id, current),
+                "observed_at": f"{current}T00:00:00Z",
+                "source_type": entry.source_type,
+                "collection_tier": entry.collection_tier,
+                "actor_hint": "unknown actors",
+                "region_hint": "global",
+                "target_sector": "organizations using Microsoft products",
+                "vector_class": vector_class,
+                "motive_hint": "public patch and advisory timing",
+                "confidence": "medium",
+                "summary": summary,
+                "source_ref": make_source_ref(
+                    label="Microsoft MSRC Security Update Guide CVRF API",
+                    url=link,
+                    date_value=current,
+                    supports=f"public MSRC update-list metadata for {update_id}",
+                ),
+                "tags": _record_tags(["microsoft", "msrc", "patch_tuesday", severity, *_keyword_tags(vector_class)]),
+            },
+            source_name=f"{entry.name}:{update_id}",
+        )
+    return records
+
+
 def collect_reddit_listing(data: Any, entry: CatalogEntry) -> list[SanitizedRecord]:
     """Collect public Reddit listing metadata without authors, comments, or bodies."""
 
@@ -1057,6 +1121,12 @@ def _millis_or_date(value: Any) -> str:
     return _date_string(value)
 
 
+def _msrc_sort_key(item: Any) -> str:
+    if not isinstance(item, Mapping):
+        return ""
+    return _date_string(item.get("CurrentReleaseDate")) or _date_string(item.get("InitialReleaseDate"))
+
+
 def _link_matches_entry(entry: CatalogEntry, link: str) -> bool:
     parsed = urlparse(link)
     path = parsed.path
@@ -1066,6 +1136,10 @@ def _link_matches_entry(entry: CatalogEntry, link: str) -> bool:
         return "/news-events/ics-advisories/" in path
     if entry.name == "openwall_oss_security_index":
         return "/lists/oss-security/" in path and bool(re.search(r"/20\d{2}/", path))
+    if entry.name == "google_cloud_security_bulletins":
+        return "/support/bulletins" in path or "security-bulletins" in path
+    if entry.name == "cert_eu_security_advisories":
+        return "/publications/security-advisories/" in path
     return parsed.netloc == (urlparse(entry.url).netloc if entry.url else parsed.netloc)
 
 
@@ -1110,6 +1184,20 @@ def fetch_public_text(url: str, *, timeout: float = 20.0) -> str:
         return response.read().decode(charset, errors="replace")
 
 
+def _resolved_live_url(entry: CatalogEntry, collector: str) -> str:
+    if collector == "nvd_cve":
+        end = datetime.now(timezone.utc).replace(microsecond=0)
+        start = end - timedelta(days=7)
+        params = {
+            "resultsPerPage": "100",
+            "pubStartDate": start.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "pubEndDate": end.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "noRejected": "",
+        }
+        return "https://services.nvd.nist.gov/rest/json/cves/2.0?" + urlencode(params)
+    return entry.url
+
+
 def _load_entry_payload(
     entry: CatalogEntry,
     *,
@@ -1128,9 +1216,10 @@ def _load_entry_payload(
             return entry.local_path.read_text(encoding="utf-8")
         return load_json_path(entry.local_path)
     if live:
-        if not entry.url:
+        url = _resolved_live_url(entry, collector)
+        if not url:
             raise ValueError(f"{entry.name}: live collection requires a URL")
-        text = fetch_public_text(entry.url, timeout=timeout)
+        text = fetch_public_text(url, timeout=timeout)
         if collector in JSON_COLLECTORS or entry.format == "json":
             return json.loads(text)
         return text

@@ -1099,7 +1099,7 @@
       "collection": {
         "method": "rss",
         "format": "rss",
-        "url": "https://www.fortiguard.com/rss/ir.xml",
+        "url": "https://fortiguard.fortinet.com/rss/ir.xml",
         "url_template": null,
         "params": {},
         "cadence_minutes": 360,
@@ -1226,7 +1226,7 @@
     },
     {
       "id": "microsoft_msrc_cvrf_api",
-      "enabled": false,
+      "enabled": true,
       "lane": "public_technical_chatter",
       "source_type": "vendor_advisory",
       "display_name": "Microsoft MSRC Security Update Guide CVRF API",
@@ -1272,7 +1272,7 @@
           "credentials",
           "target_lists"
         ],
-        "notes": "Disabled until a period-aware collector exists; cataloged as a safe vendor-advisory lane."
+        "notes": "Collect update-list metadata only. Do not persist CVRF document bodies, product matrices, exploitability notes, or remediation text."
       },
       "relevance": {
         "stage2_use": "exploit_context",
@@ -1281,6 +1281,276 @@
           "microsoft",
           "msrc",
           "patch_tuesday"
+        ]
+      }
+    },
+    {
+      "id": "unit42_threat_research_feed",
+      "enabled": true,
+      "lane": "public_technical_chatter",
+      "source_type": "vendor_advisory",
+      "display_name": "Palo Alto Unit 42 Threat Research RSS",
+      "collection": {
+        "method": "rss",
+        "format": "rss",
+        "url": "https://unit42.paloaltonetworks.com/feed/",
+        "url_template": null,
+        "params": {},
+        "cadence_minutes": 180,
+        "auth_method": "none",
+        "respect_robots_txt": true,
+        "rate_limit_per_minute": 2
+      },
+      "normalization": {
+        "record_type": "technical_signal",
+        "extract_fields": [
+          "title",
+          "link",
+          "pubDate"
+        ],
+        "time_field_candidates": [
+          "pubDate"
+        ],
+        "dedupe_keys": [
+          "link",
+          "title"
+        ]
+      },
+      "safety": {
+        "store_raw": false,
+        "raw_retention_hours": 0,
+        "max_text_chars": 500,
+        "prompt_eligibility": "after_sanitization",
+        "drop_content": [
+          "article_body",
+          "iocs",
+          "payloads",
+          "credentials",
+          "target_lists"
+        ],
+        "notes": "Collect headline/date/link only from the public research feed; do not fetch report bodies or IOC tables."
+      },
+      "relevance": {
+        "stage2_use": "exploit_context",
+        "default_weight": 0.58,
+        "tags": [
+          "unit42",
+          "vendor_research",
+          "threat_intel"
+        ]
+      },
+      "options": {
+        "display_label": "Palo Alto Unit 42 threat research feed",
+        "target_sector": "defenders tracking vendor threat research",
+        "vector_class": "vendor threat-research timing signal",
+        "motive_hint": "public threat-research disclosure timing",
+        "confidence": "medium",
+        "tags": [
+          "unit42",
+          "vendor_research",
+          "threat_intel"
+        ]
+      }
+    },
+    {
+      "id": "cisco_talos_blog_feed",
+      "enabled": true,
+      "lane": "public_technical_chatter",
+      "source_type": "vendor_advisory",
+      "display_name": "Cisco Talos Blog RSS",
+      "collection": {
+        "method": "rss",
+        "format": "rss",
+        "url": "https://blog.talosintelligence.com/rss/",
+        "url_template": null,
+        "params": {},
+        "cadence_minutes": 180,
+        "auth_method": "none",
+        "respect_robots_txt": true,
+        "rate_limit_per_minute": 2
+      },
+      "normalization": {
+        "record_type": "technical_signal",
+        "extract_fields": [
+          "title",
+          "link",
+          "pubDate"
+        ],
+        "time_field_candidates": [
+          "pubDate"
+        ],
+        "dedupe_keys": [
+          "link",
+          "title"
+        ]
+      },
+      "safety": {
+        "store_raw": false,
+        "raw_retention_hours": 0,
+        "max_text_chars": 500,
+        "prompt_eligibility": "after_sanitization",
+        "drop_content": [
+          "article_body",
+          "iocs",
+          "payloads",
+          "credentials",
+          "target_lists"
+        ],
+        "notes": "Collect headline/date/link only from the public research feed; do not fetch report bodies or IOC tables."
+      },
+      "relevance": {
+        "stage2_use": "exploit_context",
+        "default_weight": 0.58,
+        "tags": [
+          "cisco",
+          "talos",
+          "vendor_research"
+        ]
+      },
+      "options": {
+        "display_label": "Cisco Talos public research feed",
+        "target_sector": "defenders tracking vendor threat research",
+        "vector_class": "vendor threat-research timing signal",
+        "motive_hint": "public threat-research disclosure timing",
+        "confidence": "medium",
+        "tags": [
+          "cisco",
+          "talos",
+          "vendor_research"
+        ]
+      }
+    },
+    {
+      "id": "google_cloud_security_bulletins",
+      "enabled": true,
+      "lane": "public_technical_chatter",
+      "source_type": "vendor_advisory",
+      "display_name": "Google Cloud Security Bulletins",
+      "collection": {
+        "method": "rss",
+        "format": "rss",
+        "url": "https://cloud.google.com/feeds/google-cloud-security-bulletins.xml",
+        "url_template": null,
+        "params": {},
+        "cadence_minutes": 360,
+        "auth_method": "none",
+        "respect_robots_txt": true,
+        "rate_limit_per_minute": 2
+      },
+      "normalization": {
+        "record_type": "technical_signal",
+        "extract_fields": [
+          "title",
+          "link",
+          "updated"
+        ],
+        "time_field_candidates": [
+          "updated"
+        ],
+        "dedupe_keys": [
+          "link",
+          "title"
+        ]
+      },
+      "safety": {
+        "store_raw": false,
+        "raw_retention_hours": 0,
+        "max_text_chars": 500,
+        "prompt_eligibility": "after_sanitization",
+        "drop_content": [
+          "bulletin_body",
+          "remediation_details",
+          "credentials",
+          "target_lists"
+        ],
+        "notes": "Collect bulletin headline/link metadata only; do not fetch bulletin pages or copy remediation bodies."
+      },
+      "relevance": {
+        "stage2_use": "exploit_context",
+        "default_weight": 0.55,
+        "tags": [
+          "google_cloud",
+          "vendor_advisory",
+          "cloud"
+        ]
+      },
+      "options": {
+        "display_label": "Google Cloud security bulletins",
+        "target_sector": "organizations using Google Cloud products",
+        "vector_class": "cloud vendor security-bulletin signal",
+        "motive_hint": "public patch and advisory timing",
+        "confidence": "medium",
+        "tags": [
+          "google_cloud",
+          "vendor_advisory",
+          "cloud"
+        ]
+      }
+    },
+    {
+      "id": "cert_eu_security_advisories",
+      "enabled": true,
+      "lane": "official_gov_feeds",
+      "source_type": "gov_feed",
+      "display_name": "CERT-EU Security Advisories",
+      "collection": {
+        "method": "html_index",
+        "format": "html",
+        "url": "https://www.cert.europa.eu/publications/security-advisories/",
+        "url_template": null,
+        "params": {},
+        "cadence_minutes": 360,
+        "auth_method": "none",
+        "respect_robots_txt": true,
+        "rate_limit_per_minute": 2
+      },
+      "normalization": {
+        "record_type": "advisory",
+        "extract_fields": [
+          "link",
+          "title",
+          "date_from_url"
+        ],
+        "time_field_candidates": [
+          "date_from_url"
+        ],
+        "dedupe_keys": [
+          "link",
+          "title"
+        ]
+      },
+      "safety": {
+        "store_raw": false,
+        "raw_retention_hours": 0,
+        "max_text_chars": 500,
+        "prompt_eligibility": "after_sanitization",
+        "drop_content": [
+          "advisory_body",
+          "credentials",
+          "target_lists"
+        ],
+        "notes": "Collect public advisory headline/link metadata only; body text remains outside Prophet."
+      },
+      "relevance": {
+        "stage2_use": "exploit_context",
+        "default_weight": 0.6,
+        "tags": [
+          "cert_eu",
+          "official",
+          "advisory"
+        ]
+      },
+      "options": {
+        "display_label": "CERT-EU security advisories",
+        "region_hint": "Europe / global",
+        "target_sector": "public-sector and enterprise defenders",
+        "vector_class": "official security-advisory timing signal",
+        "motive_hint": "public defensive advisory timing",
+        "confidence": "medium",
+        "tags": [
+          "cert_eu",
+          "official",
+          "advisory"
         ]
       }
     },
@@ -1433,14 +1703,14 @@
     },
     {
       "id": "reliefweb_active_disasters_api",
-      "enabled": true,
+      "enabled": false,
       "lane": "osint_context_feeds",
       "source_type": "osint_context",
       "display_name": "ReliefWeb Active Disaster Metadata API",
       "collection": {
         "method": "api",
         "format": "json",
-        "url": "https://api.reliefweb.int/v1/disasters?appname=prophet&limit=20&profile=list&preset=latest",
+        "url": "https://api.reliefweb.int/v2/disasters?appname=prophet&limit=20&profile=list&preset=latest",
         "url_template": null,
         "params": {
           "appname": "prophet",
@@ -1449,7 +1719,7 @@
           "limit": "20"
         },
         "cadence_minutes": 180,
-        "auth_method": "none",
+        "auth_method": "account_required",
         "respect_robots_txt": true,
         "rate_limit_per_minute": 2
       },
@@ -1485,7 +1755,7 @@
           "victim_lists",
           "credentials"
         ],
-        "notes": "Collects coarse disaster metadata only for infrastructure-stress timing context."
+        "notes": "Disabled until ReliefWeb approves an appname for this project. Collect coarse disaster metadata only after approval."
       },
       "relevance": {
         "stage2_use": "background_context",
@@ -1499,7 +1769,7 @@
     },
     {
       "id": "gdelt_cyber_geopolitics_articles",
-      "enabled": true,
+      "enabled": false,
       "lane": "osint_context_feeds",
       "source_type": "osint_context",
       "display_name": "GDELT Cyber-Geopolitics Article Metadata",
@@ -1515,10 +1785,10 @@
           "timespan": "24h",
           "maxrecords": "20"
         },
-        "cadence_minutes": 120,
+        "cadence_minutes": 360,
         "auth_method": "none",
         "respect_robots_txt": true,
-        "rate_limit_per_minute": 2
+        "rate_limit_per_minute": 1
       },
       "normalization": {
         "record_type": "advisory",
@@ -1551,7 +1821,7 @@
           "credentials",
           "target_lists"
         ],
-        "notes": "Article-list metadata only. Do not fetch article pages or copy article bodies into prompts."
+        "notes": "Disabled by default because repeated live smoke tests hit public API 429 throttling. Enable on the VM only with conservative cadence/backoff; do not fetch article pages or copy article bodies into prompts."
       },
       "relevance": {
         "stage2_use": "background_context",

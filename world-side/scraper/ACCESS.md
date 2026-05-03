@@ -82,15 +82,20 @@ Current collector-ready low-risk feeds:
 - Openwall oss-security index metadata
 - Fortinet PSIRT RSS headline metadata
 - Ivanti security-advisory RSS headline metadata
+- Microsoft MSRC update-list metadata, without CVRF document bodies
+- Palo Alto Unit 42 public threat-research RSS metadata
+- Cisco Talos public research RSS metadata
+- Google Cloud security-bulletin Atom metadata
+- CERT-EU security-advisory index metadata
 - Reddit public security-community listing metadata, without authors, comments, or bodies
-- ReliefWeb disaster metadata for infrastructure-stress context
-- GDELT public article-list metadata for geopolitical/news-cycle context, without article bodies
 - GDACS public disaster-alert RSS metadata
 - USGS significant-earthquake GeoJSON metadata, without surfacing raw geometry
 
 Cataloged but disabled by default:
 
 - World Monitor Bootstrap API until a key is obtained out-of-band and a sanitizer review is complete
+- ReliefWeb disaster metadata until an approved ReliefWeb `appname` exists for the project
+- GDELT public article-list metadata until conservative VM-side cadence/backoff is approved
 - Shodan and Exa until API-key handling and aggregate-only query review exist
 - Telegram public-channel metadata until VM-only collection is approved
 - Onion landing/leak/forum/paste metadata until VM-only collection is approved

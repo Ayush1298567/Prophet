@@ -63,6 +63,11 @@ CATALOG_COLLECTOR_MAP = {
     "openwall_oss_security_index": "html_link_index",
     "fortinet_psirt_rss": "official_rss",
     "ivanti_security_advisory_rss": "official_rss",
+    "microsoft_msrc_cvrf_api": "microsoft_msrc_updates",
+    "unit42_threat_research_feed": "official_rss",
+    "cisco_talos_blog_feed": "official_rss",
+    "google_cloud_security_bulletins": "official_rss",
+    "cert_eu_security_advisories": "html_link_index",
     "reddit_security_public_new": "reddit_listing",
     "reliefweb_active_disasters_api": "reliefweb_disasters",
     "gdelt_cyber_geopolitics_articles": "gdelt_articles",
@@ -91,6 +96,7 @@ READY_COLLECTORS = {
     "gdelt_articles",
     "geojson_features",
     "html_link_index",
+    "microsoft_msrc_updates",
 }
 
 def load_source_catalog(path: str | Path | None = None) -> list[CatalogEntry]:
@@ -259,6 +265,8 @@ def normalize_collector(value: str) -> str:
         "github_advisories_api": "github_advisories",
         "github_commit": "github_commits",
         "github_commits_api": "github_commits",
+        "msrc": "microsoft_msrc_updates",
+        "microsoft_msrc": "microsoft_msrc_updates",
         "reddit": "reddit_listing",
         "reliefweb": "reliefweb_disasters",
         "gdelt": "gdelt_articles",

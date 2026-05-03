@@ -167,6 +167,11 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             "openwall_oss_security_index",
             "fortinet_psirt_rss",
             "ivanti_security_advisory_rss",
+            "microsoft_msrc_cvrf_api",
+            "unit42_threat_research_feed",
+            "cisco_talos_blog_feed",
+            "google_cloud_security_bulletins",
+            "cert_eu_security_advisories",
             "reddit_security_public_new",
             "reliefweb_active_disasters_api",
             "gdelt_cyber_geopolitics_articles",
@@ -191,10 +196,11 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             "kaggle_ais_dataset_reference",
             "flightradar24_context_reference",
             "worldmonitor_bootstrap_api",
+            "reliefweb_active_disasters_api",
+            "gdelt_cyber_geopolitics_articles",
             "mastodon_public_security_tags",
             "telegram_public_channel_metadata",
             "onion_public_landing_metadata",
-            "microsoft_msrc_cvrf_api",
         ):
             self.assertFalse(by_name[disabled].enabled, f"{disabled} must not run by default")
 
@@ -206,7 +212,14 @@ class ScraperChatterSafetyTests(unittest.TestCase):
         self.assertIn("first_epss_api", ready_defaults)
         self.assertIn("state_travel_advisories_rss", ready_defaults)
         self.assertIn("fortinet_psirt_rss", ready_defaults)
+        self.assertIn("microsoft_msrc_cvrf_api", ready_defaults)
+        self.assertIn("unit42_threat_research_feed", ready_defaults)
+        self.assertIn("cisco_talos_blog_feed", ready_defaults)
+        self.assertIn("google_cloud_security_bulletins", ready_defaults)
+        self.assertIn("cert_eu_security_advisories", ready_defaults)
         self.assertNotIn("shodan_context_api", ready_defaults)
+        self.assertNotIn("reliefweb_active_disasters_api", ready_defaults)
+        self.assertNotIn("gdelt_cyber_geopolitics_articles", ready_defaults)
         self.assertNotIn("telegram_public_channel_metadata", ready_defaults)
 
     def test_catalog_has_no_enabled_auth_gated_sources(self) -> None:
@@ -249,6 +262,7 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             collect_gdelt_articles,
             collect_geojson_features,
             collect_html_link_index,
+            collect_microsoft_msrc_updates,
             collect_ofac_sdn_csv,
             collect_official_rss,
             collect_reddit_listing,
@@ -382,6 +396,28 @@ class ScraperChatterSafetyTests(unittest.TestCase):
                 url="https://api.github.com/repos/projectdiscovery/nuclei-templates/commits",
             ),
         )
+        msrc_records = collect_microsoft_msrc_updates(
+            {
+                "value": [
+                    {
+                        "ID": "2026-May",
+                        "Alias": "2026-May",
+                        "DocumentTitle": "May 2026 Security Updates",
+                        "Severity": "Critical",
+                        "InitialReleaseDate": "2026-05-02T12:00:00Z",
+                        "CurrentReleaseDate": "2026-05-02T12:30:00Z",
+                        "CvrfUrl": "https://api.msrc.microsoft.com/cvrf/v3.0/cvrf/2026-May",
+                    }
+                ]
+            },
+            CatalogEntry(
+                name="microsoft_msrc_cvrf_api",
+                collector="microsoft_msrc_updates",
+                source_type="vendor_advisory",
+                collection_tier="technical_chatter",
+                url="https://api.msrc.microsoft.com/cvrf/v3.0/updates",
+            ),
+        )
         reddit_records = collect_reddit_listing(
             {
                 "data": {
@@ -512,6 +548,7 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             *ofac_records,
             *github_advisory_records,
             *github_commit_records,
+            *msrc_records,
             *reddit_records,
             *html_records,
             *metadata_records,

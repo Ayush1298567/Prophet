@@ -100,7 +100,7 @@ List the loaded source catalog:
 PYTHONPATH=world-side/scraper python3 -m scraper_side.cli --list-sources
 ```
 
-Current enabled low-risk lanes include official government feeds, vendor advisories, GitHub advisory metadata, Reddit public listing metadata, ReliefWeb, GDELT, GDACS, and USGS GeoJSON metadata. World Monitor, Shodan, Exa, Telegram, onion, AIS/flight, and other private/risky lanes remain disabled unless a human explicitly approves the integration plan.
+Current enabled low-risk lanes include official government feeds, vendor advisories, GitHub advisory metadata, Reddit public listing metadata, GDACS, and USGS GeoJSON metadata. World Monitor, Shodan, Exa, Telegram, onion, AIS/flight, ReliefWeb, GDELT, and other private/risky or rate-limited lanes remain disabled unless a human explicitly approves the integration plan.
 
 On isolated hosts:
 

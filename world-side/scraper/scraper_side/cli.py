@@ -77,6 +77,7 @@ def _build_parser() -> argparse.ArgumentParser:
             "ofac-sdn-csv",
             "github-advisories",
             "github-commits",
+            "microsoft-msrc-updates",
             "reddit-listing",
             "reliefweb-disasters",
             "gdelt-articles",
@@ -156,6 +157,8 @@ def _entry_from_direct_args(args: argparse.Namespace) -> CatalogEntry:
         if collector == "reddit_listing"
         else "manual_analyst_note"
         if collector in {"reliefweb_disasters", "gdelt_articles"}
+        else "vendor_advisory"
+        if collector == "microsoft_msrc_updates"
         else "threat_intel_feed"
     )
     collection_tier = (
