@@ -83,15 +83,28 @@ Current collector-ready low-risk feeds:
 - Fortinet PSIRT RSS headline metadata
 - Ivanti security-advisory RSS headline metadata
 - Reddit public security-community listing metadata, without authors, comments, or bodies
+- ReliefWeb disaster metadata for infrastructure-stress context
+- GDELT public article-list metadata for geopolitical/news-cycle context, without article bodies
+- GDACS public disaster-alert RSS metadata
+- USGS significant-earthquake GeoJSON metadata, without surfacing raw geometry
 
 Cataloged but disabled by default:
 
+- World Monitor Bootstrap API until a key is obtained out-of-band and a sanitizer review is complete
 - Shodan and Exa until API-key handling and aggregate-only query review exist
 - Telegram public-channel metadata until VM-only collection is approved
 - Onion landing/leak/forum/paste metadata until VM-only collection is approved
 - AIS/shipping and flight sources until terms, auth, and aggregate-only privacy rules are reviewed
 - Mastodon hashtag RSS until a concrete instance/tag expansion plan is reviewed
 - Kepler.gl, deck.gl, Wokwi, OSINT Framework, and DEFCON inspiration references as tools/references, not scrape targets
+
+World Monitor can become an optional context enhancer after a `WORLDMONITOR_API_KEY`
+is placed in gitignored `.env.local`. Prophet must continue to run without it:
+golden forecasts and public/open feeds are the demo path, while Idan-owned
+private integrations stay disabled until authorization, terms, and sanitizer
+review are complete. World Monitor's public docs describe API-key use with the
+`X-WorldMonitor-Key` header and a `/api/bootstrap` endpoint; keep that key
+outside git and outside prompts. References: [World Monitor quickstart](https://www.worldmonitor.app/docs/usage-quickstart), [World Monitor platform API](https://www.worldmonitor.app/docs/api-platform).
 
 For Linux scheduling, copy `bin/prophet-scraper.service` and
 `bin/prophet-scraper.timer` into `/etc/systemd/system/` on the isolated host,

@@ -44,8 +44,9 @@ In flight:
 - `fixtures/` — safe Direction A candidate examples for edge-appliance, disruptive-shutdown, and financial-theft scenarios.
 - `outputs/` — generated and golden Direction B forecast examples for UI / Cyber Side handoff.
 - `tests/` — stdlib `unittest` smoke tests for loaders, schemas, CLI, source coverage, and non-actionable vector constraints.
+- `app/` — static Prophet World Console that renders the source feed, geopolitical pressure map, Cyber Pressure Index, and forecast detail pages from fixtures/golden outputs.
 - `scraper/` — isolated scraper machine access docs + setup script. Network reachability is being resolved by Idan (venue wifi appears to block peer-to-peer; Tailscale or similar is the likely fix).
-- `scraper/config/source_catalog.json` — source matrix for official feeds, public chatter, high-risk metadata, OSINT context, and analysis-tool references. Safe official/RSS/API/HTML/CSV metadata collectors are enabled; auth-gated, onion, Telegram, AIS/flight, Mastodon expansion, and target-enumeration lanes are disabled by default.
+- `scraper/config/source_catalog.json` — source matrix for official feeds, public chatter, high-risk metadata, OSINT context, and analysis-tool references. Safe official/RSS/API/HTML/CSV/GeoJSON metadata collectors are enabled; auth-gated, World Monitor, onion, Telegram, AIS/flight, Mastodon expansion, and target-enumeration lanes are disabled by default.
 - `data/` — historical pairings corpus, calendar of timing windows, indictment + sanctions snapshots. Substantial pre-event research artifacts; will feed the analogy engine and the current-context engine when those are built.
 
 ## Run the forecaster
@@ -91,6 +92,15 @@ List the loaded source catalog:
 PYTHONPATH=world-side/scraper python3 -m scraper_side.cli --list-sources
 ```
 
+Run the static World Console:
+
+```bash
+cd world-side
+python3 -m http.server 8765
+```
+
+Then open `http://localhost:8765/app/`. It uses golden forecasts and sanitized fixtures by default, so demo mode works without live internet or API keys.
+
 On a Linux isolated scraper host, use `scraper/bin/bootstrap-scraper-machine.sh` once, then emit sanitized JSONL plus run manifests into `/srv/scraper/output/`:
 
 ```bash
@@ -108,6 +118,7 @@ On a Windows OpenSSH scraper host, deploy `world-side/scraper/` to `C:\srv\scrap
 - `forecaster/models.py` — Direction A / Direction B validation
 - `forecaster/generator.py` — assembles `world_forecast.v0.1`
 - `forecaster/loaders.py`, `corpus.py`, `features.py`, `matcher.py`, `scoring.py` — local data loading, feature extraction, matching, and scoring helpers
+- `app/` — static demo console inspired by World Monitor: Live Source Feed, Geopolitical Pressure Map, Cyber Pressure Index, Forecast Detail Page, and fixture-based Demo Mode
 - `fixtures/` and `outputs/` — candidate and forecast examples
 - `fixtures/sanitized-chatter-sample.jsonl` — safe chatter fixture; no raw posts, onion addresses, credentials, or targets
 - `tests/` — smoke tests

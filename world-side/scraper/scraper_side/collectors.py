@@ -41,6 +41,10 @@ ALLOWED_LIVE_HOSTS = {
     "www.openwall.com",
     "www.reddit.com",
     "reddit.com",
+    "api.reliefweb.int",
+    "api.gdeltproject.org",
+    "earthquake.usgs.gov",
+    "www.gdacs.org",
 }
 
 JSON_COLLECTORS = {
@@ -52,6 +56,9 @@ JSON_COLLECTORS = {
     "github_advisories",
     "github_commits",
     "reddit_listing",
+    "reliefweb_disasters",
+    "gdelt_articles",
+    "geojson_features",
     "sanitized_json",
 }
 
@@ -118,6 +125,12 @@ def collect_entry(
         records = collect_github_commits(data, entry)
     elif collector == "reddit_listing":
         records = collect_reddit_listing(data, entry)
+    elif collector == "reliefweb_disasters":
+        records = collect_reliefweb_disasters(data, entry)
+    elif collector == "gdelt_articles":
+        records = collect_gdelt_articles(data, entry)
+    elif collector == "geojson_features":
+        records = collect_geojson_features(data, entry)
     elif collector == "html_link_index":
         records = collect_html_link_index(data, entry)
     elif collector == "sanitized_json":
@@ -661,6 +674,161 @@ def collect_reddit_listing(data: Any, entry: CatalogEntry) -> list[SanitizedReco
     return records
 
 
+def collect_reliefweb_disasters(data: Any, entry: CatalogEntry) -> list[SanitizedRecord]:
+    """Collect public ReliefWeb disaster metadata as coarse instability context."""
+
+    values = _json_items(data, entry.name, "ReliefWeb disasters")
+    records: list[SanitizedRecord] = []
+    for item in values:
+        if not isinstance(item, Mapping):
+            continue
+        fields = item.get("fields", item)
+        if not isinstance(fields, Mapping):
+            continue
+        disaster_id = _safe_label(str(item.get("id") or fields.get("id") or ""), fallback=stable_id("reliefweb", json.dumps(fields, sort_keys=True, default=str)))
+        name = _safe_label(fields.get("name"), fallback="ReliefWeb disaster")
+        date_value = _reliefweb_date(fields.get("date")) or _today()
+        countries = _label_list(fields.get("country"), "name")
+        disaster_types = _label_list(fields.get("type"), "name")
+        status = _safe_label(fields.get("status"), fallback="active or recently updated")
+        link = _safe_url(fields.get("url")) or _safe_url(item.get("href")) or entry.url
+        region = " / ".join(countries[:3]) if countries else "global"
+        sector = "critical infrastructure and continuity planners"
+        type_phrase = ", ".join(disaster_types[:3]) if disaster_types else "crisis"
+        summary = (
+            f"ReliefWeb public disaster metadata: {name}; {type_phrase}; "
+            f"status {status}; updated {date_value}. Only crisis metadata is retained; "
+            "reports, attachments, and personal data are omitted."
+        )
+        _append_record(
+            records,
+            {
+                "record_id": stable_id("reliefweb_disaster", disaster_id, date_value),
+                "observed_at": f"{date_value}T00:00:00Z",
+                "source_type": entry.source_type,
+                "collection_tier": entry.collection_tier,
+                "actor_hint": "environmental or civil-contingency pressure",
+                "region_hint": region,
+                "target_sector": sector,
+                "vector_class": "infrastructure-stress context signal",
+                "motive_hint": "crisis-window timing context",
+                "confidence": "medium",
+                "summary": summary,
+                "source_ref": make_source_ref(
+                    label="ReliefWeb disasters API",
+                    url=link,
+                    date_value=date_value,
+                    supports=f"public disaster metadata for {name}",
+                ),
+                "tags": _record_tags(["reliefweb", "disaster", "infrastructure_stress", *countries, *disaster_types, *_option_tags(entry)]),
+            },
+            source_name=f"{entry.name}:{disaster_id}",
+        )
+    return records
+
+
+def collect_gdelt_articles(data: Any, entry: CatalogEntry) -> list[SanitizedRecord]:
+    """Collect public GDELT article-list metadata without article bodies."""
+
+    values = _json_items(data, entry.name, "GDELT articles")
+    records: list[SanitizedRecord] = []
+    for item in values:
+        if not isinstance(item, Mapping):
+            continue
+        title = _safe_label(item.get("title"), fallback="GDELT article metadata")
+        date_value = _date_string(item.get("seendate")) or _date_string(item.get("date")) or _today()
+        link = _safe_url(item.get("url")) or entry.url
+        country = _safe_label(item.get("sourcecountry") or item.get("sourceCountry"), fallback="global")
+        domain = _safe_label(item.get("domain"), fallback="public news source")
+        language = _safe_label(item.get("language"), fallback="unknown language")
+        vector_class = _vector_from_terms(title)
+        summary = (
+            f"GDELT public news metadata: {title}; source country {country}; "
+            f"domain {domain}; seen {date_value}. Only title/date/source metadata is "
+            "retained; article bodies and images are omitted."
+        )
+        _append_record(
+            records,
+            {
+                "record_id": stable_id("gdelt_article", link, title, date_value),
+                "observed_at": f"{date_value}T00:00:00Z",
+                "source_type": entry.source_type,
+                "collection_tier": entry.collection_tier,
+                "actor_hint": "public news-cycle pressure",
+                "region_hint": country,
+                "target_sector": "government, critical infrastructure, and enterprise defenders",
+                "vector_class": _option(entry, "vector_class") or vector_class,
+                "motive_hint": "news-cycle and geopolitical timing context",
+                "confidence": "low",
+                "summary": summary,
+                "source_ref": make_source_ref(
+                    label="GDELT DOC API article list",
+                    url=link,
+                    date_value=date_value,
+                    supports=f"public GDELT article metadata from {domain}",
+                ),
+                "tags": _record_tags(["gdelt", "news", country, language, *_keyword_tags(title), *_option_tags(entry)]),
+            },
+            source_name=f"{entry.name}:{title}",
+        )
+    return records
+
+
+def collect_geojson_features(data: Any, entry: CatalogEntry) -> list[SanitizedRecord]:
+    """Collect public GeoJSON feature metadata for infrastructure-stress signals."""
+
+    if not isinstance(data, Mapping):
+        raise ValueError(f"{entry.name}: GeoJSON payload must be an object")
+    features = data.get("features", [])
+    if not isinstance(features, list):
+        raise ValueError(f"{entry.name}: GeoJSON features must be a list")
+
+    records: list[SanitizedRecord] = []
+    for idx, feature in enumerate(features, start=1):
+        if not isinstance(feature, Mapping):
+            continue
+        properties = feature.get("properties", {})
+        if not isinstance(properties, Mapping):
+            continue
+        event_id = _safe_label(str(feature.get("id") or properties.get("code") or idx), fallback=f"feature {idx}")
+        title = _safe_label(properties.get("title") or properties.get("place"), fallback="GeoJSON public event")
+        date_value = _millis_or_date(properties.get("time")) or _date_string(properties.get("updated")) or _today()
+        magnitude = _safe_label(str(properties.get("mag") or ""), fallback="")
+        alert = _safe_label(str(properties.get("alert") or ""), fallback="")
+        link = _safe_url(properties.get("url")) or entry.url
+        mag_phrase = f"; magnitude {magnitude}" if magnitude else ""
+        alert_phrase = f"; alert {alert}" if alert else ""
+        summary = (
+            f"USGS public GeoJSON event metadata: {title}{mag_phrase}{alert_phrase}; "
+            f"observed {date_value}. Only event metadata is retained."
+        )
+        _append_record(
+            records,
+            {
+                "record_id": stable_id("geojson_feature", entry.name, event_id, date_value),
+                "observed_at": f"{date_value}T00:00:00Z",
+                "source_type": entry.source_type,
+                "collection_tier": entry.collection_tier,
+                "actor_hint": "environmental infrastructure stress",
+                "region_hint": _safe_label(properties.get("place"), fallback="global"),
+                "target_sector": "critical infrastructure and continuity planners",
+                "vector_class": "natural-hazard infrastructure-stress signal",
+                "motive_hint": "disaster-response and continuity pressure context",
+                "confidence": "medium",
+                "summary": summary,
+                "source_ref": make_source_ref(
+                    label=_option(entry, "display_label") or "USGS GeoJSON feed",
+                    url=link,
+                    date_value=date_value,
+                    supports=f"public GeoJSON metadata for {title}",
+                ),
+                "tags": _record_tags([entry.name, "usgs", "natural_hazard", "infrastructure_stress", alert, *_option_tags(entry)]),
+            },
+            source_name=f"{entry.name}:{event_id}",
+        )
+    return records
+
+
 def collect_html_link_index(data: Any, entry: CatalogEntry) -> list[SanitizedRecord]:
     """Collect headline/link metadata from a public HTML index page."""
 
@@ -794,7 +962,7 @@ def _json_items(data: Any, source_name: str, label: str) -> list[Any]:
     if isinstance(data, list):
         return data
     if isinstance(data, Mapping):
-        for key in ("items", "results", "data", "advisories"):
+        for key in ("items", "results", "data", "advisories", "articles"):
             values = data.get(key)
             if isinstance(values, list):
                 return values
@@ -848,11 +1016,45 @@ def _github_ecosystem(item: Mapping[str, Any]) -> str:
     return " / ".join(ecosystems[:3])
 
 
+def _label_list(value: Any, key: str) -> list[str]:
+    values: list[str] = []
+    raw_items = value if isinstance(value, list) else [value]
+    for item in raw_items:
+        if isinstance(item, Mapping):
+            label = _safe_label(item.get(key), fallback="")
+        else:
+            label = _safe_label(item, fallback="")
+        if label and label not in values:
+            values.append(label)
+    return values[:6]
+
+
+def _reliefweb_date(value: Any) -> str:
+    if isinstance(value, Mapping):
+        for key in ("changed", "created", "original"):
+            parsed = _date_string(value.get(key))
+            if parsed:
+                return parsed
+    return _date_string(value)
+
+
 def _nested_date(value: Mapping[str, Any], path: tuple[str, str]) -> str:
     parent = value.get(path[0])
     if not isinstance(parent, Mapping):
         return ""
     return _date_string(parent.get(path[1]))
+
+
+def _millis_or_date(value: Any) -> str:
+    if isinstance(value, int) or (isinstance(value, str) and value.strip().isdigit()):
+        try:
+            numeric = int(value)
+            if numeric > 10_000_000_000:
+                numeric = numeric // 1000
+            return datetime.fromtimestamp(numeric, tz=timezone.utc).date().isoformat()
+        except (OverflowError, OSError, ValueError):
+            return ""
+    return _date_string(value)
 
 
 def _link_matches_entry(entry: CatalogEntry, link: str) -> bool:
@@ -1084,6 +1286,9 @@ def _date_string(value: Any) -> str:
     if not isinstance(value, str) or not value.strip():
         return ""
     text = value.strip()
+    basic = re.match(r"^(20\d{2})(\d{2})(\d{2})T", text)
+    if basic:
+        return f"{basic.group(1)}-{basic.group(2)}-{basic.group(3)}"
     if "T" in text:
         try:
             return datetime.fromisoformat(text.replace("Z", "+00:00")).date().isoformat()

@@ -168,6 +168,11 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             "fortinet_psirt_rss",
             "ivanti_security_advisory_rss",
             "reddit_security_public_new",
+            "reliefweb_active_disasters_api",
+            "gdelt_cyber_geopolitics_articles",
+            "gdacs_alerts_rss",
+            "usgs_significant_earthquakes_day_geojson",
+            "worldmonitor_bootstrap_api",
             "shodan_context_api",
             "exa_osint_search_api",
             "aishub_ais_api",
@@ -185,6 +190,7 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             "marinecadastre_vessel_traffic_data",
             "kaggle_ais_dataset_reference",
             "flightradar24_context_reference",
+            "worldmonitor_bootstrap_api",
             "mastodon_public_security_tags",
             "telegram_public_channel_metadata",
             "onion_public_landing_metadata",
@@ -240,10 +246,13 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             collect_first_epss,
             collect_github_advisories,
             collect_github_commits,
+            collect_gdelt_articles,
+            collect_geojson_features,
             collect_html_link_index,
             collect_ofac_sdn_csv,
             collect_official_rss,
             collect_reddit_listing,
+            collect_reliefweb_disasters,
             collect_sanitized_json,
         )
 
@@ -424,6 +433,76 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             )
             + "\n"
         )
+        reliefweb_records = collect_reliefweb_disasters(
+            {
+                "data": [
+                    {
+                        "id": "rw-fixture",
+                        "fields": {
+                            "name": "Fixture Flood Response",
+                            "date": {"changed": "2026-05-02T12:00:00Z"},
+                            "country": [{"name": "United States"}],
+                            "type": [{"name": "Flood"}],
+                            "status": "current",
+                            "url": "https://reliefweb.int/disaster/fixture",
+                        },
+                    }
+                ]
+            },
+            CatalogEntry(
+                name="reliefweb_active_disasters_api",
+                collector="reliefweb_disasters",
+                source_type="manual_analyst_note",
+                collection_tier="analyst_context",
+                url="https://api.reliefweb.int/v1/disasters",
+            ),
+        )
+        gdelt_records = collect_gdelt_articles(
+            {
+                "articles": [
+                    {
+                        "title": "Critical infrastructure cyber concern rises",
+                        "url": "https://example.com/public-news",
+                        "seendate": "20260502T120000Z",
+                        "domain": "example.com",
+                        "sourceCountry": "United States",
+                        "language": "English",
+                    }
+                ]
+            },
+            CatalogEntry(
+                name="gdelt_cyber_geopolitics_articles",
+                collector="gdelt_articles",
+                source_type="manual_analyst_note",
+                collection_tier="analyst_context",
+                url="https://api.gdeltproject.org/api/v2/doc/doc",
+            ),
+        )
+        geojson_records = collect_geojson_features(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "usgs-fixture",
+                        "properties": {
+                            "title": "M 5.0 - fixture region",
+                            "time": 1777723200000,
+                            "mag": 5.0,
+                            "place": "fixture region",
+                            "url": "https://earthquake.usgs.gov/earthquakes/eventpage/usgs-fixture",
+                        },
+                        "geometry": {"type": "Point", "coordinates": [0, 0, 10]},
+                    }
+                ],
+            },
+            CatalogEntry(
+                name="usgs_significant_earthquakes_day_geojson",
+                collector="geojson_features",
+                source_type="official_government",
+                collection_tier="official_signal",
+                url="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson",
+            ),
+        )
 
         for record in [
             *epss_records,
@@ -436,6 +515,9 @@ class ScraperChatterSafetyTests(unittest.TestCase):
             *reddit_records,
             *html_records,
             *metadata_records,
+            *reliefweb_records,
+            *gdelt_records,
+            *geojson_records,
         ]:
             accepted = self.api.validate(record.to_dict())
             self.assert_no_unsafe_surface(_as_mapping(accepted, fallback=record.to_dict()))

@@ -78,6 +78,9 @@ def _build_parser() -> argparse.ArgumentParser:
             "github-advisories",
             "github-commits",
             "reddit-listing",
+            "reliefweb-disasters",
+            "gdelt-articles",
+            "geojson-features",
             "html-link-index",
             "sanitized-json",
             "metadata-jsonl",
@@ -151,6 +154,8 @@ def _entry_from_direct_args(args: argparse.Namespace) -> CatalogEntry:
         if collector in {"cisa_kev", "nvd_cve", "doj_press_releases", "federal_register_documents", "ofac_sdn_csv"}
         else "public_social"
         if collector == "reddit_listing"
+        else "manual_analyst_note"
+        if collector in {"reliefweb_disasters", "gdelt_articles"}
         else "threat_intel_feed"
     )
     collection_tier = (
@@ -158,6 +163,8 @@ def _entry_from_direct_args(args: argparse.Namespace) -> CatalogEntry:
         if collector in {"cisa_kev", "nvd_cve", "doj_press_releases", "federal_register_documents", "ofac_sdn_csv"}
         else "public_chatter"
         if collector == "reddit_listing"
+        else "analyst_context"
+        if collector in {"reliefweb_disasters", "gdelt_articles"}
         else "technical_chatter"
     )
     url = args.feed_url or ""
@@ -173,6 +180,8 @@ def _entry_from_direct_args(args: argparse.Namespace) -> CatalogEntry:
         feed_format = "csv"
     elif collector == "html_link_index":
         feed_format = "html"
+    elif collector == "geojson_features":
+        feed_format = "json"
     elif collector == "sanitized_json":
         feed_format = "metadata_jsonl" if args.input and args.input.suffix == ".jsonl" else "json"
     else:
