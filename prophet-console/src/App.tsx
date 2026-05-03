@@ -31,6 +31,16 @@ import './index.css';
 
 type Phase = 'INTEL' | 'PLAN' | 'EXECUTE' | 'DEFEND';
 type ExploitStatus = 'idle' | 'running' | 'vulnerable' | 'blocked';
+type ScraperRunState = 'idle' | 'running' | 'ok' | 'error';
+
+interface ScraperRunResponse {
+  ok: boolean;
+  status: string;
+  message?: string;
+  forecast?: StrikeForecast;
+  stdoutTail?: string;
+  stderrTail?: string;
+}
 
 export default function App() {
   const [view, setView] = useState<'landing' | 'console'>('landing');
@@ -46,6 +56,10 @@ export default function App() {
   const [sigmaRule, setSigmaRule] = useState<string | null>(null);
   const [runReady, setRunReady] = useState(false);
   const [runbookOpen, setRunbookOpen] = useState(false);
+  const [scraperRunState, setScraperRunState] = useState<ScraperRunState>('idle');
+  const [scraperStatusMessage, setScraperStatusMessage] = useState<string | undefined>(
+    'Start npm run dev:control to enable live VM runs',
+  );
   // runCycle increments each time the user resets, so PreflightChecklist re-runs
   const [runCycle, setRunCycle] = useState(0);
   const [activeForecast, setActiveForecast] = useState<StrikeForecast | null>(null);
@@ -112,6 +126,42 @@ export default function App() {
     replayRef.current = handle;
   };
 
+  const handleScraperRun = useCallback(async () => {
+    setScraperRunState('running');
+    setScraperStatusMessage('Contacting local control server and scraper VM...');
+
+    try {
+      const response = await fetch('http://127.0.0.1:8787/api/scraper/run', {
+        method: 'POST',
+        headers: {
+          'x-prophet-control': 'local-console',
+        },
+      });
+      const payload = (await response.json()) as ScraperRunResponse;
+
+      if (!response.ok || !payload.ok) {
+        setScraperRunState('error');
+        setScraperStatusMessage(
+          payload.message ||
+            'Scraper VM workflow failed. Check the control server terminal.',
+        );
+        return;
+      }
+
+      if (payload.forecast) {
+        setActiveForecast(payload.forecast);
+      }
+
+      setScraperRunState('ok');
+      setScraperStatusMessage(payload.message || 'Scraper VM forecast refreshed.');
+    } catch {
+      setScraperRunState('error');
+      setScraperStatusMessage(
+        'Local control server offline. Run npm run dev:control in prophet-console.',
+      );
+    }
+  }, []);
+
   const handleAuthorize = () => {
     setGateOpen(false);
     replayRef.current?.authorize();
@@ -151,7 +201,12 @@ export default function App() {
 
         {/* Mission Context strip — World Side forecast + strike-window timeline */}
         <div className="mission-context" aria-label="World Side forecast and strike windows">
-          <ForecastPanel forecast={activeForecast} />
+          <ForecastPanel
+            forecast={activeForecast}
+            onScraperRun={handleScraperRun}
+            scraperRunState={scraperRunState}
+            scraperStatusMessage={scraperStatusMessage}
+          />
           <StrikeWindowTimeline forecast={activeForecast} />
         </div>
 

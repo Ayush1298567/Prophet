@@ -249,6 +249,8 @@
 .fp-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 9px 12px 8px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -271,6 +273,36 @@
   font-size: 9px;
 }
 
+.fp-action-btn {
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.08);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fp-action-btn:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.55);
+}
+
+.fp-action-btn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.fp-action-bracket {
+  color: var(--primary);
+  opacity: 0.75;
+}
+
 .fp-body {
   flex: 1;
   padding: 10px 12px 8px;
@@ -278,6 +310,35 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px 16px;
   align-content: start;
+}
+
+.fp-control-status {
+  grid-column: 1 / -1;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 3px;
+  padding: 6px 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  color: var(--secondary);
+  text-transform: uppercase;
+}
+
+.fp-control-status--ok {
+  border-color: rgba(34, 197, 94, 0.35);
+  color: var(--success);
+}
+
+.fp-control-status--error {
+  border-color: rgba(239, 68, 68, 0.35);
+  color: var(--danger);
+}
+
+.fp-control-status--running {
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--accent);
 }
 
 .fp-deliverables {

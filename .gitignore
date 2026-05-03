@@ -30,6 +30,7 @@ build/
 # Local data / artifacts
 /data/
 world-layer/
+world-side/outputs/runtime/
 *.db
 *.sqlite
 *.sqlite3

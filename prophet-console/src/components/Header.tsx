@@ -56,7 +56,7 @@ export function Header({ isRunning, onRunClick, onRunbookClick, runReady }: Head
         <div className="header-right">
           <StatusPill dotColor="var(--success)" label="KEV FEED · LIVE" />
           <StatusPill dotColor="var(--success)" label="NVD STREAMING" />
-          <StatusPill dotColor="var(--success)" label="CLAUDE API · ONLINE" />
+          <StatusPill dotColor="var(--success)" label="CODEX TERMINAL · READY" />
           <StatusPill dotColor="var(--info)" label="CVP · AUTHORIZED" />
           <StatusPill dotColor="var(--success)" label="SANDBOX · ISOLATED" />
 

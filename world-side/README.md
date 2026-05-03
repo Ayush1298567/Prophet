@@ -107,4 +107,10 @@ On isolated hosts:
 - Linux: run `scraper/bin/bootstrap-scraper-machine.sh`, then `/srv/scraper/app/bin/run-once.sh`.
 - Windows OpenSSH: deploy to `C:\srv\scraper\app`, run `bootstrap-scraper-windows.ps1`, then `run-once-windows.ps1`.
 
+The main React console can trigger a Linux scraper host through
+`scripts/run-scraper-vm-workflow.sh` when `prophet-console/control-server.mjs`
+is running locally. The workflow uses SSH key auth only, pulls back sanitized
+JSONL and the sanitization manifest, then writes a runtime forecast under
+`world-side/outputs/runtime/` for the browser session.
+
 See `scraper/ACCESS.md` and `scraper/TEAMMATE_SETUP.md` for OPSEC, SSH, and deployment details.

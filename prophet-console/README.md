@@ -9,7 +9,7 @@ The Prophet Console is the real-time web UI for Prophet's prediction pipeline. I
 
 ## Stack
 
-React + TypeScript + Vite. No backend required for the demo — the Console loads forecaster output from static JSON files and replays recorded agent events.
+React + TypeScript + Vite. The demo works without a backend by loading static forecaster fixtures and replaying recorded agent events. An optional local-only control server can trigger the isolated scraper VM and refresh the forecast while running on localhost.
 
 ## Run
 
@@ -19,6 +19,16 @@ npm install
 npm run dev
 # opens at http://localhost:5173
 ```
+
+Optional scraper VM control button:
+
+```bash
+cd prophet-console
+npm run dev:control
+# listens on http://127.0.0.1:8787
+```
+
+With both commands running, the `RUN SCRAPER VM` button calls the local control server, which uses SSH key auth to run `world-side/scripts/run-scraper-vm-workflow.sh`. That script pulls back sanitized JSONL only, validates it through the Forecaster, and returns a refreshed forecast to the Console. If key auth is not ready, the button fails closed and does not prompt for a password.
 
 ## How it connects to Prophet
 

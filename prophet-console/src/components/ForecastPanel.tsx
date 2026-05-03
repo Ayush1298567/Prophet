@@ -62,6 +62,9 @@ export interface ForecastPanelData {
 
 interface ForecastPanelProps {
   forecast?: ForecastPanelData | null;
+  onScraperRun?: () => void;
+  scraperRunState?: 'idle' | 'running' | 'ok' | 'error';
+  scraperStatusMessage?: string;
 }
 
 // ── Default fallback data (edge-appliance golden fixture) ─────────────────
@@ -137,7 +140,12 @@ function formatWindow(window: StrikeWindowProps | null): string {
 
 // ── Component ─────────────────────────────────────────────────────────────
 
-export function ForecastPanel({ forecast }: ForecastPanelProps) {
+export function ForecastPanel({
+  forecast,
+  onScraperRun,
+  scraperRunState = 'idle',
+  scraperStatusMessage,
+}: ForecastPanelProps) {
   // Controls animated fill of the confidence bar on mount
   const [fillWidth, setFillWidth] = useState(0);
   const mountedRef = useRef(false);
@@ -193,10 +201,30 @@ export function ForecastPanel({ forecast }: ForecastPanelProps) {
           WORLD SIDE FORECAST
           <span className="fp-eyebrow-chevron" aria-hidden>◣</span>
         </span>
+        {onScraperRun && (
+          <button
+            className="fp-action-btn"
+            type="button"
+            onClick={onScraperRun}
+            disabled={scraperRunState === 'running'}
+            aria-label="Run isolated scraper VM workflow"
+            title="Runs local control server -> SSH scraper VM -> sanitized JSONL -> forecast"
+          >
+            <span className="fp-action-bracket">[</span>
+            {scraperRunState === 'running' ? 'SCRAPER VM RUNNING' : 'RUN SCRAPER VM'}
+            <span className="fp-action-bracket">]</span>
+          </button>
+        )}
       </div>
 
       {/* ── Two-column body ─────────────────────────────────────────── */}
       <div className="fp-body">
+        {scraperStatusMessage && (
+          <div className={`fp-control-status fp-control-status--${scraperRunState}`}>
+            {scraperStatusMessage}
+          </div>
+        )}
+
         <div className="fp-deliverables" aria-label="Forecast deliverables">
           <div className="fp-deliverable">
             <span className="fp-deliverable-label">ATTACK METHOD / STRIKE VECTOR</span>
