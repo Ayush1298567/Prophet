@@ -1,133 +1,73 @@
-# World Side — Agent Context
+# Forecaster — World Side
 
-> If you are an AI agent (Claude Code, Codex, etc.) joining this work, read this first. 60-second orientation. Detailed specs live in adjacent files.
+The Forecaster is Prophet's geopolitical intelligence engine. It ingests chatter and world-event signals, fuses them with a historical campaign corpus, and outputs a **strike window** (when) and **strike vector** (how) for a given exploit candidate.
 
-## Project: Prophet
+**Owner:** Ayush
 
-A cyber-threat-prediction system being built for the **3rd Annual National Security Hackathon (Army xTech)** at Shack15, San Francisco. Hacking window: Saturday 2026-05-02 11:45 PT → Sunday 2026-05-03 12:00 PT. **Public repo on submission.** Primary problem statement: **PS4 — Digital Defense and Cybersecurity**. Secondary: PS3 Mission C2.
+## What it outputs
 
-Core idea: cyber attacks aren't random — they follow geopolitical pressure and rhyme with history. Prophet reads the world, predicts the cyber move, validates the defense in a sandbox, before the campaign runs.
+Given an exploit candidate (JSON from the Exploit Engine), the Forecaster produces a `world_forecast` with:
 
-## Team — three people, two components
+- `strike_windows` — ranked time windows when an adversary is most likely to activate the exploit, with confidence scores, trigger signals, and historical analogies
+- `strike_vectors` — ranked attack methods most consistent with the geopolitical context (e.g. edge-appliance initial access, supply chain, destructive wiper)
+- `strategic_frame` — adversary class, target scope, forecast assumptions
+- `summary` — one-line and recommended demo path
 
-- **Cyber Side** — Alexander + Idan. Identifies the next likely zero-day or CVE class. Runs a sandbox-and-patch loop: fire the exploit against a vulnerable container, generate the patch + Sigma rule, confirm the block. Answers *what* will be exploited.
-- **World Side** — Ayush (your user). Threat-timing forecaster. Produces strike-window forecasts grounded in cited evidence. Answers *when* and *why*.
+Full schema is in `INTERFACE.md`.
 
-Cyber Side hands an exploit candidate to World Side. World Side hands a strike-window forecast back. Outputs merge into a single alert: *"deploy this patch and this Sigma rule during this window because of these reasons."*
+## What it does NOT do
 
-## Ayush's role — World Side
+- Does not predict specific CVEs or generate exploit code — that is the Exploit Engine's job
+- Does not identify live targets — sector-level only
+- Does not run on live infrastructure — all scraping is isolated to the scraper machine
 
-**One line:** Cyber Side predicts *what* will be exploited. Ayush predicts *when* and *why*.
+## Directory layout
 
-For each exploit candidate Cyber Side hands over, Ayush produces one forecast that answers three questions, with a cited source for every claim:
-
-1. **Why this exploit?** — what makes it valuable to the adversary right now
-2. **Why now?** — the time-sensitive geopolitical pressure that puts the value at peak in this window
-3. **What's the window?** — a concrete date range with a confidence level
-
-Engine inputs:
-
-- **Historical campaign corpus** — past geopolitical trends paired with past zero-day usage. The analogy anchor.
-- **Current geopolitical context** — sanctions, military escalations, indictments, election cycles. Open-source signal.
-- **Current chatter** — Telegram channels, dark-web forums. Scraped on an **isolated machine**, sanitized before any record reaches a Claude prompt.
-
-Ayush does **NOT** predict the exploit itself, run the exploit, or generate the patch — those are Cyber Side.
-
-## Current project state
-
-Planning docs, data corpus, scaffolding, and the first World Side forecaster implementation are now present. The data corpus remains a pre-event research artifact; the forecaster code was added during the hackathon window.
-
-In flight:
-
-- `INTERFACE.md` — JSON contract between Cyber Side and World Side. Drafted, awaiting Alexander's sign-off.
-- `forecaster/` — stdlib-only Python package that turns a Cyber Side candidate JSON into a sourced `world_forecast.v0.1` JSON.
-- `fixtures/` — safe Direction A candidate examples for edge-appliance, disruptive-shutdown, and financial-theft scenarios.
-- `outputs/` — generated and golden Direction B forecast examples for UI / Cyber Side handoff.
-- `tests/` — stdlib `unittest` smoke tests for loaders, schemas, CLI, source coverage, and non-actionable vector constraints.
-- `scraper/` — isolated scraper machine access docs + setup script. Network reachability is being resolved by Idan (venue wifi appears to block peer-to-peer; Tailscale or similar is the likely fix).
-- `scraper/config/source_catalog.json` — source matrix for official feeds, public chatter, high-risk metadata, OSINT context, and analysis-tool references. Safe official/RSS/API collectors are enabled; auth-gated, onion, Telegram, AIS/flight, and target-enumeration lanes are disabled by default.
-- `data/` — historical pairings corpus, calendar of timing windows, indictment + sanctions snapshots. Substantial pre-event research artifacts; will feed the analogy engine and the current-context engine when those are built.
-
-## Run the forecaster
-
-From repo root:
-
-```bash
-PYTHONPATH=world-side python3 -m forecaster.cli \
-  --candidate world-side/fixtures/exploit-candidate-edge-appliance.json \
-  --out world-side/outputs/generated-forecast-edge-appliance.json
+```
+world-side/
+├── README.md              ← this file
+├── INTERFACE.md           ← JSON contract with Exploit Engine
+├── forecaster/            ← Python forecasting engine
+│   ├── generator.py       ← main entry point
+│   ├── matcher.py         ← historical analogy matching
+│   ├── scoring.py         ← window + vector scoring
+│   ├── models.py          ← data models
+│   ├── features.py        ← feature extraction
+│   ├── loaders.py         ← corpus loaders
+│   ├── corpus.py          ← corpus assembly
+│   ├── chatter.py         ← chatter signal processing
+│   ├── sources.py         ← source registry
+│   └── cli.py             ← CLI entry point
+├── scraper/               ← isolated scraper machine (SSH only)
+│   ├── ACCESS.md          ← scraper architecture + OPSEC
+│   ├── TEAMMATE_SETUP.md  ← 5-min SSH setup for teammates
+│   ├── scraper_side/      ← scraper Python package
+│   ├── config/            ← source catalog
+│   └── bin/               ← collection + sanitization scripts
+├── data/                  ← geopolitical corpus (research artifacts)
+│   ├── historical_pairings.md    ← geopolitical event → cyber campaign pairs
+│   ├── calendar_events.md        ← forward-looking threat calendar (May–Nov 2026)
+│   ├── indictments_state.md      ← state-affiliated cyber indictments snapshot
+│   └── sanctions_state.md        ← sanctions snapshot
+├── fixtures/              ← exploit candidate mocks for dev/test
+└── outputs/               ← generated forecasts
+    ├── golden-*.json      ← hand-verified reference outputs
+    └── generated-*.json   ← machine-generated outputs
 ```
 
-Run tests:
+## How to run
 
 ```bash
-PYTHONPATH=world-side python3 -m unittest discover -s world-side/tests
+cd world-side
+pip install -r scraper/requirements.txt
+
+# Generate a forecast from a fixture candidate
+python -m forecaster.cli --candidate fixtures/exploit-candidate-edge-appliance.json
+# Output goes to world-side/outputs/
 ```
 
-Optional sanitized chatter input:
+## Connecting to the Console
 
-```bash
-PYTHONPATH=world-side python3 -m forecaster.cli \
-  --candidate world-side/fixtures/exploit-candidate-edge-appliance.json \
-  --chatter world-side/fixtures/sanitized-chatter-sample.jsonl \
-  --out world-side/outputs/generated-forecast-edge-appliance.json
-```
+The Console (`prophet-console/src/data/worldSide.ts`) loads forecasts from `world-side/outputs/`. Golden fixtures are pre-loaded for the demo. To use a freshly generated forecast, copy it to `outputs/` and update the loader.
 
-Only pass sanitized JSONL here. Raw scraper output stays on the isolated scraper machine.
-
-Dry-run the scraper-side sanitizer/official collector locally:
-
-```bash
-PYTHONPATH=world-side/scraper python3 -m scraper_side.cli \
-  --collector cisa-kev \
-  --input kve.json \
-  --limit 25 \
-  --out /tmp/prophet-cisa.jsonl
-```
-
-List the loaded source catalog:
-
-```bash
-PYTHONPATH=world-side/scraper python3 -m scraper_side.cli --list-sources
-```
-
-On a Linux isolated scraper host, use `scraper/bin/bootstrap-scraper-machine.sh` once, then emit sanitized JSONL into `/srv/scraper/output/`.
-
-On a Windows OpenSSH scraper host, deploy `world-side/scraper/` to `C:\srv\scraper\app`, run `scraper/bin/bootstrap-scraper-windows.ps1`, then run `scraper/bin/run-once-windows.ps1` to emit sanitized JSONL into `C:\srv\scraper\output`.
-
-## Files in this folder
-
-- `ROLE.md` — full role definition for World Side
-- `INTERFACE.md` — JSON contract with Cyber Side (DRAFT, pending sign-off)
-- `forecaster/cli.py` — CLI entrypoint for producing forecast JSON
-- `forecaster/chatter.py` — validates sanitized chatter JSONL and converts it into forecast context signals
-- `forecaster/models.py` — Direction A / Direction B validation
-- `forecaster/generator.py` — assembles `world_forecast.v0.1`
-- `forecaster/loaders.py`, `corpus.py`, `features.py`, `matcher.py`, `scoring.py` — local data loading, feature extraction, matching, and scoring helpers
-- `fixtures/` and `outputs/` — candidate and forecast examples
-- `fixtures/sanitized-chatter-sample.jsonl` — safe chatter fixture; no raw posts, onion addresses, credentials, or targets
-- `tests/` — smoke tests
-- `data/historical_pairings.md` — analogy corpus (geopolitical event ↔ cyber-campaign pairings, fully sourced)
-- `data/calendar_events.md` — forward calendar of high-value timing windows (May–Nov 2026)
-- `data/indictments_state.md` — state-affiliated cyber indictments snapshot
-- `data/sanctions_state.md` — current US/EU sanctions snapshot with cyber-motive analysis
-- `scraper/ACCESS.md` — architecture + OPSEC for the isolated scraper machine
-- `scraper/TEAMMATE_SETUP.md` — 5-minute SSH setup for teammates
-- `scraper/setup-access.sh` — idempotent SSH access script
-- `scraper/.env.example` — env template (real `.env.local` is gitignored)
-- `scraper/scraper_side/` — stdlib scraper-side sanitization and official-feed collector package
-- `scraper/config/source_catalog.json` — safe source inventory and lane rules
-
-Repo-level:
-
-- `../HACKATHON.md` — full hackathon constraints, judging plan, hour-by-hour
-- `../PROPHET_TECHNICAL_WRITEUP.md` — pre-event design writeup (planning artifact)
-- `../research/` — pre-event research (planning artifacts only, no code)
-
-## Working norms for any agent picking up work
-
-- **Don't run scrapers on Ayush's main dev box.** Scraping happens only on the isolated scraper machine.
-- **Don't commit secrets.** `.env.local`, SSH keys (`*_ed25519`, `*.pem`), session files, raw scrape artifacts are all gitignored. Verify with `git check-ignore -v <file>` before any push.
-- **Don't paste raw scrape output into Claude.** Sanitize first.
-- **Ask before architectural decisions.** Ayush is the human in the loop. The contract with Cyber Side is collaborative — bend to whichever side is harder to change.
-- **Step-by-step delivery.** Don't dump giant artifacts on Ayush. Small steps, confirm, then proceed.
+Live scraper data requires SSH access to the isolated scraper machine — see `scraper/TEAMMATE_SETUP.md`.
