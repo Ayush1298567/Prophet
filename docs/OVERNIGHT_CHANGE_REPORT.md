@@ -163,6 +163,26 @@ After commit shaping on branch `prophet-pilot-consolidation-2026-05-05`:
   vulnerabilities.
 - GStack timeline event was logged for consolidation completion.
 
+## Fresh-Clone Validation
+
+Fresh-clone validation was run on 2026-05-05 in
+`/tmp/prophet-fresh-7W5S0V/Prophet` at commit
+`bddce65fd02403461609c7f6076848526aeb728b`.
+
+- `./scripts/run-pilot-demo-smoke.sh`: passed.
+- `./scripts/run-pilot-demo-smoke.sh --sector financial-workflow`: passed.
+- `cd prophet-console && npm ci`: passed from the lockfile.
+- `cd prophet-console && npm run acceptance`: passed, including Playwright
+  browser smoke with 2 tests passed.
+- `cd prophet-console && npm audit --audit-level=moderate`: passed with 0
+  vulnerabilities.
+- `git diff --check`: passed.
+- `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py
+  --tracked`: passed across 245 tracked paths.
+- Fresh-clone `git status --short --untracked-files=all`: clean after generated
+  runtime outputs, Playwright reports, and console build artifacts were ignored.
+- GStack devex-review timeline event was logged for the fresh-clone pass.
+
 ## Remediation During Consolidation
 
 - Added missing policy provenance to
@@ -191,7 +211,6 @@ After commit shaping on branch `prophet-pilot-consolidation-2026-05-05`:
 ## Known Open Gaps
 
 - Console does not yet expose a full sector selector for `financial-workflow`.
-- Fresh-clone validation has not been run after commit shaping.
 - Production SaaS gaps remain: RBAC, SSO, tenant isolation, production secrets,
   deployment runbooks, and production retention automation.
 - No push has been made yet for the overnight work.

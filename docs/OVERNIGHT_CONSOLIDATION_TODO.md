@@ -123,18 +123,18 @@ is documented and isolated.
 
 ## P2: Fresh Clone Gate
 
-- [ ] Create a fresh clone or fresh worktree after local commits exist.
-- [ ] Run `./scripts/run-pilot-demo-smoke.sh`.
-- [ ] Run `./scripts/run-pilot-demo-smoke.sh --sector financial-workflow`.
-- [ ] Run `cd prophet-console && npm ci && npm run acceptance`.
-- [ ] Confirm no private context, live target, credential, raw scraper text, or
+- [x] Create a fresh clone or fresh worktree after local commits exist.
+- [x] Run `./scripts/run-pilot-demo-smoke.sh`.
+- [x] Run `./scripts/run-pilot-demo-smoke.sh --sector financial-workflow`.
+- [x] Run `cd prophet-console && npm ci && npm run acceptance`.
+- [x] Confirm no private context, live target, credential, raw scraper text, or
   generated runtime artifact is required.
 
 ## P2: Release Candidate
 
 - [ ] Add release note with policy hash, evidence hashes, smoke manifests, and
   known gaps.
-- [ ] Tag an internal alpha only after fresh-clone validation passes.
+- [~] Tag an internal alpha only after fresh-clone validation passes.
 - [ ] Do not push until the user explicitly asks.
 
 ## Current Residual Risks
