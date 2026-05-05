@@ -89,8 +89,11 @@ operator board for the next buyer-pilot cycles.
 - [ ] Add no-egress notes, resource limits, and container hash provenance.
 - [x] Add a second sandbox profile for a different defensive class.
 - [ ] Add CycloneDX and SPDX SBOM fixtures and parsers.
-- [ ] Add production architecture, threat model, RBAC/SSO plan, and customer
-  data-boundary appendix.
+- [x] Add production architecture, threat model, production execution plan, and
+  compliance gap map.
+- [ ] Add RBAC/SSO plan, customer data-boundary appendix, and tenant isolation
+  test design.
+- [x] Add machine-readable production readiness backlog and scorecard.
 
 ## Verification Commands
 
@@ -123,3 +126,5 @@ cd prophet-console && npm audit --audit-level=moderate
 - Asset/SBOM, OSINT, forecast, integrations, audit, security, and DX: P2.
 - Commercial readiness, production architecture, operations, product, UX: P3.
 - Governance, compliance, research, and testing matrix: P4 and later.
+- Production readiness source of truth:
+  `docs/production-readiness-backlog.json`.

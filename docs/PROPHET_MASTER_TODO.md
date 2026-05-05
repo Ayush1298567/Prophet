@@ -97,12 +97,12 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 
 - [x] Add this master TODO.
 - [x] Make `docs/PROPHET_TODO.md` a shorter operational view that points here.
-- [ ] Add owner and target version columns for each production milestone.
-- [ ] Add risk tags: `safety`, `security`, `buyer`, `infra`, `console`,
+- [x] Add owner and target version columns for each production milestone.
+- [x] Add risk tags: `safety`, `security`, `buyer`, `infra`, `console`,
   `data`, `docs`.
 - [ ] Add a weekly review ritual for pruning completed or stale items.
-- [ ] Add a release readiness scorecard generated from this backlog.
-- [ ] Add a machine-readable backlog file if this needs to sync to GitHub
+- [x] Add a release readiness scorecard generated from this backlog.
+- [x] Add a machine-readable backlog file if this needs to sync to GitHub
   Issues or Linear later.
 
 ## P1: Buyer Pilot Demo Flow
@@ -414,9 +414,9 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 
 ## P3: Production Architecture
 
-- [ ] Decide first production model: single-tenant, customer-managed, or
+- [x] Decide first production model: single-tenant, customer-managed, or
   hosted multi-tenant.
-- [ ] Add production architecture doc.
+- [x] Add production architecture doc.
 - [ ] Add deployment architecture doc.
 - [ ] Add tenant isolation model.
 - [ ] Add secrets handling design.
@@ -511,7 +511,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add change management workflow.
 - [ ] Add vendor risk register.
 - [ ] Add customer environment boundary documentation.
-- [ ] Add compliance evidence map for SOC 2, ISO 27001, CMMC, FedRAMP, and
+- [x] Add compliance evidence map for SOC 2, ISO 27001, CMMC, FedRAMP, and
   internal security review.
 - [ ] Add legal review checklist for live collection.
 - [ ] Add legal review checklist for defense customer use cases.
@@ -554,8 +554,11 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] `docs/ASSET_IMPORT_GUIDE.md`: asset input path.
 - [ ] `docs/RELEASE_CHECKLIST.md`: release gate.
 - [ ] `docs/PROPHET_MASTER_TODO.md`: full backlog.
-- [ ] `docs/PRODUCTION_ARCHITECTURE.md`: future production design.
-- [ ] `docs/THREAT_MODEL.md`: future formal threat model.
+- [x] `docs/PRODUCTION_ARCHITECTURE.md`: future production design.
+- [x] `docs/THREAT_MODEL.md`: future formal threat model.
+- [x] `docs/PRODUCTION_EXECUTION_PLAN.md`: production execution roadmap.
+- [x] `docs/COMPLIANCE_GAP_MAP.md`: production security review gap map.
+- [x] `docs/production-readiness-backlog.json`: machine-readable production backlog.
 
 ## P5: Future Product Tracks
 

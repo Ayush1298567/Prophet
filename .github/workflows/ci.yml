@@ -32,6 +32,8 @@ jobs:
           else
             python3 scripts/check-release-safety.py --changed-from HEAD^..HEAD
           fi
+      - name: Production readiness scorecard
+        run: python3 scripts/production-readiness-scorecard.py --backlog docs/production-readiness-backlog.json >/tmp/prophet-production-readiness.json
       - name: Cyber-side contract tests
         run: PYTHONPATH=cyber-side python3 -m unittest discover -s cyber-side/tests -v
       - name: World-side forecaster tests

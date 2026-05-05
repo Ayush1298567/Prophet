@@ -262,6 +262,20 @@ Near-term integrations should focus on defensive systems: SBOM/asset inventory,
 SIEM, ticketing, vulnerability management, and sandbox orchestration. Offensive
 or live-target integrations should stay out of the default product.
 
+Production-readiness planning is tracked in:
+
+- `docs/PRODUCTION_EXECUTION_PLAN.md`
+- `docs/PRODUCTION_ARCHITECTURE.md`
+- `docs/THREAT_MODEL.md`
+- `docs/COMPLIANCE_GAP_MAP.md`
+- `docs/production-readiness-backlog.json`
+
+Generate the current production readiness scorecard with:
+
+```bash
+python3 scripts/production-readiness-scorecard.py
+```
+
 ## Repository Map
 
 ```text
