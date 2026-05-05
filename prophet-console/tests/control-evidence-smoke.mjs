@@ -46,7 +46,7 @@ try {
     health.policy?.retention?.runtime_outputs_max_days === 30,
     'health policy retention hints missing',
   );
-  const lastResultBeforeReadiness = JSON.stringify(health.lastResult ?? null);
+  let lastResultBeforeReadiness = JSON.stringify(health.lastResult ?? null);
 
   const policyStatusResponse = await fetch(`${baseUrl}/api/policy/status`);
   const policyStatus = await policyStatusResponse.json();
@@ -89,6 +89,39 @@ try {
   assert(
     /policy blocks live vm scraper/i.test(liveRunPayload.message ?? ''),
     'live scraper block message must explain the policy denial',
+  );
+
+  const demoRefreshResponse = await fetch(`${baseUrl}/api/scraper/demo-refresh`, {
+    method: 'POST',
+    headers: {
+      'x-prophet-control': 'local-console',
+      'x-prophet-operator': 'control-smoke',
+    },
+  });
+  const demoRefreshPayload = await demoRefreshResponse.json();
+  assert(
+    demoRefreshResponse.status === 200,
+    `expected demo refresh HTTP 200, got ${demoRefreshResponse.status}`,
+  );
+  assert(demoRefreshPayload.ok === true, 'demo refresh payload.ok must be true');
+  assert(
+    demoRefreshPayload.status === 'demo_refreshed',
+    `unexpected demo refresh status: ${demoRefreshPayload.status}`,
+  );
+  assert(
+    demoRefreshPayload.forecast?.open_source_signals?.integrated === true,
+    'demo refresh must generate seeded OSINT forecast context',
+  );
+  assert(
+    demoRefreshPayload.forecast?.asset_seed_context?.integrated === true,
+    'demo refresh must generate asset seed forecast context',
+  );
+
+  const healthBeforeReadiness = await (await fetch(`${baseUrl}/health`)).json();
+  lastResultBeforeReadiness = JSON.stringify(healthBeforeReadiness.lastResult ?? null);
+  assert(
+    healthBeforeReadiness.lastResult?.status === 'demo_refreshed',
+    'demo refresh should update control server lastResult before readiness check',
   );
 
   const readinessResponse = await fetch(`${baseUrl}/api/readiness`);
