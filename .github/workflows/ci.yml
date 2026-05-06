@@ -38,6 +38,12 @@ jobs:
         run: python3 scripts/customer-validation-scorecard.py --log docs/customer-validation-log.example.json >/tmp/prophet-customer-validation.json
       - name: Validation targets scorecard
         run: python3 scripts/validation-targets-scorecard.py --targets docs/validation-targets.example.json >/tmp/prophet-validation-targets.json
+      - name: Validation sprint dashboard
+        run: |
+          python3 scripts/validation-sprint-dashboard.py \
+            --log docs/customer-validation-log.example.json \
+            --targets docs/validation-targets.example.json \
+            >/tmp/prophet-validation-dashboard.json
       - name: Cyber-side contract tests
         run: PYTHONPATH=cyber-side python3 -m unittest discover -s cyber-side/tests -v
       - name: World-side forecaster tests

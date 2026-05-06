@@ -295,6 +295,14 @@ Plan outreach from an anonymized target tracker with:
 python3 scripts/validation-targets-scorecard.py --targets docs/validation-targets.example.json
 ```
 
+Initialize the gitignored private validation workspace and print the daily
+dashboard with:
+
+```bash
+python3 scripts/init-validation-sprint.py
+python3 scripts/validation-sprint-dashboard.py
+```
+
 ## Repository Map
 
 ```text

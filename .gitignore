@@ -31,6 +31,7 @@ prophet-console/playwright-report/
 
 # Local data / artifacts
 /data/
+_archive-private-research/
 world-layer/
 world-side/outputs/runtime/
 cyber-side/outputs/runtime/

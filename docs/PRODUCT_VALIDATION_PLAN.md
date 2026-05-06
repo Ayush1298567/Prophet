@@ -194,6 +194,12 @@ Use a private anonymized log based on
 Use a private anonymized target tracker based on
 `docs/validation-targets.example.json`.
 
+Initialize both under ignored local storage with:
+
+```bash
+python3 scripts/init-validation-sprint.py
+```
+
 Do not commit real names, emails, phone numbers, company-private details, raw
 customer hostnames, IPs, screenshots, transcripts, or proprietary artifacts.
 
@@ -207,6 +213,12 @@ Track outreach targets with:
 
 ```bash
 python3 scripts/validation-targets-scorecard.py --targets path/to/private-targets.json
+```
+
+Use the combined daily dashboard with:
+
+```bash
+python3 scripts/validation-sprint-dashboard.py
 ```
 
 The scorecard returns a verdict:

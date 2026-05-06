@@ -7,9 +7,12 @@ Do not add production platform scope while this checklist is red.
 
 ## Setup
 
-- [ ] Create a private local folder: `validation/private/`.
-- [ ] Copy `docs/customer-validation-log.example.json` to
-  `validation/private/customer-validation-log.json`.
+- [ ] Initialize the private local workspace:
+
+  ```bash
+  python3 scripts/init-validation-sprint.py
+  ```
+
 - [ ] Do not commit anything under `validation/private/`.
 - [ ] Prepare the 10-minute demo around generated evidence, not platform
   architecture.
@@ -25,11 +28,10 @@ Every weekday:
 - [ ] Ask every warm contact for one more specific intro.
 - [ ] Book or run at least one qualified conversation when possible.
 - [ ] Log each conversation in the private validation log.
-- [ ] Run the scorecard.
+- [ ] Run the dashboard.
 
 ```bash
-python3 scripts/customer-validation-scorecard.py \
-  --log validation/private/customer-validation-log.json
+python3 scripts/validation-sprint-dashboard.py
 ```
 
 ## Call Rules

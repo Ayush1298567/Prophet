@@ -56,8 +56,7 @@ That is useful. What tool or workflow already solves it well enough?
 ## Scorecard Command
 
 ```bash
-python3 scripts/customer-validation-scorecard.py \
-  --log validation/private/customer-validation-log.json
+python3 scripts/validation-sprint-dashboard.py
 ```
 
 ## Decision Rule
