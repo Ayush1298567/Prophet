@@ -63,6 +63,7 @@ make goal-resume
 make validation-next-draft
 make validation-send-copy
 make validation-send-copy-batch
+make validation-pre-send-check TARGET=target-dib-platform-001
 make validation-draft-copy TARGET=target-dib-platform-004
 ```
 
@@ -98,6 +99,7 @@ make goal-resume DATE=YYYY-MM-DD
 make validation-next-draft DATE=YYYY-MM-DD
 make validation-send-copy DATE=YYYY-MM-DD
 make validation-send-copy-batch DATE=YYYY-MM-DD
+make validation-pre-send-check TARGET=target-dib-platform-001 DATE=YYYY-MM-DD
 make validation-draft-copy TARGET=target-dib-platform-004 DATE=YYYY-MM-DD
 ```
 
@@ -132,7 +134,8 @@ batch checklist body, neutral copy-index body, subject-order body, and
 DO_NOT_SEND guard. Open the generated `.txt` files and copy only their contents
 into the outreach channel. Do not attach the files, and do not send the private
 manifest, checklist, copy index, subject-order helper, DO_NOT_SEND guard, or
-batch README.
+batch README. For the next single send, the dashboard also reports
+`outreach_execution.next_pending_pre_send_check_command`.
 
 The next operational loop is:
 
@@ -152,12 +155,15 @@ The next operational loop is:
    DATE=YYYY-MM-DD` and copy only the generated `.txt` file contents after the
    dashboard reports the batch state is ready and matches the current pack. Do
    not attach the files.
-7. Send from `validation/private/today-send-copy.txt` only after that dry-run
-   is clean and the dashboard reports `send_copy_state: ready` plus
+7. Run `make validation-pre-send-check TARGET=<target-label>
+   DATE=YYYY-MM-DD` immediately before sending. It is dry-run only and refuses
+   `CONFIRM_SENT`, `CONFIRM_TARGET`, `CONFIRM_LOG`, or `CONFIRM_PRUNE`.
+8. Send from `validation/private/today-send-copy.txt` only after that dry-run
+   gate is clean and the dashboard reports `send_copy_state: ready` plus
    `send_copy_matches_next_pending: true`.
-8. Add `CONFIRM_SENT=1` only after the sent message and anonymized update are
+9. Add `CONFIRM_SENT=1` only after the sent message and anonymized update are
    correct.
-9. Rerun `make validation-status DATE=YYYY-MM-DD` and
+10. Rerun `make validation-status DATE=YYYY-MM-DD` and
    `make validation-dashboard DATE=YYYY-MM-DD`.
 
 Do not invent sent messages, buyer replies, calls, or pilot signals.

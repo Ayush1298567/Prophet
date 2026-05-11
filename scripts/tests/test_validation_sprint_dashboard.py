@@ -147,6 +147,10 @@ class ValidationSprintDashboardTests(unittest.TestCase):
             "make validation-apply-draft TARGET=target-dib-platform-001 DATE=2026-05-10",
         )
         self.assertEqual(
+            summary["outreach_execution"]["next_pending_pre_send_check_command"],
+            "make validation-pre-send-check TARGET=target-dib-platform-001 DATE=2026-05-10",
+        )
+        self.assertEqual(
             summary["outreach_execution"]["next_pending_confirmed_apply_command"],
             (
                 "make validation-apply-draft TARGET=target-dib-platform-001 "
@@ -174,6 +178,13 @@ class ValidationSprintDashboardTests(unittest.TestCase):
         self.assertTrue(
             any(
                 "make validation-apply-draft TARGET=target-dib-platform-001 DATE=2026-05-10"
+                in action
+                for action in summary["next_actions"]
+            )
+        )
+        self.assertFalse(
+            any(
+                "make validation-pre-send-check TARGET=target-dib-platform-001 DATE=2026-05-10"
                 in action
                 for action in summary["next_actions"]
             )
@@ -317,11 +328,16 @@ class ValidationSprintDashboardTests(unittest.TestCase):
             )
         )
         self.assertTrue(
-            any(str(next_draft_path) in action for action in summary["next_actions"])
+            any(
+                "make validation-pre-send-check TARGET=target-dib-platform-001 DATE=2026-05-10"
+                in action
+                for action in summary["next_actions"]
+            )
         )
         self.assertTrue(
-            any("is currently verified" in action for action in summary["next_actions"])
+            any(str(next_draft_path) in action for action in summary["next_actions"])
         )
+        self.assertTrue(any("after the actual send" in action for action in summary["next_actions"]))
         self.assertTrue(
             any("today-send-copy.txt" in action for action in summary["next_actions"])
         )
@@ -1144,6 +1160,10 @@ class ValidationSprintDashboardTests(unittest.TestCase):
         self.assertIn("Next target: target-dib-platform-001", rendered)
         self.assertIn(
             "Dry-run command: make validation-apply-draft TARGET=target-dib-platform-001 DATE=2026-05-10",
+            rendered,
+        )
+        self.assertIn(
+            "Pre-send check command: make validation-pre-send-check TARGET=target-dib-platform-001 DATE=2026-05-10",
             rendered,
         )
         self.assertIn("Confirmed-send command:", rendered)

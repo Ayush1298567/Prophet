@@ -19,6 +19,7 @@ class AgentOperatingManualTests(unittest.TestCase):
         self.assertIn("make validation-next-draft", text)
         self.assertIn("make validation-send-copy", text)
         self.assertIn("make validation-send-copy-batch", text)
+        self.assertIn("make validation-pre-send-check", text)
         self.assertIn("make validation-draft-copy", text)
         self.assertIn("make validation-team-update", text)
         self.assertIn("make validation-team-update-save", text)
@@ -46,6 +47,7 @@ class AgentOperatingManualTests(unittest.TestCase):
         self.assertIn("outreach_execution.send_copy_batch_copy_index_exists", text)
         self.assertIn("outreach_execution.send_copy_batch_subject_order_exists", text)
         self.assertIn("outreach_execution.send_copy_batch_do_not_send_exists", text)
+        self.assertIn("outreach_execution.next_pending_pre_send_check_command", text)
         self.assertIn("neutral copy-index body", text)
         self.assertIn("subject-order body", text)
         self.assertIn("DO_NOT_SEND guard", text)
@@ -59,6 +61,7 @@ class AgentOperatingManualTests(unittest.TestCase):
         )
         self.assertIn("make validation-status DATE=YYYY-MM-DD", text)
         self.assertIn("make validation-dashboard DATE=YYYY-MM-DD", text)
+        self.assertIn("refuses", text)
 
     def test_agents_manual_does_not_use_old_hackathon_positioning(self) -> None:
         text = AGENTS.read_text(encoding="utf-8").lower()

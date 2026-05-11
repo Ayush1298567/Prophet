@@ -123,12 +123,14 @@ class CliSafetyMatrixDocsTests(unittest.TestCase):
         self.assertIn("send_copy_batch_matches_current_pack", dashboard_line)
         self.assertIn("send_copy_batch_readme_exists", dashboard_line)
         self.assertIn("send_copy_batch_checklist_exists", dashboard_line)
+        self.assertIn("next_pending_pre_send_check_command", dashboard_line)
         self.assertIn("target/date/status", dashboard_line)
         self.assertIn("build_next_slice", dashboard_line)
         self.assertIn("target_backed_validation", dashboard_line)
         self.assertIn("call_booked", dashboard_line)
         self.assertIn("completed", dashboard_line)
         self.assertIn("matching segment/persona metadata", dashboard_line)
+        self.assertIn("pre-send", dashboard_line)
         self.assertIn("CONFIRM_SENT=1", dashboard_line)
 
     def test_apply_draft_row_names_echoed_recovery_commands(self) -> None:

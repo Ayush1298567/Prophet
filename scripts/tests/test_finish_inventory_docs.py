@@ -166,6 +166,8 @@ class FinishInventoryDocsTests(unittest.TestCase):
         self.assertIn("`validation/private/send-copy-2026-05-11/CHECKLIST.md`", inventory)
         self.assertIn("send_copy_batch_state: ready", inventory)
         self.assertIn("send_copy_batch_matches_current_pack", inventory)
+        self.assertIn("next_pending_pre_send_check_command", inventory)
+        self.assertIn("pre-send wrapper", inventory)
 
     def test_completion_audit_lists_current_copy_only_batch_boundary(self) -> None:
         audit = COMPLETION_AUDIT.read_text(encoding="utf-8")
@@ -173,6 +175,8 @@ class FinishInventoryDocsTests(unittest.TestCase):
         self.assertIn("`validation/private/send-copy-2026-05-11/`", audit)
         self.assertIn("send_copy_batch_state: ready", audit)
         self.assertIn("send_copy_batch_matches_current_pack: true", audit)
+        self.assertIn("next_pending_pre_send_check_command", audit)
+        self.assertIn("pre-send wrapper", audit)
         self.assertIn("manifest.json` as tracker/audit metadata", audit)
         self.assertIn("CHECKLIST.md` as tracker/audit metadata", audit)
         self.assertIn("README.md` as tracker/audit metadata", audit)

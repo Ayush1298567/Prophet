@@ -227,10 +227,13 @@ def render_text(dashboard: dict[str, Any]) -> str:
             ]
         )
         dry_run = outreach.get("next_pending_dry_run_apply_command")
+        pre_send = outreach.get("next_pending_pre_send_check_command")
         confirmed = outreach.get("next_pending_confirmed_apply_command")
         status_command = outreach.get("status_command")
         if dry_run:
             lines.append(f"- Dry-run command: {dry_run}")
+        if pre_send:
+            lines.append(f"- Pre-send check command: {pre_send}")
         if confirmed:
             lines.append(f"- Confirmed-send command: {confirmed}")
         if status_command:
@@ -632,6 +635,11 @@ def _outreach_execution(
         "next_pending_dry_run_apply_command": (
             next_pending.get("dry_run_apply_command") if next_pending is not None else None
         ),
+        "next_pending_pre_send_check_command": (
+            f"make validation-pre-send-check TARGET={next_pending_label} DATE={status['generated_for']}"
+            if next_pending_label is not None
+            else None
+        ),
         "next_pending_confirmed_apply_command": (
             next_pending.get("confirmed_apply_command") if next_pending is not None else None
         ),
@@ -752,6 +760,19 @@ def _outreach_execution_action(outreach_execution: dict[str, Any]) -> str | None
             next_draft_exists=next_draft_ready,
         )
         if next_draft_ready:
+            pre_send = outreach_execution.get("next_pending_pre_send_check_command")
+            confirmed = outreach_execution.get("next_pending_confirmed_apply_command")
+            status_command = outreach_execution.get("status_command")
+            pre_send_clause = (
+                f"run `{pre_send}` immediately before sending"
+                if pre_send
+                else "rerun the dry-run pre-send checks immediately before sending"
+            )
+            after_send_clause = "apply its tracker update after the confirmed send"
+            if confirmed:
+                after_send_clause = f"after the actual send, run `{confirmed}`"
+                if status_command:
+                    after_send_clause += f", then rerun `{status_command}`"
             if not outreach_execution.get("send_copy_matches_next_pending"):
                 return (
                     "Refresh the copy-only send text"
@@ -759,16 +780,22 @@ def _outreach_execution_action(outreach_execution: dict[str, Any]) -> str | None
                     f"with `{outreach_execution['send_copy_command']}` before sending; "
                     f"do not use {outreach_execution['send_copy_path']} until "
                     f"`send_copy_state` is `ready`; "
-                    f"{command_clause}. "
+                    f"then {pre_send_clause}; "
+                    f"{after_send_clause}. "
                     f"{counts['pending_send_or_update']} verified draft(s) remain."
-                )
+            )
             return (
-                "Use the copy-only send text"
+                (
+                    f"Run `{pre_send}` immediately before sending"
+                    if pre_send
+                    else "Rerun the dry-run pre-send checks immediately before sending"
+                )
+                + "; Use the copy-only send text"
                 f"{_next_pending_suffix(outreach_execution)} "
                 f"from {outreach_execution['send_copy_path']}; "
                 f"`{outreach_execution['send_copy_command']}` refreshes it from "
                 f"the verified tracker/audit draft at {outreach_execution['next_draft_path']}; "
-                f"{command_clause}. "
+                f"{after_send_clause}. "
                 f"{counts['pending_send_or_update']} verified draft(s) remain."
             )
         if next_draft_exists:

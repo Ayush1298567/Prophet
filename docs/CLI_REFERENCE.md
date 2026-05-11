@@ -656,14 +656,16 @@ The dashboard JSON includes `outreach_execution.next_draft_state`,
 `outreach_execution.send_copy_batch_checklist_exists` plus
 `outreach_execution.send_copy_batch_copy_index_exists` plus
 `outreach_execution.send_copy_batch_subject_order_exists` plus
-`outreach_execution.send_copy_batch_do_not_send_exists`. Treat the already-rendered
+`outreach_execution.send_copy_batch_do_not_send_exists`, plus
+`outreach_execution.next_pending_pre_send_check_command`. Treat the already-rendered
 `validation/private/today-next-draft.md` as tracker/audit metadata only when the
 state is `ready`; that means the draft target, outreach date, and verified
 status match the current next pending target. Run
 `make validation-send-copy DATE=YYYY-MM-DD` and send from
 `validation/private/today-send-copy.txt` only when `send_copy_state` is `ready`,
-then use the dashboard's dated dry-run / `CONFIRM_SENT=1` commands for that
-target after the actual send. The
+then run the dashboard's dated pre-send command immediately before sending and
+use the dated dry-run / `CONFIRM_SENT=1` commands for that target after the
+actual send. The
 `make validation-send-copy-batch DATE=YYYY-MM-DD` path is usable only when
 `send_copy_batch_state` is `ready` and
 `send_copy_batch_matches_current_pack`, `send_copy_batch_readme_exists`, and

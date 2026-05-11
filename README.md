@@ -208,7 +208,8 @@ checks, including `next_pending_target_label` and the exact next dry-run /
 `outreach_execution.next_draft_exists` and
 `outreach_execution.next_draft_matches_next_pending`, plus
 `outreach_execution.send_copy_state` and
-`outreach_execution.send_copy_matches_next_pending`; treat the already-rendered
+`outreach_execution.send_copy_matches_next_pending`, plus
+`outreach_execution.next_pending_pre_send_check_command`; treat the already-rendered
 `validation/private/today-next-draft.md` as tracker context, then send from
 `validation/private/today-send-copy.txt` only when both the draft and copy-only
 text match the current next pending target/date/status/body.

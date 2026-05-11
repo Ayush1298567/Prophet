@@ -764,12 +764,14 @@ Latest verification run for this inventory:
   `send_copy_batch_checklist_exists`, `send_copy_batch_copy_index_exists`, and
   `send_copy_batch_subject_order_exists`,
   `send_copy_batch_do_not_send_exists`, and
-  `send_copy_batch_matches_current_pack`.
+  `send_copy_batch_matches_current_pack`, plus
+  `next_pending_pre_send_check_command`.
 - Generated message pack, next-draft, send-copy, outreach-status, and dashboard
-  next-action text now instruct operators to run the dry-run tracker update
-  before sending or writing, send copy-only text outside the repo only after
-  that dry-run passes, then use `CONFIRM_SENT=1` only after the actual send is
-  confirmed. When `validation/private/today-next-draft.md` already exists, the
+  next-action text now instruct operators to run the dry-run tracker update and
+  the pre-send wrapper before sending or writing, send copy-only text outside
+  the repo only after those dry-run gates pass, then use `CONFIRM_SENT=1` only
+  after the actual send is confirmed. When
+  `validation/private/today-next-draft.md` already exists, the
   dashboard reports `next_draft_exists: true` plus
   `next_draft_matches_next_pending`; it tells the operator to use
   `validation/private/today-send-copy.txt` only when both the tracker/audit
