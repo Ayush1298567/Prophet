@@ -40,6 +40,9 @@ class ReleaseChecklistDocsTests(unittest.TestCase):
         self.assertIn("make python-tests", text)
         self.assertIn("python3 scripts/check-doc-links.py", text)
         self.assertIn("make secrets-archaeology", text)
+        self.assertIn("make release-tag-preflight DATE=YYYY-MM-DD", text)
+        self.assertIn("git-history secret archaeology", text)
+        self.assertIn("real-validation", text)
         self.assertIn("historical findings", text)
         self.assertIn("docs/SECRET_HISTORY_REVIEW.md", text)
         self.assertIn("npm run capture:screenshots", text)
@@ -59,6 +62,8 @@ class ReleaseChecklistDocsTests(unittest.TestCase):
 
         self.assertIn("## Release Tag Gate", text)
         self.assertIn("Do not create or push a public pilot release tag", text)
+        self.assertIn("Do not bypass `make release-tag-preflight DATE=YYYY-MM-DD`", text)
+        self.assertIn("expected to fail closed", text)
         self.assertIn("make secrets-archaeology", text)
         self.assertIn("LOG4SHELL_INSTRUCTIONS.md", text)
         self.assertIn("docs/SECRET_HISTORY_REVIEW.md", text)

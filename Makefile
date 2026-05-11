@@ -85,6 +85,7 @@ help:
 		'  After a restored/crashed session, pass DATE=YYYY-MM-DD explicitly if the shell date is not the outreach date.' \
 		'  make release-hygiene          Run read-only whitespace, safety, current-secret, policy, and default-output checks.' \
 		'  make secrets-archaeology      Run full read-only current + git-history secret scan.' \
+		'  make release-tag-preflight    Fail-closed read-only public release-tag preflight.' \
 		'  make release-safety           Run release safety over the current diff.' \
 		'  make release-safety-staged    Run release safety over staged paths.'
 
@@ -533,6 +534,14 @@ release-hygiene:
 .PHONY: secrets-archaeology
 secrets-archaeology:
 	@./scripts/check-secrets-archaeology.sh
+
+.PHONY: release-tag-preflight
+release-tag-preflight:
+	@VALIDATION_LOG=$(VALIDATION_LOG) \
+		VALIDATION_TARGETS=$(VALIDATION_TARGETS) \
+		DATE=$(VALIDATION_RUN_DATE) \
+		PYTHONPATH_SAFE=$(PYTHONPATH_SAFE) \
+		./scripts/check-release-tag-preflight.sh
 
 .PHONY: release-safety-staged
 release-safety-staged:

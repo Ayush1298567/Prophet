@@ -97,6 +97,8 @@ class MakeValidationTargetsTests(unittest.TestCase):
         self.assertIn("read-only whitespace, safety, current-secret", completed.stdout)
         self.assertIn("make secrets-archaeology", completed.stdout)
         self.assertIn("current + git-history secret scan", completed.stdout)
+        self.assertIn("make release-tag-preflight", completed.stdout)
+        self.assertIn("Fail-closed read-only public release-tag preflight", completed.stdout)
 
     def test_python_tests_target_runs_all_unit_suites(self) -> None:
         makefile = (ROOT / "Makefile").read_text(encoding="utf-8")
@@ -280,6 +282,22 @@ class MakeValidationTargetsTests(unittest.TestCase):
         self.assertIn("tracked and untracked non-ignored files", completed.stdout)
         self.assertIn("git history", completed.stdout)
         self.assertIn("does not print matched secret values", completed.stdout)
+
+    def test_release_tag_preflight_help_documents_fail_closed_gate(self) -> None:
+        completed = subprocess.run(
+            ["./scripts/check-release-tag-preflight.sh", "--help"],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertIn("read-only public pilot release-tag preflight", completed.stdout)
+        self.assertIn("full secrets archaeology", completed.stdout)
+        self.assertIn("build_next_slice", completed.stdout)
+        self.assertIn("does not stage, commit, push, tag", completed.stdout)
 
     def test_console_demo_rejects_non_localhost_ui_host_before_starting(self) -> None:
         env = os.environ.copy()

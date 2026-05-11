@@ -51,6 +51,7 @@ make validation-dashboard DATE=2026-05-11
 make validation-resume DATE=2026-05-11
 make release-hygiene
 make secrets-archaeology
+make release-tag-preflight DATE=2026-05-11
 make release-safety
 ```
 
@@ -72,6 +73,12 @@ URL/provenance safety, and local Markdown link checking.
 It reports only paths and commit IDs, not matched values. Treat any
 finding as a public-release blocker until the underlying secret or false
 positive is reviewed.
+
+`make release-tag-preflight DATE=YYYY-MM-DD` is a read-only public pilot tag
+gate. It fails closed unless the worktree is clean, release hygiene passes,
+full git-history secrets archaeology passes, staged-path safety passes, and
+real buyer validation has opened `build_next_slice`. It does not create or push
+tags.
 
 `make console-demo` starts the localhost-only control API and evaluator UI in
 one terminal. On a fresh checkout, run `cd prophet-console && npm ci` first. If

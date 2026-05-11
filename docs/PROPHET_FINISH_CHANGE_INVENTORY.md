@@ -359,6 +359,7 @@ Files:
 - `docs/PROPHET_TODO.md`
 - `docs/PROPHET_MASTER_TODO.md`
 - `docs/PROPHET_FINISH_CHANGE_INVENTORY.md`
+- `docs/CLI_REFERENCE.md`
 - `docs/RELEASE_CHECKLIST.md`
 - `docs/SECRET_HISTORY_REVIEW.md`
 - `.github/pull_request_template.md`
@@ -372,6 +373,7 @@ Files:
 - `scripts/check-default-output-safety.py`
 - `scripts/check-doc-links.py`
 - `scripts/check-release-hygiene.sh`
+- `scripts/check-release-tag-preflight.sh`
 - `scripts/check-secrets-archaeology.sh`
 - `scripts/check-local-env.sh`
 - `scripts/check-console-live-demo.sh`
@@ -392,6 +394,7 @@ Files:
 - `scripts/tests/test_pilot_release_notes_docs.py`
 - `scripts/tests/test_production_readiness_scorecard.py`
 - `scripts/tests/test_pull_request_template_docs.py`
+- `scripts/tests/test_cli_reference_docs.py`
 - `scripts/tests/test_release_checklist_docs.py`
 - `scripts/tests/test_secret_history_review_docs.py`
 
@@ -504,7 +507,7 @@ sanitized examples.
 
 Latest verification run for this inventory:
 
-- `python3 -m unittest discover -s scripts/tests -v`: 390 tests passed after
+- `python3 -m unittest discover -s scripts/tests -v`: 391 tests passed after
   the NIST/CMMC security packet docs guard, send-boundary dashboard, copy-only resume boundary, CLI-reference,
   validation-resume, goal-resume, validation-team-update, validation-weekly-review,
   validation-next-action handoff generation, weekly-review `review_date`,
@@ -553,6 +556,7 @@ Latest verification run for this inventory:
   coverage,
   dry-run-only pre-send check guard coverage,
   full-batch pre-send check guard coverage,
+  release-tag preflight help/docs coverage,
   release-checklist console-demo and python-tests wrapper coverage, pilot-release-note runnable-product
   coverage, worktree-smoke wrapper coverage, all-Python Make wrapper coverage,
   same-target wrong-date next-draft rejection, example-seed build-gate
@@ -740,7 +744,7 @@ Latest verification run for this inventory:
 - `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py --diff`:
   passed over 0 paths in the clean committed worktree.
 - `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py --tracked --paths-only`:
-  passed over 358 tracked paths, including release-bound policy-hash coverage
+  passed over 359 tracked paths, including release-bound policy-hash coverage
   checks.
 - `python3 -m policy.lint --policy policy/prophet-pilot-policy.json`:
   passed and reported policy ID `prophet-pilot-fixture-localhost-v0.1` with

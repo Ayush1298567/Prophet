@@ -208,6 +208,10 @@ operator board for the next buyer-pilot cycles.
   `make release-hygiene` / `scripts/check-release-hygiene.sh`.
 - [x] Full secrets archaeology scanner exists:
   `make secrets-archaeology` / `scripts/check-secrets-archaeology.sh`.
+- [x] Public release-tag preflight exists and fails closed on dirty worktrees,
+  unresolved full-history secret archaeology, staged-path safety failures, or a
+  closed real-validation build gate:
+  `make release-tag-preflight DATE=YYYY-MM-DD`.
 - [ ] Full secrets archaeology and public release review currently flag
   historical
   `LOG4SHELL_INSTRUCTIONS.md` password-like content in git history; decide
