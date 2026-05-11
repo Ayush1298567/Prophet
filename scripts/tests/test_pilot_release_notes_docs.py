@@ -93,7 +93,12 @@ class PilotReleaseNotesDocsTests(unittest.TestCase):
         self.assertIn("run: ./scripts/check-local-env.sh", workflow)
         self.assertIn("name: Linux fresh-clone pilot smoke", workflow)
         self.assertIn("run: ./scripts/run-pilot-demo-smoke.sh", workflow)
+        self.assertIn("Release safety scan", workflow)
+        self.assertIn("check-release-safety.py --tracked --paths-only", workflow)
+        self.assertIn("Policy examples schema validation, lint, and compare", workflow)
+        self.assertIn("python3 -m policy.lint", workflow)
         self.assertIn("[x] Fresh clone smoke on Linux.", master_todo)
+        self.assertIn("[x] Day 4: Add CI jobs for smoke hashes, policy lint, and unsafe text scan.", master_todo)
 
     def test_changelog_names_current_gate_and_review_guardrails(self) -> None:
         text = CHANGELOG.read_text(encoding="utf-8")
