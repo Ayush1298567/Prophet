@@ -18,13 +18,11 @@ It does not tag, deploy, or mark the product complete.
   (`6bd27c6 Add pre-send guard to validation send artifacts`); the GitHub
   `main` CI run for that checkpoint completed successfully at
   <https://github.com/Ayush1298567/Prophet/actions/runs/25670236106>.
-  Current repo head after audit-only handoff commits is
-  `97cfcfb3236e071ff325985970123c89b984e11f`
-  (`97cfcfb Put pre-send guard first in completion audit`); GitHub `main` CI
-  completed successfully at
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25670716101>.
-  Treat the moving current head as live state from `git log --oneline -1` and
-  GitHub `main` CI rather than hardcoding it into this inventory.
+  Audit-only handoff commits after that implementation checkpoint are
+  intentionally not hardcoded here because any doc-only commit would make that
+  value stale. Treat the moving current head as live state from
+  `git log --oneline -1` and GitHub `main` CI rather than hardcoding it into
+  this inventory.
 
 Do not create production platform commits from this inventory until real
 validation reaches `build_next_slice`.
@@ -809,11 +807,10 @@ Latest verification run for this inventory:
   <https://github.com/Ayush1298567/Prophet/actions/runs/25670236106>. This
   checkpoint adds the pre-send validation guard and does not open production
   platform scope while validation remains `insufficient_data`.
-- Current repo head after audit-only handoff commits:
-  `97cfcfb3236e071ff325985970123c89b984e11f`
-  (`97cfcfb Put pre-send guard first in completion audit`). GitHub `main` CI
-  completed successfully at
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25670716101>.
+- Audit-only handoff commits after that implementation checkpoint are
+  intentionally not hardcoded here because any doc-only commit would make that
+  value stale. Use `git log --oneline -1` plus GitHub `main` CI for the moving
+  current head.
 
 ## PR Handoff Draft
 
@@ -898,10 +895,9 @@ runtime output contents into the PR.
 - Latest implementation checkpoint is `6bd27c6`, and the GitHub `main` CI run
   for that checkpoint completed successfully:
   <https://github.com/Ayush1298567/Prophet/actions/runs/25670236106>.
-  Current repo head after audit-only handoff commits is `97cfcfb`, and GitHub
-  `main` CI completed successfully:
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25670716101>.
-  Use `git log --oneline -1` plus GitHub `main` CI for the moving current head.
+  Audit-only handoff commits after that implementation checkpoint are
+  intentionally not hardcoded here. Use `git log --oneline -1` plus GitHub
+  `main` CI for the moving current head.
 ```
 
 Before any new release tag or follow-up PR, rerun the relevant console
