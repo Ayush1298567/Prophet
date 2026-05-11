@@ -36,6 +36,15 @@ Attach or link only customer-safe artifacts:
 - Generated handoff review ZIP after a smoke run:
   `integrations/outputs/runtime/latest-edge-appliance-review-bundle.zip`
 
+Before using the generated evidence or handoff artifacts, run:
+
+```bash
+make buyer-follow-up-check
+```
+
+If it fails because runtime artifacts are missing or stale, rerun
+`./scripts/run-pilot-demo-smoke.sh`, then run the check again.
+
 Do not include raw customer data, raw scraper text, credentials, private
 hostnames, live IPs, screenshots of customer systems, or lab/offensive material.
 

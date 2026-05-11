@@ -34,6 +34,8 @@ class MakeValidationTargetsTests(unittest.TestCase):
         self.assertIn("Run pilot-ready-check plus console acceptance and audit", completed.stdout)
         self.assertIn("make worktree-smoke", completed.stdout)
         self.assertIn("overlay dirty non-ignored files", completed.stdout)
+        self.assertIn("make buyer-follow-up-check", completed.stdout)
+        self.assertIn("qualified-buyer follow-up docs", completed.stdout)
         self.assertIn("make console-control", completed.stdout)
         self.assertIn("Run the local console control server", completed.stdout)
         self.assertIn("make console-ui", completed.stdout)

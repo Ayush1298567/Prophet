@@ -40,6 +40,7 @@ make pilot-ready-check-full DATE=2026-05-11
 make python-tests
 make worktree-smoke
 make pilot-smoke
+make buyer-follow-up-check
 make console-demo
 make supply-chain-sbom DATE=2026-05-11
 make supply-chain-sbom-check DATE=2026-05-11
@@ -67,6 +68,14 @@ the safe root pilot smoke without staging, committing, pushing, or tagging.
 `make python-tests` runs the scripts, cyber-side, world-side, assets, sandbox
 runner, policy, evidence, and integration Python unit suites. Use it before a
 pilot commit or PR review when you need the full Python verification set.
+
+`make buyer-follow-up-check` verifies the qualified-buyer follow-up package
+after a smoke run. It checks the tracked buyer docs, confirms generated evidence
+and handoff artifacts are ignored/untracked runtime outputs, compares their
+SHA-256 hashes to `scripts/pilot-demo-smoke.sha256`, and verifies the evidence
+safety attestation plus review-template-only handoff manifest. Run
+`./scripts/run-pilot-demo-smoke.sh` first if the runtime files are missing or
+stale.
 
 `make release-hygiene` is the read-only pre-commit hygiene wrapper. It runs
 tracked and untracked whitespace checks, release-safety scans for tracked diffs
