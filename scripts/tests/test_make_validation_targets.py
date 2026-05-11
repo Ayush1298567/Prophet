@@ -934,6 +934,8 @@ class MakeValidationTargetsTests(unittest.TestCase):
             self.assertIn("Build gate open: false", completed.stdout)
             self.assertIn("Copy-only send text is missing or stale", completed.stdout)
             self.assertIn("make validation-send-copy DATE=2026-05-10", completed.stdout)
+            self.assertIn("Contact-form copy state: missing", completed.stdout)
+            self.assertIn("make validation-contact-form-copy DATE=2026-05-10", completed.stdout)
             self.assertIn("DO NOT SEND BELOW THIS LINE", completed.stdout)
             self.assertIn("Already-rendered next draft with tracker metadata:", completed.stdout)
             self.assertLess(
@@ -1004,6 +1006,7 @@ class MakeValidationTargetsTests(unittest.TestCase):
             self.assertIn("Send-copy state: stale", completed.stdout)
             self.assertIn("Copy-only send text is missing or stale", completed.stdout)
             self.assertIn("make validation-send-copy DATE=2026-05-10", completed.stdout)
+            self.assertIn("Contact-form copy state: missing", completed.stdout)
             self.assertNotIn("stale outbound text", completed.stdout)
             self.assertIn("DO NOT SEND BELOW THIS LINE", completed.stdout)
             self.assertIn("Already-rendered next draft with tracker metadata:", completed.stdout)
@@ -1056,6 +1059,7 @@ class MakeValidationTargetsTests(unittest.TestCase):
                 check=True,
             )
             _run_make_send_copy(private_dir)
+            _run_make_contact_form_copy(private_dir)
 
             completed = subprocess.run(
                 [
@@ -1074,6 +1078,9 @@ class MakeValidationTargetsTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertIn("BEGIN COPY-ONLY SEND TEXT:", completed.stdout)
         self.assertIn("END COPY-ONLY SEND TEXT", completed.stdout)
+        self.assertIn("CONTACT-FORM COPY READY:", completed.stdout)
+        self.assertIn("validation-private/contact-form-copy-2026-05-10", completed.stdout)
+        self.assertIn("Copy only numbered .txt contents", completed.stdout)
         self.assertIn("DO NOT SEND BELOW THIS LINE", completed.stdout)
         self.assertIn("Already-rendered next draft with tracker metadata:", completed.stdout)
         self.assertLess(
@@ -1145,6 +1152,7 @@ class MakeValidationTargetsTests(unittest.TestCase):
             self.assertEqual(completed.returncode, 0, completed.stderr)
             self.assertIn("Next draft matches target/date/status/body: true", completed.stdout)
             self.assertIn("Copy-only send text is missing or stale", completed.stdout)
+            self.assertIn("Contact-form copy state: missing", completed.stdout)
             self.assertIn("DO NOT SEND BELOW THIS LINE", completed.stdout)
             self.assertIn("Already-rendered next draft with tracker metadata:", completed.stdout)
             self.assertIn("Next Prophet Validation Draft - 2026-05-10", completed.stdout)
@@ -2414,6 +2422,22 @@ def _run_make_send_copy(private_dir: Path) -> None:
         [
             "make",
             "validation-send-copy",
+            "DATE=2026-05-10",
+            f"VALIDATION_DIR={private_dir}",
+        ],
+        cwd=ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+    )
+
+
+def _run_make_contact_form_copy(private_dir: Path) -> None:
+    subprocess.run(
+        [
+            "make",
+            "validation-contact-form-copy",
             "DATE=2026-05-10",
             f"VALIDATION_DIR={private_dir}",
         ],

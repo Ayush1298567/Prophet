@@ -523,9 +523,11 @@ validation-resume:
 		--targets $(VALIDATION_TARGETS) \
 		$(REQUIRE_DATE_ARG) \
 		--message-pack $(VALIDATION_MESSAGE_PACK_JSON) \
-		--format json | python3 -c 'import json, sys; data = json.load(sys.stdin); outreach = data.get("outreach_execution", {}); print(outreach.get("next_draft_state", "unknown")); print(outreach.get("send_copy_state", "unknown"))'); \
+		--format json | python3 -c 'import json, sys; data = json.load(sys.stdin); outreach = data.get("outreach_execution", {}); print(outreach.get("next_draft_state", "unknown")); print(outreach.get("send_copy_state", "unknown")); print(outreach.get("contact_form_copy_state", "unknown")); print(outreach.get("contact_form_copy_dir", ""))'); \
 	next_draft_state=$$(printf '%s\n' "$$dashboard_states" | sed -n '1p'); \
 	send_copy_state=$$(printf '%s\n' "$$dashboard_states" | sed -n '2p'); \
+	contact_form_copy_state=$$(printf '%s\n' "$$dashboard_states" | sed -n '3p'); \
+	contact_form_copy_dir=$$(printf '%s\n' "$$dashboard_states" | sed -n '4p'); \
 	if [ -f "$(VALIDATION_NEXT_DRAFT_MD)" ] && [ "$$next_draft_state" = "ready" ]; then \
 		if [ -f "$(VALIDATION_SEND_COPY_TXT)" ] && [ "$$send_copy_state" = "ready" ]; then \
 			printf '\nBEGIN COPY-ONLY SEND TEXT: %s\n\n' "$(VALIDATION_SEND_COPY_TXT)"; \
@@ -533,6 +535,12 @@ validation-resume:
 			printf '\nEND COPY-ONLY SEND TEXT\n'; \
 		else \
 			printf '\nCopy-only send text is missing or stale. Run: make validation-send-copy DATE=%s\n' "$(VALIDATION_RUN_DATE)"; \
+		fi; \
+		if [ "$$contact_form_copy_state" = "ready" ] && [ -n "$$contact_form_copy_dir" ]; then \
+			printf '\nCONTACT-FORM COPY READY: %s\n' "$$contact_form_copy_dir"; \
+			printf 'Copy only numbered .txt contents; do not send manifest/checklist/index/README/DO_NOT_SEND.\n'; \
+		elif [ "$$contact_form_copy_state" != "not_needed" ]; then \
+			printf '\nContact-form copy state: %s. For public contact forms, run: make validation-contact-form-copy DATE=%s\n' "$$contact_form_copy_state" "$(VALIDATION_RUN_DATE)"; \
 		fi; \
 		printf '\nDO NOT SEND BELOW THIS LINE. Tracker/audit metadata follows.\n'; \
 		printf '\nAlready-rendered next draft with tracker metadata: %s\n\n' "$(VALIDATION_NEXT_DRAFT_MD)"; \
