@@ -62,6 +62,7 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             self.assertEqual(manifest["dry_run_verified_count"], 8)
             first = manifest["files"][0]
             self.assertEqual(first["target_label"], "target-dib-platform-001")
+            self.assertIn("subject", first)
             self.assertEqual(
                 first["path"],
                 str(out_dir / "01.txt"),
@@ -87,8 +88,9 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             self.assertIn("copy only its contents", readme)
             self.assertIn("Do not attach the `.txt` files", readme)
             self.assertIn("COPY_ONLY_INDEX.md", readme)
+            self.assertIn("SUBJECT_ORDER.md", readme)
             self.assertIn(
-                "Do not send `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, or this README",
+                "Do not send `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, `SUBJECT_ORDER.md`, or this README",
                 readme,
             )
             self.assertIn("SHA-256", readme)
@@ -131,6 +133,15 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             self.assertNotIn("@", copy_index)
             self.assertNotIn("http://", copy_index)
             self.assertNotIn("https://", copy_index)
+            subject_order = Path(manifest["subject_order_path"]).read_text(encoding="utf-8")
+            self.assertIn("Prophet Copy-Only Subject Order", subject_order)
+            self.assertIn("`01.txt`", subject_order)
+            self.assertIn("Intro to someone", subject_order)
+            self.assertNotIn("target-dib-platform-001", subject_order)
+            self.assertNotIn("make validation-apply-draft", subject_order)
+            self.assertNotIn("@", subject_order)
+            self.assertNotIn("http://", subject_order)
+            self.assertNotIn("https://", subject_order)
 
     def test_removes_old_generated_copy_files_before_writing(self) -> None:
         targets, pack = _targets_and_pack()
@@ -208,11 +219,13 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             self.assertEqual(manifest["readme_path"], str(out_dir / "README.md"))
             self.assertEqual(manifest["checklist_path"], str(out_dir / "CHECKLIST.md"))
             self.assertEqual(manifest["copy_index_path"], str(out_dir / "COPY_ONLY_INDEX.md"))
+            self.assertEqual(manifest["subject_order_path"], str(out_dir / "SUBJECT_ORDER.md"))
             self.assertEqual(json.loads(manifest_path.read_text(encoding="utf-8")), manifest)
             self.assertTrue((out_dir / "08.txt").exists())
             self.assertTrue((out_dir / "README.md").exists())
             self.assertTrue((out_dir / "CHECKLIST.md").exists())
             self.assertTrue((out_dir / "COPY_ONLY_INDEX.md").exists())
+            self.assertTrue((out_dir / "SUBJECT_ORDER.md").exists())
 
     def test_check_send_copy_directory_validates_existing_batch(self) -> None:
         targets, pack = _targets_and_pack()
@@ -248,6 +261,8 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             self.assertTrue(summary["checklist_matches_manifest"])
             self.assertTrue(summary["copy_index_exists"])
             self.assertTrue(summary["copy_index_matches_manifest"])
+            self.assertTrue(summary["subject_order_exists"])
+            self.assertTrue(summary["subject_order_matches_manifest"])
             self.assertTrue(all(file["subject_count"] == 1 for file in summary["checked_files"]))
 
     def test_cli_check_dir_validates_existing_batch_without_writing(self) -> None:
@@ -287,6 +302,7 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             self.assertTrue(summary["readme_matches_manifest"])
             self.assertTrue(summary["checklist_matches_manifest"])
             self.assertTrue(summary["copy_index_matches_manifest"])
+            self.assertTrue(summary["subject_order_matches_manifest"])
 
     def test_check_send_copy_directory_rejects_stale_metadata(self) -> None:
         targets, pack = _targets_and_pack()
@@ -302,6 +318,30 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             manifest["manifest_path"] = str(manifest_path)
             manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
             (out_dir / "COPY_ONLY_INDEX.md").write_text("stale\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(
+                send_copy_batch.SendCopyBatchError,
+                "metadata file is stale",
+            ):
+                send_copy_batch.check_send_copy_directory(
+                    out_dir,
+                    require_date="2026-05-10",
+                )
+
+    def test_check_send_copy_directory_rejects_stale_subject_order(self) -> None:
+        targets, pack = _targets_and_pack()
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "send-copy"
+            manifest = send_copy_batch.write_send_copy_batch(
+                pack,
+                targets,
+                out_dir=out_dir,
+                require_date="2026-05-10",
+            )
+            manifest_path = out_dir / "manifest.json"
+            manifest["manifest_path"] = str(manifest_path)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            (out_dir / "SUBJECT_ORDER.md").write_text("stale\n", encoding="utf-8")
 
             with self.assertRaisesRegex(
                 send_copy_batch.SendCopyBatchError,

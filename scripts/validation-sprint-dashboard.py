@@ -212,6 +212,8 @@ def render_text(dashboard: dict[str, Any]) -> str:
                 f"- Send-copy batch checklist exists: {str(outreach.get('send_copy_batch_checklist_exists', False)).lower()}",
                 f"- Send-copy batch copy index: {outreach.get('send_copy_batch_copy_index_path') or 'none'}",
                 f"- Send-copy batch copy index exists: {str(outreach.get('send_copy_batch_copy_index_exists', False)).lower()}",
+                f"- Send-copy batch subject order: {outreach.get('send_copy_batch_subject_order_path') or 'none'}",
+                f"- Send-copy batch subject order exists: {str(outreach.get('send_copy_batch_subject_order_exists', False)).lower()}",
                 f"- Send-copy batch state: {outreach.get('send_copy_batch_state', 'unknown')}",
                 f"- Send-copy batch files: {outreach.get('send_copy_batch_copy_file_count', 0)}",
                 f"- Send-copy batch matches current pack: {str(outreach.get('send_copy_batch_matches_current_pack', False)).lower()}",
@@ -300,6 +302,7 @@ def render_team_update(dashboard: dict[str, Any]) -> str:
                 f"- Send-copy batch README exists: {str(outreach.get('send_copy_batch_readme_exists', False)).lower()}",
                 f"- Send-copy batch checklist exists: {str(outreach.get('send_copy_batch_checklist_exists', False)).lower()}",
                 f"- Send-copy batch copy index exists: {str(outreach.get('send_copy_batch_copy_index_exists', False)).lower()}",
+                f"- Send-copy batch subject order exists: {str(outreach.get('send_copy_batch_subject_order_exists', False)).lower()}",
                 f"- Send-copy batch files: {outreach.get('send_copy_batch_copy_file_count', 0)}",
                 f"- Send-copy batch matches current pack: {str(outreach.get('send_copy_batch_matches_current_pack', False)).lower()}",
             ]
@@ -537,6 +540,7 @@ def _outreach_execution(
     send_copy_batch_readme_path = send_copy_batch_dir / "README.md"
     send_copy_batch_checklist_path = send_copy_batch_dir / "CHECKLIST.md"
     send_copy_batch_copy_index_path = send_copy_batch_dir / "COPY_ONLY_INDEX.md"
+    send_copy_batch_subject_order_path = send_copy_batch_dir / "SUBJECT_ORDER.md"
     next_pending = _next_verified_pending_item(status)
     next_pending_label = next_pending["target_label"] if next_pending is not None else None
     counts = status["counts"]
@@ -582,6 +586,7 @@ def _outreach_execution(
         "send_copy_batch_readme_path": str(send_copy_batch_readme_path),
         "send_copy_batch_checklist_path": str(send_copy_batch_checklist_path),
         "send_copy_batch_copy_index_path": str(send_copy_batch_copy_index_path),
+        "send_copy_batch_subject_order_path": str(send_copy_batch_subject_order_path),
         "send_copy_exists": send_copy_check["exists"],
         "send_copy_matches_next_pending": send_copy_check["matches"],
         "send_copy_state": send_copy_check["state"],
@@ -591,6 +596,7 @@ def _outreach_execution(
         "send_copy_batch_readme_exists": send_copy_batch_check["readme_exists"],
         "send_copy_batch_checklist_exists": send_copy_batch_check["checklist_exists"],
         "send_copy_batch_copy_index_exists": send_copy_batch_check["copy_index_exists"],
+        "send_copy_batch_subject_order_exists": send_copy_batch_check["subject_order_exists"],
         "send_copy_batch_matches_current_pack": send_copy_batch_check["matches"],
         "send_copy_batch_state": send_copy_batch_check["state"],
         "send_copy_batch_copy_file_count": send_copy_batch_check["copy_file_count"],
@@ -1021,6 +1027,8 @@ def _send_copy_batch_check(
     checklist_exists = checklist_path.exists()
     copy_index_path = send_copy_batch_dir / "COPY_ONLY_INDEX.md"
     copy_index_exists = copy_index_path.exists()
+    subject_order_path = send_copy_batch_dir / "SUBJECT_ORDER.md"
+    subject_order_exists = subject_order_path.exists()
     copy_file_count = len(_send_copy_batch_file_paths(send_copy_batch_dir)) if exists else 0
     result = {
         "exists": exists,
@@ -1028,6 +1036,7 @@ def _send_copy_batch_check(
         "readme_exists": readme_exists,
         "checklist_exists": checklist_exists,
         "copy_index_exists": copy_index_exists,
+        "subject_order_exists": subject_order_exists,
         "matches": False,
         "state": "missing",
         "copy_file_count": copy_file_count,
@@ -1050,6 +1059,10 @@ def _send_copy_batch_check(
         result["state"] = "stale"
         result["mismatch_reason"] = "send-copy batch COPY_ONLY_INDEX is missing"
         return result
+    if not subject_order_exists:
+        result["state"] = "stale"
+        result["mismatch_reason"] = "send-copy batch SUBJECT_ORDER is missing"
+        return result
     try:
         expected_files = _expected_send_copy_batch_files(
             send_copy_batch_dir=send_copy_batch_dir,
@@ -1070,6 +1083,7 @@ def _send_copy_batch_check(
         actual_readme = readme_path.read_text(encoding="utf-8")
         actual_checklist = checklist_path.read_text(encoding="utf-8")
         actual_copy_index = copy_index_path.read_text(encoding="utf-8")
+        actual_subject_order = subject_order_path.read_text(encoding="utf-8")
     except OSError as exc:
         result["state"] = "stale"
         result["mismatch_reason"] = f"could not read send-copy batch operator files: {exc}"
@@ -1120,6 +1134,14 @@ def _send_copy_batch_check(
         result["state"] = "stale"
         result["mismatch_reason"] = "send-copy batch COPY_ONLY_INDEX does not match current generator"
         return result
+    expected_subject_order = _expected_send_copy_batch_subject_order(
+        generated_for=generated_for,
+        files=expected_files,
+    )
+    if actual_subject_order != expected_subject_order:
+        result["state"] = "stale"
+        result["mismatch_reason"] = "send-copy batch SUBJECT_ORDER does not match current generator"
+        return result
 
     expected_manifest_fields = {
         "schema_version": SEND_COPY_BATCH_SCHEMA_VERSION,
@@ -1136,6 +1158,7 @@ def _send_copy_batch_check(
         "readme_path": str(readme_path),
         "checklist_path": str(checklist_path),
         "copy_index_path": str(copy_index_path),
+        "subject_order_path": str(subject_order_path),
         "copy_file_count": len(expected_files),
         "pending_send_or_update_count": status["counts"]["pending_send_or_update"],
         "needs_attention_count": status["counts"]["needs_attention"],
@@ -1147,6 +1170,7 @@ def _send_copy_batch_check(
                 "target_label": file["target_label"],
                 "group": file["group"],
                 "path": file["path"],
+                "subject": file["subject"],
                 "sha256": file["sha256"],
                 "dry_run_apply_command": file["dry_run_apply_command"],
                 "confirmed_apply_command": file["confirmed_apply_command"],
@@ -1169,7 +1193,7 @@ def _send_copy_batch_check(
 def _expected_send_copy_batch_operator_notes(generated_for: str) -> list[str]:
     return [
         "Each file contains only one subject line and body text; copy the contents, do not attach the file.",
-        "Do not paste target labels, tracker commands, the manifest, the batch checklist, or the batch README to buyers.",
+        "Do not paste target labels, tracker commands, the manifest, the batch checklist, the copy index, the subject order helper, or the batch README to buyers.",
         "Run the matching dry-run command before sending each file's contents.",
         "Run the matching CONFIRM_SENT=1 command only after that message was actually sent.",
         f"Rerun make validation-status DATE={generated_for} after confirmed tracker updates.",
@@ -1189,14 +1213,15 @@ def _expected_send_copy_batch_readme(*, generated_for: str, copy_file_count: int
             "- Open each numbered `.txt` file and copy only its contents into the outreach channel.",
             "- Do not attach the `.txt` files; filenames and this directory are private operator workflow.",
             "- `COPY_ONLY_INDEX.md` is a neutral operator aid for send order, not buyer collateral.",
-            "- Do not send `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, or this README.",
+            "- `SUBJECT_ORDER.md` is a private subject/file-order helper, not buyer collateral.",
+            "- Do not send `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, `SUBJECT_ORDER.md`, or this README.",
             "- Each `.txt` file should contain only one `Subject:` line and the message body.",
             "- Copy the generated subject/body as-is, or personalize only in the outreach channel after pasting.",
             "- Do not store recipient names or private contact details in repo files.",
             "",
             "## Tracker Boundary",
             "",
-            "- Use `manifest.json`, `CHECKLIST.md`, and `COPY_ONLY_INDEX.md` only as private tracker/operator metadata.",
+            "- Use `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, and `SUBJECT_ORDER.md` only as private tracker/operator metadata.",
             f"- Before using an existing batch, run `make validation-send-copy-check DATE={generated_for}`.",
             "- The manifest records a SHA-256 for each copy-only `.txt` file.",
             "- Run each matching dry-run command from the manifest before sending.",
@@ -1286,6 +1311,37 @@ def _expected_send_copy_batch_copy_index(
     return "\n".join(lines)
 
 
+def _expected_send_copy_batch_subject_order(
+    *,
+    generated_for: str,
+    files: list[dict[str, Any]],
+) -> str:
+    lines = [
+        "# Prophet Copy-Only Subject Order",
+        "",
+        f"Date: {generated_for}",
+        "",
+        "Use this private helper to send the numbered copy-only `.txt` files in order.",
+        "Do not attach this file, the manifest, checklist, README, or copy index.",
+        "Send only the contents of each numbered `.txt` file.",
+        "",
+        "| File | Subject |",
+        "|---|---|",
+    ]
+    for file in files:
+        lines.append(f"| `{Path(str(file['path'])).name}` | {file['subject']} |")
+    lines.extend(
+        [
+            "",
+            "After each real send, use the matching row in `CHECKLIST.md` to run the",
+            "corresponding confirmed tracker update. Do not run `CONFIRM_SENT=1` before the",
+            "message is actually sent.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def _expected_send_copy_batch_files(
     *,
     send_copy_batch_dir: Path,
@@ -1319,6 +1375,7 @@ def _expected_send_copy_batch_files(
         filtered_pack["draft_count"] = 1
         name = f"{ordinal:02d}.txt"
         text = message_module.render_send_text(filtered_pack)
+        subject = _subject_from_copy_text(text)
         files.append(
             {
                 "ordinal": ordinal,
@@ -1327,6 +1384,7 @@ def _expected_send_copy_batch_files(
                 "name": name,
                 "path": str(send_copy_batch_dir / name),
                 "text": text,
+                "subject": subject,
                 "sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
                 "dry_run_apply_command": item.get("dry_run_apply_command"),
                 "confirmed_apply_command": item.get("confirmed_apply_command"),
@@ -1341,6 +1399,17 @@ def _send_copy_batch_file_paths(send_copy_batch_dir: Path) -> list[Path]:
         *send_copy_batch_dir.glob("[0-9][0-9]-*.txt"),
     }
     return sorted(path for path in paths if path.is_file())
+
+
+def _subject_from_copy_text(rendered: str) -> str:
+    subjects = [
+        line.removeprefix("Subject: ").strip()
+        for line in rendered.splitlines()
+        if line.startswith("Subject: ")
+    ]
+    if len(subjects) != 1 or not subjects[0]:
+        raise ValidationDashboardError("copy-only send text must contain exactly one subject")
+    return subjects[0]
 
 
 def _expected_send_copy_text(

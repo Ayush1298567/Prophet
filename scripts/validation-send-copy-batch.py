@@ -89,6 +89,7 @@ def write_send_copy_batch(
                 "target_label": item["target_label"],
                 "group": item["group"],
                 "path": str(path),
+                "subject": _subject_from_copy_text(rendered),
                 "sha256": hashlib.sha256(rendered.encode("utf-8")).hexdigest(),
                 "dry_run_apply_command": item.get("dry_run_apply_command"),
                 "confirmed_apply_command": item.get("confirmed_apply_command"),
@@ -119,6 +120,14 @@ def write_send_copy_batch(
         ),
         encoding="utf-8",
     )
+    subject_order_path = out_dir / "SUBJECT_ORDER.md"
+    subject_order_path.write_text(
+        _render_subject_order(
+            generated_for=status["generated_for"],
+            files=files,
+        ),
+        encoding="utf-8",
+    )
 
     return {
         "schema_version": SEND_COPY_BATCH_SCHEMA_VERSION,
@@ -134,6 +143,7 @@ def write_send_copy_batch(
         "readme_path": str(readme_path),
         "checklist_path": str(checklist_path),
         "copy_index_path": str(copy_index_path),
+        "subject_order_path": str(subject_order_path),
         "copy_file_count": len(files),
         "pending_send_or_update_count": status["counts"]["pending_send_or_update"],
         "needs_attention_count": status["counts"]["needs_attention"],
@@ -141,7 +151,7 @@ def write_send_copy_batch(
         "files": files,
         "operator_notes": [
             "Each file contains only one subject line and body text; copy the contents, do not attach the file.",
-            "Do not paste target labels, tracker commands, the manifest, the batch checklist, or the batch README to buyers.",
+            "Do not paste target labels, tracker commands, the manifest, the batch checklist, the copy index, the subject order helper, or the batch README to buyers.",
             "Run the matching dry-run command before sending each file's contents.",
             "Run the matching CONFIRM_SENT=1 command only after that message was actually sent.",
             f"Rerun make validation-status DATE={status['generated_for']} after confirmed tracker updates.",
@@ -228,6 +238,11 @@ def check_send_copy_directory(
         out_dir=out_dir,
         expected_name="COPY_ONLY_INDEX.md",
     )
+    subject_order_path = _metadata_path(
+        manifest.get("subject_order_path"),
+        out_dir=out_dir,
+        expected_name="SUBJECT_ORDER.md",
+    )
     _assert_metadata_body(
         readme_path,
         _render_operator_readme(
@@ -249,6 +264,13 @@ def check_send_copy_directory(
             files=files,
         ),
     )
+    _assert_metadata_body(
+        subject_order_path,
+        _render_subject_order(
+            generated_for=generated_for,
+            files=files,
+        ),
+    )
     return {
         "schema_version": "prophet_validation_send_copy_batch_check.v0.1",
         "generated_for": generated_for,
@@ -265,6 +287,8 @@ def check_send_copy_directory(
         "checklist_matches_manifest": True,
         "copy_index_exists": True,
         "copy_index_matches_manifest": True,
+        "subject_order_exists": True,
+        "subject_order_matches_manifest": True,
         "checked_files": checked_files,
     }
 
@@ -357,14 +381,15 @@ def _render_operator_readme(*, generated_for: str, copy_file_count: int) -> str:
             "- Open each numbered `.txt` file and copy only its contents into the outreach channel.",
             "- Do not attach the `.txt` files; filenames and this directory are private operator workflow.",
             "- `COPY_ONLY_INDEX.md` is a neutral operator aid for send order, not buyer collateral.",
-            "- Do not send `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, or this README.",
+            "- `SUBJECT_ORDER.md` is a private subject/file-order helper, not buyer collateral.",
+            "- Do not send `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, `SUBJECT_ORDER.md`, or this README.",
             "- Each `.txt` file should contain only one `Subject:` line and the message body.",
             "- Copy the generated subject/body as-is, or personalize only in the outreach channel after pasting.",
             "- Do not store recipient names or private contact details in repo files.",
             "",
             "## Tracker Boundary",
             "",
-            "- Use `manifest.json`, `CHECKLIST.md`, and `COPY_ONLY_INDEX.md` only as private tracker/operator metadata.",
+            "- Use `manifest.json`, `CHECKLIST.md`, `COPY_ONLY_INDEX.md`, and `SUBJECT_ORDER.md` only as private tracker/operator metadata.",
             f"- Before using an existing batch, run `make validation-send-copy-check DATE={generated_for}`.",
             "- The manifest records a SHA-256 for each copy-only `.txt` file.",
             "- Run each matching dry-run command from the manifest before sending.",
@@ -454,6 +479,39 @@ def _render_copy_only_index(
     return "\n".join(lines)
 
 
+def _render_subject_order(
+    *,
+    generated_for: str,
+    files: list[dict[str, Any]],
+) -> str:
+    lines = [
+        "# Prophet Copy-Only Subject Order",
+        "",
+        f"Date: {generated_for}",
+        "",
+        "Use this private helper to send the numbered copy-only `.txt` files in order.",
+        "Do not attach this file, the manifest, checklist, README, or copy index.",
+        "Send only the contents of each numbered `.txt` file.",
+        "",
+        "| File | Subject |",
+        "|---|---|",
+    ]
+    for file in files:
+        lines.append(
+            f"| `{Path(str(file['path'])).name}` | {file['subject']} |"
+        )
+    lines.extend(
+        [
+            "",
+            "After each real send, use the matching row in `CHECKLIST.md` to run the",
+            "corresponding confirmed tracker update. Do not run `CONFIRM_SENT=1` before the",
+            "message is actually sent.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def _validate_copy_text(
     rendered: str,
     *,
@@ -469,6 +527,7 @@ def _validate_copy_text(
         "manifest.json",
         "CHECKLIST.md",
         "COPY_ONLY_INDEX.md",
+        "SUBJECT_ORDER.md",
         "Tracker update command",
         "Safe dry-run",
         "Confirmed-send",
@@ -496,6 +555,17 @@ def _validate_copy_text(
             raise SendCopyBatchError(f"copy-only send text contains {label}")
     if re.search(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", rendered):
         raise SendCopyBatchError("copy-only send text contains IP-like text")
+
+
+def _subject_from_copy_text(rendered: str) -> str:
+    subjects = [
+        line.removeprefix("Subject: ").strip()
+        for line in rendered.splitlines()
+        if line.startswith("Subject: ")
+    ]
+    if len(subjects) != 1 or not subjects[0]:
+        raise SendCopyBatchError("copy-only send text must contain exactly one subject")
+    return subjects[0]
 
 
 def _metadata_path(raw_path: object, *, out_dir: Path, expected_name: str) -> Path:

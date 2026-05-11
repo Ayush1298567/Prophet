@@ -122,13 +122,14 @@ DATE=YYYY-MM-DD` only after the dashboard reports
 `outreach_execution.send_copy_batch_matches_current_pack: true`, with
 `outreach_execution.send_copy_batch_readme_exists: true` and
 `outreach_execution.send_copy_batch_checklist_exists: true` and
-`outreach_execution.send_copy_batch_copy_index_exists: true`; the match check
+`outreach_execution.send_copy_batch_copy_index_exists: true` and
+`outreach_execution.send_copy_batch_subject_order_exists: true`; the match check
 covers the numbered copy files, manifest fields, manifest operator notes,
 manifest outbound-boundary fields, copy-file SHA-256 values, batch README body,
-batch checklist body, and neutral copy-index body. Open the generated `.txt`
-files and copy only their contents into the outreach channel. Do not attach the
-files, and do not send the private manifest, checklist, copy index, or batch
-README.
+batch checklist body, neutral copy-index body, and subject-order body. Open the
+generated `.txt` files and copy only their contents into the outreach channel.
+Do not attach the files, and do not send the private manifest, checklist, copy index,
+subject-order helper, or batch README.
 
 The next operational loop is:
 

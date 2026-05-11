@@ -90,15 +90,17 @@ Do not add production platform scope while this checklist is red.
   `make validation-send-copy-batch DATE=YYYY-MM-DD`. It writes under
   `validation/private/send-copy-YYYY-MM-DD/`; open the numbered `.txt` files
   and copy only their contents into the outreach channel. Do not attach the
-  `.txt` files, and do not send the private manifest, checklist, copy index, or batch README. Use the
+  `.txt` files, and do not send the private manifest, checklist, copy index,
+  subject-order helper, or batch README. Use the
   batch only after the dashboard reports `send_copy_batch_state: ready` and
   `send_copy_batch_matches_current_pack: true` with
   `send_copy_batch_readme_exists: true` and
   `send_copy_batch_checklist_exists: true` and
-  `send_copy_batch_copy_index_exists: true`. The match check also verifies the
+  `send_copy_batch_copy_index_exists: true` and
+  `send_copy_batch_subject_order_exists: true`. The match check also verifies the
   manifest operator notes, manifest outbound-boundary fields, copy-file
   SHA-256 values, batch README body, batch checklist body, and neutral
-  copy-index body.
+  copy-index body and subject-order body.
 - [ ] Before using an existing send-copy batch, run
   `make validation-send-copy-check DATE=YYYY-MM-DD`. It verifies neutral
   numbered filenames, one `Subject:` line per file, copy-file SHA-256 matches,

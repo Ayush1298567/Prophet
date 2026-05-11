@@ -142,18 +142,20 @@ Use `make validation-send-copy-batch DATE=YYYY-MM-DD` when you want one
 copy-only `.txt` file per verified pending draft under
 `validation/private/send-copy-YYYY-MM-DD/`. The generated manifest, checklist,
 batch README, and neutral `COPY_ONLY_INDEX.md` are private tracker/operator
-metadata; open the numbered `.txt` files and copy only their subject/body
-contents into the outreach channel after running the matching dry-run command
-for each target. Do not attach the `.txt` files, because filenames and the
-directory are private operator workflow. Use them only when the dashboard
-reports `send_copy_batch_state: ready` and
+metadata; `SUBJECT_ORDER.md` is also private tracker/operator metadata for
+file/subject order. Open the numbered `.txt` files and copy only their
+subject/body contents into the outreach channel after running the matching
+dry-run command for each target. Do not attach the `.txt` files, because
+filenames and the directory are private operator workflow. Use them only when
+the dashboard reports `send_copy_batch_state: ready` and
 `send_copy_batch_matches_current_pack: true`, with
 `send_copy_batch_readme_exists: true` and
 `send_copy_batch_checklist_exists: true`, and
-`send_copy_batch_copy_index_exists: true`. The batch match check also verifies
+`send_copy_batch_copy_index_exists: true`, and
+`send_copy_batch_subject_order_exists: true`. The batch match check also verifies
 manifest operator notes, manifest outbound-boundary fields, copy-file SHA-256
 values, the batch README body, the batch checklist body, and the neutral
-copy-index body.
+copy-index body and subject-order body.
 Use `make validation-send-copy-check DATE=YYYY-MM-DD` before using an existing
 batch directory; it verifies neutral numbered filenames, one `Subject:` line
 per file, copy-file SHA-256 matches, and no target labels or tracker metadata

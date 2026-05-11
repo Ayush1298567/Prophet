@@ -176,7 +176,7 @@ Pilot abuse cases and controls:
 
 | Abuse case | Control | Verification |
 |---|---|---|
-| Private target labels, tracker commands, or contact details leak into outbound outreach. | Use copy-only send files and neutral numbered batch files; keep manifests, checklists, copy indexes, and tracker commands private. | `validation-send-copy-batch` checks, dashboard ready/match checks, and release-safety scans. |
+| Private target labels, tracker commands, or contact details leak into outbound outreach. | Use copy-only send files and neutral numbered batch files; keep manifests, checklists, copy indexes, subject-order helpers, and tracker commands private. | `validation-send-copy-batch` checks, dashboard ready/match checks, and release-safety scans. |
 | A restored session sends stale outreach or writes stale tracker state. | Require `DATE=YYYY-MM-DD`, dashboard-first recovery, dry-run tracker commands, and exact `CONFIRM_SENT=1` after a real send. | `make goal-resume`, `make validation-status`, `make validation-dashboard`, and validation sprint tests. |
 | Runtime evidence or screenshots contain live target data, raw source text, credentials, private hostnames, or live IPs. | Default outputs are policy-listed, sanitized, ignored runtime artifacts; release checks reject unsafe fields and staged runtime paths. | `check-default-output-safety.py`, `check-release-safety.py`, screenshot manifest checks, and pilot smoke hash verification. |
 | Localhost console actions become live collection or production pushes. | Control server actions are policy-gated, fixture-backed, localhost-only, and integration outputs are review templates. | `make console-live-check`, console acceptance tests, policy lint, and release checklist gates. |

@@ -74,6 +74,7 @@ class ValidationWeeklyReviewTests(unittest.TestCase):
             self.assertEqual(review["outreach_execution"]["state"], "not_ready")
             self.assertEqual(review["outreach_execution"]["send_copy_batch_state"], "missing")
             self.assertFalse(review["outreach_execution"]["send_copy_batch_copy_index_exists"])
+            self.assertFalse(review["outreach_execution"]["send_copy_batch_subject_order_exists"])
             self.assertEqual(review["private_artifacts"]["send_copy_warning_count"], 0)
             self.assertEqual(review["private_artifacts"]["send_copy_warnings"], [])
             self.assertEqual(review["pruning_candidates"]["overdue_follow_ups"], [])
@@ -119,6 +120,7 @@ class ValidationWeeklyReviewTests(unittest.TestCase):
             self.assertTrue(outreach["send_copy_batch_readme_exists"])
             self.assertTrue(outreach["send_copy_batch_checklist_exists"])
             self.assertTrue(outreach["send_copy_batch_copy_index_exists"])
+            self.assertTrue(outreach["send_copy_batch_subject_order_exists"])
             self.assertTrue(outreach["send_copy_batch_matches_current_pack"])
             self.assertEqual(review["private_artifacts"]["send_copy_warning_count"], 0)
 
@@ -343,6 +345,7 @@ class ValidationWeeklyReviewTests(unittest.TestCase):
             self.assertIn("## Outreach Execution", rendered)
             self.assertIn("Batch checklist exists: false", rendered)
             self.assertIn("Batch copy index exists: false", rendered)
+            self.assertIn("Batch subject order exists: false", rendered)
             self.assertIn("Do not run CONFIRM_SENT=1", rendered)
 
     def test_rejects_sensitive_target_text(self) -> None:
