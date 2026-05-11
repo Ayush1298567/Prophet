@@ -179,12 +179,16 @@ After the default smoke passes, the main reviewer artifacts are:
   verification time passed on macOS on 2026-05-11 with
   `./scripts/check-local-env.sh` and `./scripts/run-pilot-demo-smoke.sh`,
   verifying 26 pilot hashes.
-- A true GitHub fresh clone of current `main` at
+- A true GitHub fresh clone of GitHub `main` at verification time,
   `91b91e630a418b83cb9c00ff959e47be5897ac6a` passed on macOS on
   2026-05-11 with `./scripts/check-local-env.sh` and
   `./scripts/run-pilot-demo-smoke.sh`, verifying 26 pilot hashes and reporting
-  no policy drift. This is the current-main true fresh-clone proof. Rerun this
-  check before release tagging if a later release tag moves beyond this commit.
+  no policy drift. This is a checked-baseline true fresh-clone proof, not a
+  moving claim about later documentation-only commits. Rerun this check before
+  release tagging if a later release tag moves beyond this commit.
+- Documentation-only commit `ad5eb5c` passed GitHub `main` CI on 2026-05-11,
+  including the Linux fresh-clone pilot smoke. It does not replace the macOS
+  true-clone baseline above.
 - The GitHub Actions `python` job runs on `ubuntu-latest` and now names the
   `Linux fresh-clone pilot smoke preflight` plus
   `Linux fresh-clone pilot smoke` steps, covering the Linux fresh-clone smoke

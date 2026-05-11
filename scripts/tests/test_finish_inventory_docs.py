@@ -120,16 +120,16 @@ class FinishInventoryDocsTests(unittest.TestCase):
         self.assertIn("npm run acceptance` passed locally at `1929dc0`", audit)
         self.assertIn("Documentation-only commits", audit)
 
-    def test_current_github_main_fresh_clone_smoke_is_recorded(self) -> None:
+    def test_github_main_fresh_clone_baseline_smoke_is_recorded(self) -> None:
         audit = COMPLETION_AUDIT.read_text(encoding="utf-8")
         inventory = FINISH_INVENTORY.read_text(encoding="utf-8")
 
         for text in (audit, inventory):
             with self.subTest(document=("audit" if text == audit else "inventory")):
                 self.assertIn("true GitHub fresh clone", text)
-                self.assertIn("current `main`", text)
+                self.assertIn("GitHub `main` at verification time", text)
                 self.assertIn("91b91e6", text)
-                self.assertIn("current-main true fresh-clone proof", text)
+                self.assertIn("checked-baseline true fresh-clone proof", text)
                 self.assertIn("verifying 26 pilot hashes", text)
 
     def test_inventory_lists_copy_only_private_send_artifact(self) -> None:

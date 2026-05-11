@@ -402,13 +402,15 @@ Review focus:
 - Pilot release tag remains blocked until the historical secret-history finding
   has an owner decision. A true GitHub fresh clone of the PR branch at
   `6fe55f3` passed on macOS with 26 verified pilot hashes, and a true GitHub
-  fresh clone of current `main` at `91b91e6` also passed with
+  fresh clone of GitHub `main` at verification time, `91b91e6`, also passed with
   `./scripts/check-local-env.sh` plus `./scripts/run-pilot-demo-smoke.sh`,
   verifying 26 pilot hashes and reporting no policy drift.
-  This is the current-main true fresh-clone proof. The GitHub Actions `python`
-  job runs on `ubuntu-latest` and now names the Linux fresh-clone pilot smoke
-  steps. Rerun true macOS fresh-clone smoke before release tagging if a later
-  release tag moves beyond this commit.
+  This is a checked-baseline true fresh-clone proof, not a moving claim about
+  later documentation-only commits. Documentation-only commit `ad5eb5c` passed
+  GitHub `main` CI on 2026-05-11, including the Linux fresh-clone pilot smoke.
+  The GitHub Actions `python` job runs on `ubuntu-latest` and now names the
+  Linux fresh-clone pilot smoke steps. Rerun true macOS fresh-clone smoke before
+  release tagging if a later release tag moves beyond this commit.
 - `make worktree-smoke` should remain a local pre-commit release-hygiene check:
   it may clone HEAD to `/tmp`, overlay non-ignored dirty files, and run the safe
   root smoke, but must not copy `validation/private/`, stage, commit, push, tag,
@@ -834,9 +836,10 @@ runtime output contents into the PR.
 - Full git-history secret archaeology remains unresolved; rotate/clean/except
   the historical `LOG4SHELL_INSTRUCTIONS.md` finding before public release.
 - Release tag remains blocked until the historical secret-history finding has
-  an owner decision. True GitHub fresh-clone smoke passed on macOS for current
-  `main` at `91b91e6`, verifying 26 pilot hashes. This is the current-main
-  true fresh-clone proof; rerun it before release tagging if a later release
+  an owner decision. True GitHub fresh-clone smoke passed on macOS for GitHub
+  `main` at verification time, `91b91e6`, verifying 26 pilot hashes. This is a
+  checked-baseline true fresh-clone proof, not a moving claim about later
+  documentation-only commits; rerun it before release tagging if a later release
   tag moves beyond this commit.
   Linux fresh-clone smoke is covered by the Ubuntu CI pilot smoke steps.
 - PR `#5` is merged to `main` at `04fb56b`, and the GitHub `main` CI run for
