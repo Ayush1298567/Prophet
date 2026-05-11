@@ -208,7 +208,12 @@ can use placeholder handles.
 - Job queue technology.
 - OIDC provider assumptions.
 - Whether hosted single-tenant is required before customer-managed appliance.
-- Whether production artifacts require detached signatures in v1.0 or v1.1.
+- Whether signed policy implementation is required before customer-approved
+  dry-run; the design is documented separately.
+- Whether detached signature implementation is required in v1.0 or v1.1; the
+  signed evidence manifest design is documented separately.
+- Whether signed operator approvals are required before customer-approved
+  dry-run or push modes; the design is documented separately.
 
 ## Acceptance Gates
 

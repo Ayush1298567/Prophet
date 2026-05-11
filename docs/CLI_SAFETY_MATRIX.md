@@ -1,10 +1,11 @@
 # Prophet CLI Safety Matrix
 
-Last updated: 2026-05-05
+Last updated: 2026-05-10
 
 This matrix defines the no-live-target guardrail for local buyer-pilot CLIs.
 It covers command surfaces that accept mutable operator, customer, policy,
 source, forecast, sandbox, evidence, or export input.
+For operator examples and command sequencing, use `docs/CLI_REFERENCE.md`.
 
 Run the guard suite with:
 
@@ -29,6 +30,70 @@ PYTHONPATH=.:cyber-side:world-side:world-side/scraper python3 -m unittest script
 | `python3 -m policy.lint` | Rejects policies with `live_targets_allowed` enabled. |
 | `python3 -m policy.retention` | Rejects retention runs under policies with `live_targets_allowed` enabled. |
 
+## Covered Validation Sprint CLIs
+
+Validation sprint CLIs operate on public examples or ignored
+`validation/private/` files. They must not introduce names, emails, phone
+numbers, URLs, private hostnames, IPs, raw customer artifacts, or claims that
+outreach happened when it did not.
+
+| CLI | Guard exercised |
+|---|---|
+| `python3 scripts/init-validation-sprint.py` | Initializes ignored private templates, uses sanitized dry-run examples, and supports `--refresh-readme` / `make validation-init REFRESH_README=1` to refresh only the ignored private README without overwriting private tracker/log templates. |
+| `python3 scripts/validation-outreach-block.py` | Validates anonymized targets and rejects sensitive target text before generating a daily block. |
+| `python3 scripts/validation-message-pack.py` | Builds source-aware safe drafts from a validated block, supports `--require-date` for date-mismatched packs, emits dry-run tracker commands only, and supports `--target-label ... --format send-text` for one copy-only outbound draft without target labels or tracker metadata. |
+| `python3 scripts/validation-next-draft.py` | Renders one pending draft only after dry-run tracker verification; `--require-date` rejects date-mismatched packs; Markdown output warns that the tracker/audit draft must not be pasted to buyers; `--format send-text` emits one subject line plus the message body without target labels, tracker commands, alternate subject options, or status metadata; `--out` can write the current draft under ignored `validation/private/`. |
+| `python3 scripts/validation-send-copy-batch.py` | Writes one neutral-named copy-only `.txt` file per verified pending draft after dry-run tracker verification; `--require-date` rejects date-mismatched packs; operators copy the file contents into outreach channels rather than attaching files; writes a neutral `COPY_ONLY_INDEX.md` that omits target labels and tracker commands; the private manifest records copy-file SHA-256 values and machine-readable outbound-boundary fields showing only the numbered copy files are buyer-sendable while manifest/checklist/README/index files are not. |
+| `python3 scripts/validation-apply-draft-update.py` | Dry-runs the exact generated tracker update by default, supports `--require-date` for stale-pack rejection, requires a matching copy-only send artifact before confirmed writes, echoes dry-run/`CONFIRM_SENT=1`/status/dashboard commands, and writes only with `--confirm-sent`. |
+| `python3 scripts/validation-outreach-status.py` | Compares a message pack with the private tracker, supports `--require-date` for date-mismatched pack rejection, exposes `next_pending_target_label` plus dry-run/`CONFIRM_SENT=1` commands, and flags stale generated commands as `needs_attention`. |
+| `python3 scripts/validation-reply-triage.py` | No-write reply helper that accepts only a sanitized classification, never reply text; validates the target tracker, checks current target status, emits dry-run commands, and emits `CONFIRM_TARGET=1` commands only for `book_call` and `disqualify`. |
+| `python3 scripts/validation-target-update.py` | Updates one anonymized target only after schema, date, sensitive-text, and `--require-current-status` checks pass; confirmed completed writes require a matching sanitized validation-log interview; dry-run send-derived `intro_requested` / `outreach_sent` updates are allowed for generated-command verification, but confirmed send-derived writes are blocked so post-send writes must use `scripts/validation-apply-draft-update.py` with matching copy-only artifact verification; raw CLI writes only with `--confirm-target` for non-send target transitions, and Make wrappers for booked, disqualified, and completed targets write only with `CONFIRM_TARGET=1`. |
+| `python3 scripts/validation-prepare-interview.py` | Writes an intentionally incomplete private interview starter only from a booked anonymized target; the starter should fail validation until real sanitized call outcomes are filled. |
+| `python3 scripts/customer-validation-log-add.py` | Validates sanitized interview notes without writing by default; normal confirmed writes require the interview `account_label`, segment, and persona to match a booked anonymized target unless `--allow-untracked-interview` is explicit; writes only with `--confirm-log`; can replace the initialized example seed only with explicit `--replace-example-seed`, `--require-target-status call_booked`, matching target metadata, and no `--allow-untracked-interview`; reports `gaps_to_verdicts`; and rejects sensitive contact or private infrastructure text. |
+| `python3 scripts/customer-validation-scorecard.py` | Keeps the production build gate closed unless repeated workflow pain and pilot evidence thresholds are met, and reports `gaps_to_verdicts` for validation planning. |
+| `python3 scripts/validation-targets-scorecard.py` | Validates anonymized outreach targets, duplicate labels, top-level and target date fields, due follow-ups with due dates, cleared follow-up dates for advanced statuses, and sensitive text. |
+| `python3 scripts/validation-sprint-dashboard.py` | Combines validation scorecards, keeps `pilot_pull_detected` separate from `build_next_slice`, requires `target_backed_validation` to reach `build_next_slice` before opening production scope, counts only interviews tied to anonymized targets in `call_booked` or `completed` with matching segment/persona metadata for that gate, supports `--require-date` for date-mismatched private message packs, reports `next_draft_state`, `send_copy_state`, `send_copy_batch_state`, `send_copy_batch_readme_exists`, `send_copy_batch_checklist_exists`, and `send_copy_batch_copy_index_exists`, verifies the existing next draft's target/date/status/body through `next_draft_matches_next_pending`, verifies the copy-only send text through `send_copy_matches_next_pending`, verifies whole-block copy files, manifest fields, manifest operator notes, manifest outbound-boundary fields, copy-file SHA-256 values, batch README body, batch checklist body, and neutral copy-index body through `send_copy_batch_matches_current_pack` before treating the batch path as usable, points operators to the one-draft outreach path plus exact Make dry-run/`CONFIRM_SENT=1` commands when a private message pack exists, and supports `--format team` for sanitized aggregate-only shared updates that omit target labels, commands, message bodies, and private validation paths while showing gate-counted buyer evidence before any raw example-seed counts. |
+| `python3 scripts/validation-weekly-review.py` | Builds a read-only private weekly review, validates the private tracker/log, reports message-pack age, date-guarded outreach execution readiness, send-copy batch README/checklist/copy-index state, ignored private artifact counts, stale private artifacts, and pruning candidates, and does not delete files or mutate trackers/logs. |
+
+The `make validation-resume DATE=YYYY-MM-DD` wrapper is a no-write recovery aid:
+it runs the dashboard with the date guard, prints the copy-only send text only
+when `send_copy_state` is `ready` and `send_copy_matches_next_pending` is true,
+and prints the already-rendered
+`validation/private/today-next-draft.md` only when it still matches the current
+next pending target/date/status/body. `make goal-resume DATE=YYYY-MM-DD` is the same no-write
+path with a name that matches a restored `/goal` session.
+`make validation-reply-triage TARGET=... REPLY=book_call DATE=YYYY-MM-DD` is a
+no-write wrapper over `scripts/validation-reply-triage.py`; it accepts only the
+sanitized reply classification and emits the safe dry-run / reviewed
+`CONFIRM_TARGET=1` commands.
+`make validation-send-copy DATE=YYYY-MM-DD` writes
+`validation/private/today-send-copy.txt` for the same verified next draft,
+as one subject line plus the message body, without target labels, tracker
+commands, alternate subject options, or status metadata.
+`make validation-send-copy-batch DATE=YYYY-MM-DD` writes one neutral-named
+copy-only `.txt` file per verified pending draft under
+`validation/private/send-copy-YYYY-MM-DD/`;
+open those `.txt` files and copy only their contents when the dashboard reports
+`send_copy_batch_state` is ready and
+`send_copy_batch_matches_current_pack`, `send_copy_batch_readme_exists`, and
+`send_copy_batch_checklist_exists`, plus `send_copy_batch_copy_index_exists`,
+are true. Do not attach the files; the match
+check also covers copy-file SHA-256 values, manifest operator notes, manifest
+outbound-boundary fields, the batch README body, the batch checklist body, and
+the neutral copy-index body.
+`make validation-team-update DATE=YYYY-MM-DD` is the shared-status wrapper for
+the dashboard's aggregate-only team renderer, including aggregate send-copy readiness
+and match state without target labels, commands, paths, or message bodies.
+`make validation-team-update-save DATE=YYYY-MM-DD` writes the same
+aggregate-only update to the ignored private validation workspace through a
+temporary file and preserves the previous saved update if rendering fails.
+`make validation-weekly-review DATE=YYYY-MM-DD` writes read-only private weekly
+review JSON/Markdown under `validation/private/` for pruning review; it does
+not send, delete, or confirm-update anything.
+Make confirmation wrappers fail closed unless the value is exactly `1`:
+`CONFIRM_SENT=1`, `CONFIRM_TARGET=1`, `CONFIRM_LOG=1`, and
+`REFRESH_README=1`.
+
 ## Related Release Utilities
 
 `scripts/check-release-safety.py` is covered by
@@ -40,3 +105,8 @@ checks.
 `scripts/verify-pilot-demo-hashes.py` read deterministic fixture/hash inputs and
 do not accept target-control, live host, credential, or network collection
 parameters.
+
+Validation sprint safety docs are checked by
+`scripts/tests/test_cli_safety_matrix_docs.py`. Behavior is covered by the
+`scripts/tests/test_validation_*.py`, `test_customer_validation_*.py`, and
+`test_make_validation_targets.py` suites.

@@ -1,6 +1,13 @@
 # Prophet Full Finish Plan
 
 Date: 2026-05-05
+
+Historical context: this broader V1 plan was recovered during the `/goal`
+salvage. Use `docs/CODEX_CEO_FINISH_BRIEF.md`,
+`docs/PROPHET_COMPLETION_AUDIT.md`, `docs/PROPHET_TODO.md`, and the validation
+dashboard as the current source of truth. Do not start production work from this
+plan while customer validation remains `insufficient_data`.
+
 Method: gstack-style CEO, customer, engineering, CSO, QA, and DX loop.
 
 ## Finish Definition
@@ -152,11 +159,11 @@ Tasks:
 - Add source freshness metadata to forecast and evidence.
 - Add required-source failure budgets.
 - Fail closed when required sources are unavailable.
-- Add source license/terms notes.
+- Document source license/terms review notes.
 - Collapse duplicate source refs in evidence summaries.
-- Add customer-approved source allowlist.
-- Add raw-to-sanitized boundary diagram.
-- Add provenance manifest for every runtime snapshot.
+- Document customer-approved source allowlist process.
+- Document raw-to-sanitized boundary diagram.
+- Verify provenance manifests for policy-listed default runtime snapshots.
 
 Done when:
 

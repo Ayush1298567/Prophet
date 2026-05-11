@@ -30,7 +30,7 @@ The repo is not yet production-compliance-ready because it lacks:
 - Backup and restore.
 - Incident response playbook.
 - Security control matrix.
-- Full data classification inventory.
+- Production-enforced data classification controls.
 - External security review.
 
 ## Evidence Already Present
@@ -43,6 +43,7 @@ The repo is not yet production-compliance-ready because it lacks:
 | Runtime output boundary | `.gitignore`, release safety scan, smoke hashes |
 | Integration safety | Review-template exporter and tests |
 | Sandbox safety | Fixture-mode `sandbox_runner`, validator tests |
+| Data classification | `docs/DATA_CLASSIFICATION_AND_ARTIFACT_INVENTORY.md` |
 | CI discipline | `.github/workflows/ci.yml`, dependency audit workflow |
 | Buyer documentation | Evaluator, pilot, FAQ, walkthrough, and troubleshooting docs |
 
@@ -59,7 +60,7 @@ The repo is not yet production-compliance-ready because it lacks:
 | Risk assessment | Defense readiness docs exist | Formal risk register and recurring review | Risk register, POA&M, review cadence |
 | System and communications protection | Localhost/default fixture safety | TLS, secure headers, encrypted storage, network policy | Deployment architecture and security tests |
 | System and information integrity | Validators and CI exist | Vulnerability management and patch cadence | Dependency review, SAST, container scan, remediation SLA |
-| Data retention | Runtime retention exists | Customer data retention/deletion workflow | Data inventory, retention jobs, deletion audit |
+| Data retention | Runtime retention exists and data classification inventory is documented | Customer data retention/deletion workflow | Data inventory, retention jobs, deletion audit |
 | Backup and recovery | Not implemented | Backup, restore, and DR targets | Backup policy, restore drill evidence |
 | Supply chain | npm audit and dependency boundary | SBOM for Prophet, provenance, license review | SBOM, provenance notes, dependency risk register |
 
@@ -140,7 +141,7 @@ The v1.0 customer packet should include:
 ## Immediate Compliance Actions
 
 1. Keep the production readiness scorecard in CI.
-2. Add data classification inventory.
+2. Turn the data classification inventory into enforceable production controls.
 3. Add RBAC/tenant model design before production code.
 4. Add durable audit and evidence storage design.
 5. Add incident response playbook.

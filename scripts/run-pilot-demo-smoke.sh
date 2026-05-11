@@ -11,7 +11,7 @@ export PYTHONPATH="${ROOT_DIR}:${ROOT_DIR}/cyber-side:${ROOT_DIR}/world-side:${R
 GENERATED_AT="2026-05-04T20:30:00Z"
 POLICY="policy/prophet-pilot-policy.json"
 SECTOR="edge-appliance"
-TOTAL_STEPS=12
+TOTAL_STEPS=13
 
 HASH_MANIFEST=""
 ASSET_CSV=""
@@ -30,6 +30,7 @@ SANDBOX_RUN_MANIFEST=""
 EVIDENCE_JSON=""
 EVIDENCE_MD=""
 INTEGRATION_OUT_DIR=""
+INTEGRATION_ZIP=""
 AUDIT_LOG=""
 APPROVAL_RECORD=""
 AUDIT_EXPORT=""
@@ -80,6 +81,7 @@ configure_sector() {
       EVIDENCE_JSON="evidence/outputs/runtime/latest-edge-appliance.json"
       EVIDENCE_MD="evidence/outputs/runtime/latest-edge-appliance.md"
       INTEGRATION_OUT_DIR="integrations/outputs/runtime/latest-edge-appliance"
+      INTEGRATION_ZIP="integrations/outputs/runtime/latest-edge-appliance-review-bundle.zip"
       AUDIT_LOG="evidence/outputs/runtime/pilot-demo-operator-audit-log.jsonl"
       APPROVAL_RECORD="evidence/outputs/runtime/pilot-demo-approval-record.json"
       AUDIT_EXPORT="evidence/outputs/runtime/pilot-demo-operator-audit-export.json"
@@ -113,6 +115,7 @@ configure_sector() {
       EVIDENCE_JSON="evidence/outputs/runtime/latest-financial-workflow.json"
       EVIDENCE_MD="evidence/outputs/runtime/latest-financial-workflow.md"
       INTEGRATION_OUT_DIR="integrations/outputs/runtime/latest-financial-workflow"
+      INTEGRATION_ZIP="integrations/outputs/runtime/latest-financial-workflow-review-bundle.zip"
       AUDIT_LOG="evidence/outputs/runtime/pilot-demo-financial-workflow-operator-audit-log.jsonl"
       APPROVAL_RECORD="evidence/outputs/runtime/pilot-demo-financial-workflow-approval-record.json"
       AUDIT_EXPORT="evidence/outputs/runtime/pilot-demo-financial-workflow-operator-audit-export.json"
@@ -158,6 +161,8 @@ configure_sector() {
     "$INTEGRATION_OUT_DIR/tickets/jira_remediation_ticket.json"
     "$INTEGRATION_OUT_DIR/tickets/servicenow_remediation_task.json"
     "$INTEGRATION_OUT_DIR/audit/operator_approval_event.json"
+    "$INTEGRATION_OUT_DIR/review_checklist.md"
+    "$INTEGRATION_ZIP"
   )
 
   RUNTIME_POLICY_ARTIFACTS=(
@@ -374,7 +379,7 @@ python3 -m forecaster.cli \
   --generated-at "$GENERATED_AT" \
   --out "$FORECAST_OUT"
 
-echo "[6/${TOTAL_STEPS}] Generating safe exploit-class prediction portfolio"
+echo "[6/${TOTAL_STEPS}] Generating safe exposure-class defense portfolio"
 python3 -m predictor \
   --forecast "$FORECAST_OUT" \
   --candidate "$CANDIDATE" \
@@ -411,6 +416,7 @@ python3 -m evidence.bundle \
   --asset-seedset "$ASSET_SEEDSET" \
   --policy "$POLICY" \
   --approval-record "$APPROVAL_RECORD" \
+  --sandbox-run-manifest "$SANDBOX_RUN_MANIFEST" \
   --operator-label fixture \
   --approval-decision bypassed_for_fixture \
   --generated-at "$GENERATED_AT" \
@@ -435,7 +441,8 @@ python3 -m integrations.export \
   --policy "$POLICY" \
   --generated-at "$GENERATED_AT" \
   --export-id "$INTEGRATION_EXPORT_ID" \
-  --out-dir "$INTEGRATION_OUT_DIR"
+  --out-dir "$INTEGRATION_OUT_DIR" \
+  --zip-out "$INTEGRATION_ZIP"
 
 echo "[11/${TOTAL_STEPS}] Validating outputs and printing hashes"
 python3 -c 'import json,sys; from validator import validate_exploit_engine_artifact; validate_exploit_engine_artifact(json.load(open(sys.argv[1], encoding="utf-8")))' "$SANDBOX_ARTIFACT"
@@ -446,7 +453,10 @@ python3 -c 'from evidence.bundle import load_json, validate_evidence_bundle; imp
 python3 -c 'from integrations.export import load_json, validate_integration_export; import sys; validate_integration_export(load_json(sys.argv[1]))' "$INTEGRATION_OUT_DIR/manifest.json"
 python3 scripts/verify-pilot-demo-hashes.py --manifest "$HASH_MANIFEST"
 
-echo "[12/${TOTAL_STEPS}] Verifying runtime artifact policy hashes"
+echo "[12/${TOTAL_STEPS}] Checking default output URL safety"
+python3 scripts/check-default-output-safety.py --policy "$POLICY" --format text
+
+echo "[13/${TOTAL_STEPS}] Verifying runtime artifact policy hashes"
 python3 -m policy.lint \
   --policy "$POLICY" \
   --verify-runtime-artifacts "${RUNTIME_POLICY_ARTIFACTS[@]}" >/dev/null
@@ -467,10 +477,11 @@ Pilot demo smoke summary
 - Result: PASS in ${ELAPSED_TEXT}.
 - Sector: ${SECTOR_SUMMARY}.
 - Mode: fixture-backed seeded OSINT, deterministic localhost sandbox, policy-bound exports.
-- Safety: no live targets, no raw scraper text, no credentials, no payload generation.
+- Safety: no live targets, no live target URLs, no raw scraper text, no credentials, no payload generation.
 - Policy drift: generated runtime artifacts match ${POLICY}.
 - Evidence bundle: ${EVIDENCE_MD}
 - Audit review: ${AUDIT_EXPORT}
 - Integration handoff templates: ${INTEGRATION_OUT_DIR}/manifest.json
+- Integration review ZIP: ${INTEGRATION_ZIP}
 
 SUMMARY

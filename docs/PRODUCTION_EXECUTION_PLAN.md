@@ -11,8 +11,9 @@ data, real operations, and security-review evidence.
 Do not treat this as permission to build the whole platform before buyer pull.
 The demand-validation source of truth is `docs/PRODUCT_VALIDATION_PLAN.md`.
 Production implementation should proceed only after the validation scorecard
-shows `pilot_pull_detected` or `build_next_slice` from real anonymized customer
-interviews.
+shows `build_next_slice` from real anonymized customer interviews.
+`pilot_pull_detected` means convert the design partner first; it is not yet a
+production build gate.
 
 ## Production Definition
 

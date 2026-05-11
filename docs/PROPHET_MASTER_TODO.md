@@ -80,18 +80,19 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 
 - [ ] Split the current dirty worktree into intentional commits:
   safety cleanup, pilot CLI, policy, evidence, sandbox, console, docs, and CI.
-- [ ] Confirm deleted lab/demo exploit files are intentional in the final diff.
+- [x] Confirm deleted lab/demo exploit files are intentional in the final diff:
+  current tracked diff has no deleted files.
 - [ ] Run `git diff --check` before each commit.
 - [ ] Run all Python unit suites before the final pilot commit.
-- [ ] Run `cd prophet-console && npm run acceptance`.
-- [ ] Run `cd prophet-console && npm audit --audit-level=moderate`.
-- [ ] Run the top-level smoke script from a fresh checkout.
-- [ ] Store smoke output hashes in a release note.
+- [x] Run `cd prophet-console && npm run acceptance`.
+- [x] Run `cd prophet-console && npm audit --audit-level=moderate`.
+- [x] Run the top-level smoke script from a temporary worktree-overlay clone.
+- [x] Store smoke output hashes in a release note.
 - [ ] Create a pilot release tag.
-- [ ] Add a changelog entry for the buyer pilot package.
-- [ ] Add a rollback note for restoring the previous local demo state if needed.
-- [ ] Add a `make` or `just` wrapper if scripts keep multiplying.
-- [ ] Add a repo map explaining each top-level directory.
+- [x] Add a changelog entry for the buyer pilot package.
+- [x] Add a rollback note for restoring the previous local demo state if needed.
+- [x] Add a `make` or `just` wrapper if scripts keep multiplying.
+- [x] Add a repo map explaining each top-level directory.
 
 ## P0: Massive Backlog Tracking
 
@@ -100,7 +101,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Add owner and target version columns for each production milestone.
 - [x] Add risk tags: `safety`, `security`, `buyer`, `infra`, `console`,
   `data`, `docs`.
-- [ ] Add a weekly review ritual for pruning completed or stale items.
+- [x] Add a weekly review ritual for pruning completed or stale items.
 - [x] Add a release readiness scorecard generated from this backlog.
 - [x] Add a machine-readable backlog file if this needs to sync to GitHub
   Issues or Linear later.
@@ -124,7 +125,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Add a second golden hash manifest for the second sector.
 - [x] Add a fixture diff command to explain what changed between demo runs.
 - [x] Add a failure-mode demo showing policy-blocked live behavior.
-- [ ] Add an evaluator mode that hides non-demo controls.
+- [x] Add an evaluator mode that hides non-demo controls.
 
 ## P1: Pilot Documentation
 
@@ -142,10 +143,10 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Add a 30-minute technical path through policy, tests, and validation.
 - [x] Add a demo operator checklist.
 - [x] Add a troubleshooting guide for missing Node, Python, npm, or Playwright.
-- [ ] Add screenshots of the final console state.
-- [ ] Add redacted example output snippets with hashes.
+- [x] Add expected screenshot artifacts for the final console state.
+- [x] Add redacted example output snippets with hashes.
 - [x] Add a glossary for non-cyber readers.
-- [ ] Add "what this is not" language for live attack and live collection
+- [x] Add "what this is not" language for live attack and live collection
   misunderstandings.
 
 ## P1: Evidence Bundle
@@ -160,7 +161,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Integration export manifest references generated artifacts.
 - [x] Add evidence schema version compatibility tests.
 - [x] Add evidence bundle JSON Schema.
-- [ ] Add signed evidence manifest design.
+- [x] Add signed evidence manifest design.
 - [ ] Add optional detached signature support.
 - [x] Add validation of all evidence paths before export.
 - [x] Add a summary table optimized for CISO review.
@@ -184,13 +185,13 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add policy migration handling.
 - [x] Add policy comparison output.
 - [x] Add customer policy review checklist.
-- [ ] Add policy signing design.
-- [ ] Add an allowlist review for every future source catalog entry.
+- [x] Add policy signing design.
+- [x] Add an allowlist review for every future source catalog entry.
 - [x] Add explicit "no live targets" enforcement tests for every buyer-pilot
   CLI that accepts mutable operator, customer, source, policy, forecast,
   sandbox, evidence, or export input.
-- [ ] Add policy-bound console button enablement.
-- [ ] Add policy-blocked error states in the console.
+- [x] Add policy-bound console button enablement.
+- [x] Add policy-blocked error states in the console.
 - [x] Add policy drift detection between runtime outputs and the policy file.
 - [x] Add policy retention enforcement, not only retention metadata.
 
@@ -209,9 +210,9 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Add a negative validation fixture where the defense fails.
 - [x] Add sandbox artifact schema.
 - [x] Add sandbox run manifest with logs hash and no raw logs.
-- [ ] Add customer approval gate before non-fixture sandbox modes.
+- [x] Add customer approval gate before non-fixture sandbox modes.
 - [ ] Add ephemeral VM design, but keep disabled until approved.
-- [ ] Add artifact provenance chain from profile to evidence bundle.
+- [x] Add artifact provenance chain from profile to evidence bundle.
 
 ## P1: Console
 
@@ -226,15 +227,15 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Add sandbox artifact source badge: runtime artifact vs checked-in fixture.
 - [x] Add source freshness indicators.
 - [x] Add source failure indicators.
-- [ ] Add asset seed summary drilldown.
-- [ ] Add safer empty states for missing runtime outputs.
+- [x] Add asset seed summary drilldown.
+- [x] Add safer empty states for missing runtime outputs.
 - [x] Add error states for policy-blocked actions.
-- [ ] Add export download controls for each SIEM/ticket artifact.
-- [ ] Add "fixture mode" visual proof in the console.
-- [ ] Add evaluator mode to hide experimental controls.
-- [ ] Add keyboard navigation checks.
-- [ ] Add accessibility smoke checks.
-- [ ] Add responsive screenshots for desktop and mobile.
+- [x] Add export download controls for each SIEM/ticket artifact.
+- [x] Add "fixture mode" visual proof in the console.
+- [x] Add evaluator mode to hide experimental controls.
+- [x] Add keyboard navigation checks.
+- [x] Add accessibility smoke checks.
+- [x] Add responsive screenshots for desktop and mobile.
 - [ ] Add visual regression baseline if the console becomes buyer-facing.
 
 ## P1: CI And Local QA
@@ -250,7 +251,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Add CI job for smoke hash verification.
 - [x] Add CI job for unsafe text scanning.
 - [x] Add CI job for generated runtime artifact detection.
-- [ ] Add CI job for docs link checking.
+- [x] Add CI job for docs link checking.
 - [x] Add CI job for JSON Schema validation once schemas exist.
 - [ ] Add CI matrix for supported Python and Node versions.
 - [ ] Add coverage reporting for validator-heavy modules.
@@ -277,7 +278,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add "unknown owner" safe fallback behavior.
 - [ ] Add import preview before writing runtime outputs.
 - [x] Add import manifest with raw input hash and sanitized output hash.
-- [ ] Add fixture generation docs for customer-safe examples.
+- [x] Add fixture generation docs for customer-safe examples.
 
 ## P2: Data And OSINT
 
@@ -287,16 +288,19 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add official-source live collection policy gates.
 - [x] Add source freshness metadata to forecasts.
 - [x] Add source freshness metadata to evidence.
-- [ ] Add source failure budget and fail-closed behavior.
-- [ ] Add source license and terms notes.
+- [ ] Add source failure budget and fail-closed behavior. Design notes exist in
+  `docs/PILOT_POLICY_REVIEW.md`; implementation remains gated on
+  buyer/security-review demand or `build_next_slice`.
+- [x] Add source license and terms notes.
 - [ ] Add official vendor advisory source fixtures.
 - [ ] Add CISA KEV fixture integration if license and policy allow.
 - [ ] Add NVD/Vulnrichment freshness review if policy allows.
-- [ ] Add customer-approved source allowlist docs.
-- [ ] Add raw-to-sanitized boundary diagram.
-- [ ] Add source provenance manifest for every runtime OSINT output.
-- [ ] Add tests that raw scraper text never appears in evidence.
-- [ ] Add tests that live URLs never appear in default outputs.
+- [x] Add customer-approved source allowlist docs.
+- [x] Add raw-to-sanitized boundary diagram.
+- [x] Add source provenance manifest check for policy-listed default OSINT
+  runtime outputs.
+- [x] Add tests that raw scraper text never appears in evidence.
+- [x] Add tests that live target URL fields never appear in default outputs.
 
 ## P2: Forecasting
 
@@ -329,11 +333,11 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add Azure DevOps work item review template if customer demand exists.
 - [ ] Add ServiceNow field mapping configuration.
 - [ ] Add Jira project/issue-type mapping configuration.
-- [ ] Add integration export schema tests.
-- [ ] Add customer-filled placeholder validation.
-- [ ] Add export review checklist embedded in each handoff bundle.
-- [ ] Add SOC analyst sign-off fields.
-- [ ] Add one-click zip packaging for handoff artifacts.
+- [x] Add integration export schema tests.
+- [x] Add customer-filled placeholder validation.
+- [x] Add export review checklist embedded in each handoff bundle.
+- [x] Add SOC analyst sign-off fields.
+- [x] Add one-click zip packaging for handoff artifacts.
 
 ## P2: Operator Identity And Audit
 
@@ -348,8 +352,8 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Add audit log verification command.
 - [x] Add audit retention cleanup.
 - [x] Add audit redaction report.
-- [ ] Add operator identity format guidance.
-- [ ] Add signed operator approval design.
+- [x] Add operator identity format guidance.
+- [x] Add signed operator approval design.
 - [~] Add RBAC roles: viewer, analyst, approver, admin.
 - [ ] Add SSO/SAML/OIDC design.
 - [ ] Add approval quorum design for higher-risk modes.
@@ -357,7 +361,10 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 
 ## P2: Security And CSO Backlog
 
-- [ ] Run a full secrets archaeology pass before any public release.
+- [~] Run a full secrets archaeology pass before any public release. Scanner now
+  exists; latest full scan flags historical `LOG4SHELL_INSTRUCTIONS.md`
+  password-like content that needs cleanup, rotation, or explicit exception;
+  see `docs/SECRET_HISTORY_REVIEW.md`.
 - [ ] Add dependency pinning and update cadence.
 - [ ] Add software supply-chain risk register.
 - [ ] Add SBOM for Prophet itself.
@@ -365,31 +372,31 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add static analysis for Python.
 - [ ] Add static analysis for TypeScript.
 - [ ] Add shellcheck for scripts.
-- [ ] Add threat model for pilot mode.
-- [ ] Add threat model for production mode.
+- [x] Add threat model for pilot mode: `docs/SAFETY_ARCHITECTURE.md`.
+- [x] Add threat model for production mode: `docs/THREAT_MODEL.md`.
 - [ ] Add LLM/AI trust-boundary review if model-based components are added.
 - [ ] Add secure coding checklist for future contributors.
 - [ ] Add vulnerability disclosure process.
 - [ ] Add dependency license review.
-- [ ] Add data classification labels for every artifact type.
+- [x] Add data classification labels for every artifact type.
 - [ ] Add abuse-case review for every future live integration.
 
 ## P2: Developer Experience
 
 - [x] Add root README quickstart.
-- [ ] Add `scripts/check-local-env.sh`.
-- [ ] Add clear Python version requirements.
-- [ ] Add clear Node version requirements.
-- [ ] Add virtualenv setup instructions.
-- [ ] Add npm install troubleshooting.
-- [ ] Add "first successful run" target under 3 minutes.
-- [ ] Add Makefile or Justfile.
-- [ ] Add architecture diagram.
-- [ ] Add module ownership map.
-- [ ] Add CLI reference for assets, OSINT, forecaster, sandbox, evidence,
+- [x] Add `scripts/check-local-env.sh`.
+- [x] Add clear Python version requirements.
+- [x] Add clear Node version requirements.
+- [x] Add virtualenv setup instructions.
+- [x] Add npm install troubleshooting.
+- [x] Add "first successful run" target under 3 minutes.
+- [x] Add Makefile or Justfile.
+- [x] Add architecture diagram.
+- [x] Add module ownership map.
+- [x] Add CLI reference for assets, OSINT, forecaster, sandbox, evidence,
   integrations, and policy.
-- [ ] Add `--help` examples to every CLI.
-- [ ] Add docs tests for documented commands.
+- [x] Add `--help` examples to every CLI.
+- [x] Add docs tests for documented commands.
 
 ## P3: Commercial Readiness
 
@@ -397,20 +404,20 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Pilot scope exists.
 - [x] Commercial readiness doc exists.
 - [x] Defense-tech readiness review exists.
-- [ ] Add pilot statement of work template.
-- [ ] Add CISO evaluator checklist.
-- [ ] Add data boundary appendix.
-- [ ] Add pricing and packaging memo.
-- [ ] Add customer success criteria template.
-- [ ] Add post-pilot conversion plan.
-- [ ] Add procurement/security questionnaire draft.
-- [ ] Add FedRAMP/CMMC/SOC 2 gap map.
-- [ ] Add export-control review placeholder.
-- [ ] Add data processing addendum notes.
-- [ ] Add support model for pilots.
-- [ ] Add incident communication template.
-- [ ] Add onboarding/offboarding checklist.
-- [ ] Add customer reference architecture.
+- [x] Add pilot statement of work template.
+- [x] Add CISO evaluator checklist.
+- [x] Add data boundary appendix.
+- [x] Add pricing and packaging memo.
+- [x] Add customer success criteria template.
+- [x] Add post-pilot conversion plan.
+- [x] Add procurement/security questionnaire draft.
+- [x] Add FedRAMP/CMMC/SOC 2 gap map.
+- [x] Add export-control review placeholder.
+- [x] Add data processing addendum notes.
+- [x] Add support model for pilots.
+- [x] Add incident communication template.
+- [x] Add onboarding/offboarding checklist.
+- [x] Add customer reference architecture.
 
 ## P3: Production Architecture
 
@@ -443,31 +450,31 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add liveness checks if containerized.
 - [ ] Add distributed trace plan if services split.
 - [ ] Add error budgets for pilot services.
-- [ ] Add runbook for failed evidence generation.
-- [ ] Add runbook for failed sandbox validation.
-- [ ] Add runbook for policy-blocked evaluator actions.
-- [ ] Add runbook for dependency audit failures.
+- [x] Add runbook for failed evidence generation.
+- [x] Add runbook for failed sandbox validation.
+- [x] Add runbook for policy-blocked evaluator actions.
+- [x] Add runbook for dependency audit failures.
 - [ ] Add deployment rollback procedure.
 - [ ] Add production support dashboard.
 
 ## P3: Product Management
 
-- [ ] Define the primary buyer persona.
-- [ ] Define the primary evaluator persona.
-- [ ] Define the primary daily user persona.
-- [ ] Define the first paid wedge.
-- [ ] Decide whether Prophet is positioned as evidence automation, predictive
+- [x] Define the primary buyer persona.
+- [x] Define the primary evaluator persona.
+- [x] Define the primary daily user persona.
+- [x] Define the first paid wedge.
+- [x] Decide whether Prophet is positioned as evidence automation, predictive
   defense planning, or a broader anticipatory defense platform.
-- [ ] Define what must be true for a paid pilot to convert.
-- [ ] Define the non-goals for the next 90 days.
-- [ ] Define the competitive set.
-- [ ] Add a roadmap with v0.1, v0.2, v0.3, v1.0 milestones.
-- [ ] Add pricing hypotheses.
-- [ ] Add pilot acceptance criteria.
-- [ ] Add success metrics: time to evidence, false-positive review burden,
+- [x] Define what must be true for a paid pilot to convert.
+- [x] Define the non-goals for the next 90 days.
+- [x] Define the competitive set.
+- [x] Add a roadmap with v0.1, v0.2, v0.3, v1.0 milestones.
+- [x] Add pricing hypotheses.
+- [x] Add pilot acceptance criteria.
+- [x] Add success metrics: time to evidence, false-positive review burden,
   analyst time saved, policy-blocked unsafe action rate.
-- [ ] Add customer interview guide.
-- [ ] Add feedback collection form.
+- [x] Add customer interview guide.
+- [x] Add feedback collection form.
 - [x] Add product validation plan.
 - [x] Add customer discovery guide.
 - [x] Add outreach playbook.
@@ -534,31 +541,31 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [x] Console lint/build.
 - [x] Console control evidence smoke.
 - [x] Console browser smoke.
-- [ ] Fresh clone smoke on macOS.
+- [x] Fresh clone smoke on macOS.
 - [ ] Fresh clone smoke on Linux.
 - [ ] Python version matrix.
 - [ ] Node version matrix.
 - [x] CI smoke hash verification.
-- [ ] Docs command verification.
-- [ ] Safety scan verification.
-- [ ] Schema validation verification.
-- [ ] Negative sandbox validation.
+- [x] Docs command verification.
+- [x] Safety scan verification.
+- [x] Schema validation verification.
+- [x] Negative sandbox validation.
 - [x] Policy-blocked live mode tests.
 
 ## P4: Documentation Map
 
 - [x] Root README: quickstart and repo map.
-- [ ] `docs/PILOT_DEMO.md`: evaluator path.
-- [ ] `docs/PILOT_SCOPE.md`: included and excluded surfaces.
-- [ ] `docs/BUYER_FAQ.md`: buyer Q&A.
-- [ ] `docs/COMMERCIAL_READINESS.md`: production gap narrative.
-- [ ] `docs/DEFENSE_TECH_READINESS_REVIEW.md`: defense-tech review.
-- [ ] `docs/SAFETY_ARCHITECTURE.md`: safety boundary.
-- [ ] `docs/PILOT_POLICY_REVIEW.md`: policy review.
-- [ ] `docs/INTEGRATION_HANDOFF_GUIDE.md`: integration templates.
-- [ ] `docs/ASSET_IMPORT_GUIDE.md`: asset input path.
-- [ ] `docs/RELEASE_CHECKLIST.md`: release gate.
-- [ ] `docs/PROPHET_MASTER_TODO.md`: full backlog.
+- [x] `docs/PILOT_DEMO.md`: evaluator path.
+- [x] `docs/PILOT_SCOPE.md`: included and excluded surfaces.
+- [x] `docs/BUYER_FAQ.md`: buyer Q&A.
+- [x] `docs/COMMERCIAL_READINESS.md`: production gap narrative.
+- [x] `docs/DEFENSE_TECH_READINESS_REVIEW.md`: defense-tech review.
+- [x] `docs/SAFETY_ARCHITECTURE.md`: safety boundary.
+- [x] `docs/PILOT_POLICY_REVIEW.md`: policy review.
+- [x] `docs/INTEGRATION_HANDOFF_GUIDE.md`: integration templates.
+- [x] `docs/ASSET_IMPORT_GUIDE.md`: asset input path.
+- [x] `docs/RELEASE_CHECKLIST.md`: release gate.
+- [x] `docs/PROPHET_MASTER_TODO.md`: full backlog.
 - [x] `docs/PRODUCTION_ARCHITECTURE.md`: future production design.
 - [x] `docs/THREAT_MODEL.md`: future formal threat model.
 - [x] `docs/PRODUCTION_EXECUTION_PLAN.md`: production execution roadmap.

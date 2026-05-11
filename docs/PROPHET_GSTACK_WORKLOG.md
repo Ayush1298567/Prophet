@@ -1,5 +1,12 @@
 # Prophet Gstack Worklog
 
+Historical context: this worklog records earlier gstack cycles and recovered
+planning context. Use `docs/CODEX_CEO_FINISH_BRIEF.md`,
+`docs/PROPHET_COMPLETION_AUDIT.md`, `docs/PROPHET_TODO.md`, and the validation
+dashboard as the current source of truth. Do not treat old worklog entries as
+permission to build production scope while customer validation remains
+`insufficient_data`.
+
 ## 2026-05-05 Overnight Loop
 
 ### Buyer Operator Docs Cycle

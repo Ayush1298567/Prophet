@@ -1,6 +1,6 @@
 {
   "schema_version": "prophet_production_readiness_backlog.v0.1",
-  "updated_at": "2026-05-05",
+  "updated_at": "2026-05-10",
   "target_definition": "Controlled production means Prophet can run as a secure, deployable, policy-bound defense evidence product with approved customer data, tenant isolation, durable storage, operator identity, real integration handoffs, observability, and a security review packet.",
   "status_scale": {
     "done": "Implemented, documented, tested, and backed by repo evidence.",
@@ -46,12 +46,13 @@
         {
           "id": "M0-03",
           "title": "Run fresh-clone smoke on macOS",
-          "status": "planned",
+          "status": "done",
           "priority": "P0",
           "owner": "founder",
           "target_version": "v0.3",
           "risk_tags": ["release", "buyer", "docs"],
-          "acceptance_gates": ["A clean macOS clone completes the 3-minute evaluator path with matching hashes."]
+          "acceptance_gates": ["A clean macOS clone completes the 3-minute evaluator path with matching hashes."],
+          "evidence_paths": ["docs/PILOT_RELEASE_NOTES.md", "scripts/pilot-demo-smoke.sha256"]
         },
         {
           "id": "M0-04",
@@ -66,12 +67,13 @@
         {
           "id": "M0-05",
           "title": "Publish release notes with expected output hashes",
-          "status": "planned",
+          "status": "done",
           "priority": "P1",
           "owner": "founder",
           "target_version": "v0.3",
           "risk_tags": ["release", "docs", "buyer"],
-          "acceptance_gates": ["Release notes name generated artifact paths, policy hash, evidence hash, and smoke hash manifest."]
+          "acceptance_gates": ["Release notes name generated artifact paths, policy hash, evidence hash, and smoke hash manifest."],
+          "evidence_paths": ["docs/PILOT_RELEASE_NOTES.md", "scripts/pilot-demo-smoke.sha256", "scripts/pilot-demo-smoke-financial-workflow.sha256"]
         }
       ]
     },
@@ -134,12 +136,13 @@
         {
           "id": "M1-05",
           "title": "Create data classification and artifact inventory",
-          "status": "planned",
+          "status": "done",
           "priority": "P1",
           "owner": "security",
           "target_version": "v0.4",
           "risk_tags": ["data", "security", "compliance"],
-          "acceptance_gates": ["Every artifact type has classification, allowed fields, retention, storage, and export rules."]
+          "acceptance_gates": ["Every artifact type has classification, allowed fields, retention, storage, and export rules."],
+          "evidence_paths": ["docs/DATA_CLASSIFICATION_AND_ARTIFACT_INVENTORY.md"]
         }
       ]
     },
@@ -383,12 +386,21 @@
         {
           "id": "M5-04",
           "title": "Add sandbox provenance chain from profile to evidence bundle",
-          "status": "planned",
+          "status": "done",
           "priority": "P1",
           "owner": "engineering",
           "target_version": "v0.7",
           "risk_tags": ["sandbox", "security", "data"],
-          "acceptance_gates": ["Evidence includes profile ID, artifact hash, run manifest hash, policy hash, and validator result."]
+          "acceptance_gates": ["Evidence includes profile ID, artifact hash, run manifest hash, policy hash, and validator result."],
+          "evidence_paths": [
+            "evidence/bundle.py",
+            "evidence/prophet-evidence-bundle.schema.json",
+            "evidence/tests/test_evidence_bundle.py",
+            "sandbox_runner/runner.py",
+            "scripts/run-pilot-demo-smoke.sh",
+            "scripts/pilot-demo-smoke.sha256",
+            "scripts/pilot-demo-smoke-financial-workflow.sha256"
+          ]
         },
         {
           "id": "M5-05",

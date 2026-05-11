@@ -142,15 +142,19 @@ while [[ "$(date +%s)" -lt "$END_EPOCH" && "$cycle" -lt "$MAX_CYCLES" ]]; do
   cat > "$prompt_file" <<'PROMPT'
 You are Codex running inside the Prophet overnight GStack loop.
 
-Mission: improve Prophet as a buyer-ready, defensive cyber/evidence pilot. Plan, execute, verify, checkpoint, and return. Do one coherent slice per cycle. Do not stall on questions.
+Mission: improve Prophet as a buyer-ready, defensive cyber/evidence pilot while the production build gate remains closed. Plan, execute, verify, checkpoint, and return. Do one coherent slice per cycle. Do not stall on questions.
 
 Hard safety boundary:
 - Prophet only. Do not add unrelated product tracks.
 - No live targets, no payload generation, no credentials, no private hostnames, no raw scraper text, no offensive workflow.
 - Keep default mode fixture-backed, seeded-OSINT-backed, policy-bound, and localhost-only.
+- Do not add production platform scope while customer validation is `insufficient_data`.
+- Only `build_next_slice` opens production platform work. `pilot_pull_detected` means convert design partners first.
+- Do not mark messages sent, calls booked, interviews completed, pilot signals, or paid paths unless the real external action happened and the sanitized private record was reviewed.
 - Never run destructive git commands. Do not reset, checkout, clean, force-push, or delete user work.
 - Do not commit or push unless the user explicitly asked in the current prompt. This loop did not ask you to commit.
 - Runtime outputs must stay under ignored outputs/runtime directories.
+- Do not commit anything under `validation/private/`.
 
 Use GStack:
 - Read recent GStack timeline/checkpoint context with `/Users/dullet/.gstack/repos/gstack/bin/gstack-timeline-read`.
@@ -159,23 +163,24 @@ Use GStack:
 - If context is unclear, consult the repo docs/TODOs and make the safest reasonable assumption.
 
 Cycle workflow:
-1. Read `docs/PROPHET_MASTER_TODO.md`, `docs/PROPHET_TODO.md`, and recent GStack timeline.
-2. Pick the highest-leverage unblocked P0/P1/P2 item that can be completed in one cycle.
-3. State the micro-plan in your own working output.
-4. Implement it with minimal, localized edits.
-5. Update the relevant TODO/docs.
-6. Run focused tests. If the slice touches the buyer smoke path, run `./scripts/run-pilot-demo-smoke.sh`.
-7. Always run `git diff --check`.
-8. Log the completed cycle to GStack timeline.
-9. Final response must include: files changed, tests run, pass/fail, remaining risk, and next recommended slice.
+1. Read `docs/CODEX_CEO_FINISH_BRIEF.md`, `docs/PROPHET_COMPLETION_AUDIT.md`, `docs/PROPHET_TODO.md`, and recent GStack timeline.
+2. Run `make validation-dashboard DATE=YYYY-MM-DD` for the active outreach date, or `make goal-resume DATE=YYYY-MM-DD` after a restored `/goal` session.
+3. If the dashboard is `insufficient_data`, pick the highest-leverage unblocked validation-sprint or safe-pilot-packaging item that can be completed in one cycle.
+4. Do not pick production platform work unless the dashboard reaches `build_next_slice`.
+5. State the micro-plan in your own working output.
+6. Implement it with minimal, localized edits.
+7. Update the relevant TODO/docs.
+8. Run focused tests. If the slice touches the buyer smoke path, run `./scripts/run-pilot-demo-smoke.sh`.
+9. Always run `git diff --check` and the relevant release-safety scan.
+10. Log the completed cycle to GStack timeline.
+11. Final response must include: files changed, tests run, pass/fail, current validation verdict/build gate, remaining risk, and next recommended slice.
 
-Good next areas if still open:
-- Evidence/audit retention cleanup and export verification.
-- Policy JSON Schema and CLI validation.
-- Sandbox artifact schema and negative validation fixture.
-- Root evaluator README and 3-minute path.
-- CI safety scans for runtime artifacts and unsafe text.
-- Console policy status/error states.
+Good next areas while validation remains `insufficient_data`:
+- Buyer validation sprint tooling, recovery docs, and stale-state guards.
+- Copy-only outreach/send-boundary safety.
+- Aggregate-only validation handoffs that avoid private target details.
+- Buyer-facing evidence packaging that improves qualified review quality.
+- Release hygiene that preserves the closed production build gate.
 
 Be strict: do not mark TODO items complete unless code/docs/tests actually support it.
 PROMPT

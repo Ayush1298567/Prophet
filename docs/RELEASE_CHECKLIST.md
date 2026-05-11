@@ -8,6 +8,20 @@ For local commits, enable the repository hook once:
 git config core.hooksPath .githooks
 ```
 
+## Validation Gate
+
+- [ ] Run `make validation-dashboard DATE=YYYY-MM-DD` against the current
+  private validation workspace.
+- [ ] If the dashboard verdict is `insufficient_data`, keep the production
+  build gate closed and do not add production platform scope.
+- [ ] If the dashboard verdict is `pilot_pull_detected`, convert the design
+  partner path first; do not treat it as permission to build the next
+  production slice.
+- [ ] Only `build_next_slice` opens production platform work, and only from
+  real anonymized buyer validation.
+- [ ] Use `make goal-resume DATE=YYYY-MM-DD` after a restored `/goal` session
+  before relying on an existing private draft or send-copy file.
+
 ## Safety Boundary
 
 - [ ] Live targets remain blocked by policy.
@@ -31,14 +45,32 @@ git config core.hooksPath .githooks
 
 ## Verification
 
-- [ ] Python unit suites pass for policy, assets, cyber-side, world-side, sandbox runner, evidence, and integrations.
+- [ ] `make python-tests` passes for scripts, policy, assets, cyber-side,
+  world-side, sandbox runner, evidence, and integrations.
 - [ ] `cd prophet-console && npm run acceptance` passes.
 - [ ] `cd prophet-console && npm audit --audit-level=moderate` passes or has a documented exception.
+- [ ] `make console-demo` starts the localhost-only control API and evaluator
+  UI in one terminal and stops both with `Ctrl-C` or process termination.
+- [ ] With the local demo running, `make console-live-check` passes. This checks
+  readiness plus the evidence and integration demo endpoints and validates the
+  local runtime audit log.
 - [ ] `git diff --check` passes.
+- [ ] `make release-hygiene` passes for the current worktree.
+- [ ] `make secrets-archaeology` has been run before public release, and any
+  historical findings have an explicit cleanup, rotation, or false-positive
+  decision. Use `docs/SECRET_HISTORY_REVIEW.md` for the current finding and
+  safe review path.
+- [ ] `python3 scripts/check-doc-links.py` passes, either directly or through
+  `make release-hygiene`.
 - [ ] `python3 scripts/check-release-safety.py --tracked --paths-only` passes, including policy-hash coverage checks for release-bound JSON artifacts.
 - [ ] `python3 scripts/check-release-safety.py --staged` passes before commit.
 - [ ] `python3 -m unittest discover -s scripts/tests -v` passes.
 - [ ] Manual `GET /api/readiness` returns zero blocking failures.
+
+  ```bash
+  make console-demo
+  make console-live-check
+  ```
 
 ## Artifact Review
 
@@ -48,9 +80,29 @@ git config core.hooksPath .githooks
 - [ ] Integration manifest and handoff file hashes are recorded in the release note.
 - [ ] No unsafe raw customer input is committed.
 - [ ] Demo screenshots, if included, are redacted and contain no live target details.
+- [ ] If responsive screenshots are needed, run
+  `cd prophet-console && npm run capture:screenshots`, then
+  `make console-screenshot-check`, and review
+  `evidence/outputs/runtime/console-screenshots/manifest.json` before sharing.
 
 ## Release Note
 
 - [ ] Summarize the scenario, policy ID/hash, evidence hash, integration manifest hash, and known open blockers.
 - [ ] Name whether the build is internal alpha, friendly pilot, or paid pilot candidate.
 - [ ] List manual steps needed to reproduce the demo from a clean checkout.
+
+## Local Demo Rollback
+
+- [ ] If a local demo run corrupts or confuses runtime state, restore the known
+  fixture-backed pilot outputs with:
+
+  ```bash
+  ./scripts/run-pilot-demo-smoke.sh --clean-runtime --yes
+  shasum -a 256 -c scripts/pilot-demo-smoke.sha256 --quiet
+  ```
+
+- [ ] If the console readiness endpoint was running with ad hoc environment
+  variables, stop the control server and restart it without those variables
+  before evaluating the default pilot path.
+- [ ] Do not use `git reset --hard` or delete tracked files to recover local
+  demo state; runtime outputs are ignored and should be regenerated instead.

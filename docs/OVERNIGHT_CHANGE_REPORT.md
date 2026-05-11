@@ -2,6 +2,13 @@
 
 Last updated: 2026-05-05
 
+Historical context: this report summarizes the May 2026 overnight GStack loop
+and its consolidation work. For current product direction, use
+`docs/CODEX_CEO_FINISH_BRIEF.md`, `docs/PROPHET_COMPLETION_AUDIT.md`,
+`docs/PROPHET_TODO.md`, and the validation dashboard as the source of truth.
+Do not use this report as authorization for production platform work while
+customer validation remains `insufficient_data`.
+
 This report summarizes the autonomous Prophet GStack loop and the consolidation
 work required before the repo can be treated as a pilot release candidate.
 

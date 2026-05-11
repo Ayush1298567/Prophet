@@ -2,6 +2,13 @@
 
 Last updated: 2026-05-05
 
+Historical context: this checklist records the May 2026 overnight consolidation
+pass. For current product direction, use `docs/CODEX_CEO_FINISH_BRIEF.md`,
+`docs/PROPHET_COMPLETION_AUDIT.md`, `docs/PROPHET_TODO.md`, and the validation
+dashboard as the source of truth. Do not use this checklist as authorization
+for production platform work while customer validation remains
+`insufficient_data`.
+
 The overnight GStack loop completed 40 cycles and left a large uncommitted
 worktree. This checklist is the execution plan for turning that work into a
 reviewable Prophet pilot release candidate.

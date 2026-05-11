@@ -88,7 +88,7 @@ try {
   assert(policyStatus.ok === true, 'policy status payload.ok must be true');
 
   const liveVmGate = policyStatus.actionGates?.find((gate) => gate.id === 'live_vm_scraper');
-  assert(liveVmGate?.status === 'blocked', 'live VM scraper gate must be blocked by policy');
+  assert(liveVmGate?.status === 'blocked', 'live collection gate must be blocked by policy');
   assert(
     policyStatus.blockedControls?.includes('live_vm_scraper_allowed'),
     'blocked controls must include live_vm_scraper_allowed',
@@ -110,8 +110,8 @@ try {
   assert(deniedPayload.ok === false, 'denial payload.ok must be false');
   assert(deniedPayload.status === 'policy_blocked', `unexpected denial status: ${deniedPayload.status}`);
   assert(
-    /policy blocks live vm scraper/i.test(deniedPayload.message ?? ''),
-    'denial message must explain that policy blocks live VM scraping',
+    /policy blocks live collection/i.test(deniedPayload.message ?? ''),
+    'denial message must explain that policy blocks live collection',
   );
   assert(
     deniedPayload.policy?.policySha256 === policyStatus.policy?.policySha256,
@@ -135,7 +135,7 @@ try {
     attempted_action: {
       method: 'POST',
       endpoint: '/api/scraper/run',
-      description: 'live VM scraper workflow request',
+      description: 'live collection workflow request',
       expected_policy_control: 'live_vm_scraper_allowed',
     },
     policy: {

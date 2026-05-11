@@ -2,6 +2,13 @@
 
 Date: 2026-05-05
 
+Historical context: this is an older completion-plan artifact recovered during
+the `/goal` salvage. Use `docs/CODEX_CEO_FINISH_BRIEF.md`,
+`docs/PROPHET_COMPLETION_AUDIT.md`, `docs/PROPHET_TODO.md`, and the validation
+dashboard as the current source of truth. Do not treat unchecked items here as
+permission to build production scope while customer validation remains
+`insufficient_data`.
+
 Method: GStack autoplan-style review across CEO/founder, engineering, CSO, QA,
 and DX lenses. Intermediate decisions are auto-decided using completeness,
 explicitness, reuse, and defensive safety as the tie-breakers.

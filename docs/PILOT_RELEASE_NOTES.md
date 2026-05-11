@@ -132,8 +132,10 @@ After the default smoke passes, the main reviewer artifacts are:
   world-side, assets, sandbox runner, policy, evidence, and integration Python
   suites.
 - `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py --diff`
-  passed over 93 paths.
-- Explicit release-safety scanning of the 69 untracked non-ignored files passed.
+  passed over 0 paths in the clean committed worktree.
+- There are 0 untracked non-ignored files after the local commit split; the
+  release-hygiene wrapper handles that clean state without skipping the other
+  gates.
 - `make release-hygiene` passed on 2026-05-11, including tracked/untracked
   whitespace, release-safety scans, staged-path safety, current-worktree secret
   scanning, policy lint, and default-output safety over 7 outputs, 117 URLs,
@@ -154,7 +156,8 @@ After the default smoke passes, the main reviewer artifacts are:
   passed against the running local demo, including audit-log validation.
 - Default and financial-workflow smoke manifests now verify 26 artifact hashes.
 - `make worktree-smoke` passed on 2026-05-11 after overlaying the current
-  162 non-ignored dirty files into a temporary clone, running
+  0 non-ignored dirty files into a temporary clone from the local commit set,
+  running
   `./scripts/check-local-env.sh`, and passing the default smoke with 26
   verified hashes. Rerun true fresh-clone smoke after the exact commit set
   exists.
@@ -163,15 +166,15 @@ After the default smoke passes, the main reviewer artifacts are:
   files, excludes ignored private validation files, and runs the safe root
   pilot smoke without staging, committing, pushing, or tagging.
 - `./scripts/run-worktree-smoke.sh` is the script behind `make worktree-smoke`;
-  the latest wrapper run verified the current 159-file non-ignored worktree
-  overlay and 26 smoke hashes.
+  the latest wrapper run verified the clean local commit set with 0 overlay
+  files and 26 smoke hashes.
 - Smoke verification checked runtime artifact policy hashes against
   `policy/prophet-pilot-policy.json`.
 
 ## Release Blockers
 
 - No git release tag has been created for this fixture/hash set.
-- True fresh-clone smoke from the final commit set is still open.
+- Push/PR checks for the final local commit set are still open.
 - Linux fresh-clone smoke is still open.
 - Customer validation remains `insufficient_data`; production platform build
   remains gated.
