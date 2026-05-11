@@ -14,9 +14,8 @@ It does not tag, deploy, or mark the product complete.
 - Critical open readiness items: `30`.
 - Outreach status: 8 pending send/update items, 0 attention errors.
 - GitHub PR `#5` exists for branch `prophet-pilot-consolidation-2026-05-05`
-  with checks passing on the pushed branch tip. The finish-pass work is
-  committed locally in 5 commits and the branch is ahead of origin; those
-  commits are not covered by PR checks until pushed.
+  and the finish-pass commits have been pushed. PR checks must be green on the
+  pushed head before review or merge.
 
 Do not create production platform commits from this inventory until real
 validation reaches `build_next_slice`.
@@ -384,8 +383,8 @@ Review focus:
 - The pilot smoke should scan policy-listed default outputs for live-target URL
   fields while allowing public source citations, and should verify
   policy-listed OSINT snapshot provenance manifests.
-- Pilot release tag, push/PR checks for the local commit set, and Linux
-  fresh-clone smoke remain open.
+- Pilot release tag, green PR checks on the pushed head, and Linux fresh-clone
+  smoke remain open.
 - `make worktree-smoke` should remain a local pre-commit release-hygiene check:
   it may clone HEAD to `/tmp`, overlay non-ignored dirty files, and run the safe
   root smoke, but must not copy `validation/private/`, stage, commit, push, tag,
@@ -789,10 +788,10 @@ runtime output contents into the PR.
 - Production readiness remains 24.4% with 30 critical open items.
 - Full git-history secret archaeology remains unresolved; rotate/clean/except
   the historical `LOG4SHELL_INSTRUCTIONS.md` finding before public release.
-- Release tag, Linux fresh-clone smoke, pushing these local commits, and PR
-  checks over the pushed commit set remain open.
-- PR `#5` checks cover the pushed branch tip only; the current local finish-pass
-  commits still need push and rerun checks before review.
+- Release tag, Linux fresh-clone smoke, and green PR checks over the pushed
+  commit set remain open.
+- PR `#5` has the finish-pass commits pushed; verify `gh pr checks 5` is green
+  before review or merge.
 ```
 
 Before any commit or PR, rerun the relevant console acceptance, pilot smoke,

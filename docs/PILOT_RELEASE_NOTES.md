@@ -174,7 +174,7 @@ After the default smoke passes, the main reviewer artifacts are:
 ## Release Blockers
 
 - No git release tag has been created for this fixture/hash set.
-- Push/PR checks for the final local commit set are still open.
+- PR checks for the pushed commit set must be green before review or merge.
 - Linux fresh-clone smoke is still open.
 - Customer validation remains `insufficient_data`; production platform build
   remains gated.
