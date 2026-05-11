@@ -106,6 +106,12 @@ Do not add production platform scope while this checklist is red.
   `make validation-send-copy-check DATE=YYYY-MM-DD`. It verifies neutral
   numbered filenames, one `Subject:` line per file, copy-file SHA-256 matches,
   and no target labels or tracker metadata in the outbound `.txt` files.
+- [ ] If a public contact form needs shorter copy, run
+  `make validation-contact-form-copy DATE=YYYY-MM-DD` and verify the directory
+  with `make validation-contact-form-copy-check DATE=YYYY-MM-DD`. Copy only the
+  numbered `.txt` file contents from
+  `validation/private/contact-form-copy-YYYY-MM-DD/`; do not send the manifest,
+  checklist, index, README, or DO_NOT_SEND guard.
 - [ ] Before sending a whole block, run
   `make validation-pre-send-check-all DATE=YYYY-MM-DD`. It verifies the
   existing send-copy batch and all pending generated tracker updates in one

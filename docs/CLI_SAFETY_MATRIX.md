@@ -1,6 +1,6 @@
 # Prophet CLI Safety Matrix
 
-Last updated: 2026-05-10
+Last updated: 2026-05-11
 
 This matrix defines the no-live-target guardrail for local buyer-pilot CLIs.
 It covers command surfaces that accept mutable operator, customer, policy,
@@ -44,7 +44,8 @@ outreach happened when it did not.
 | `python3 scripts/validation-message-pack.py` | Builds source-aware safe drafts from a validated block, supports `--require-date` for date-mismatched packs, emits dry-run tracker commands only, and supports `--target-label ... --format send-text` for one copy-only outbound draft without target labels or tracker metadata. |
 | `python3 scripts/validation-next-draft.py` | Renders one pending draft only after dry-run tracker verification; `--require-date` rejects date-mismatched packs; Markdown output warns that the tracker/audit draft must not be pasted to buyers; `--format send-text` emits one subject line plus the message body without target labels, tracker commands, alternate subject options, or status metadata; `--out` can write the current draft under ignored `validation/private/`. |
 | `python3 scripts/validation-send-copy-batch.py` | Writes one neutral-named copy-only `.txt` file per verified pending draft after dry-run tracker verification; `--require-date` rejects date-mismatched packs; operators copy the file contents into outreach channels rather than attaching files; writes a neutral `COPY_ONLY_INDEX.md` that omits target labels and tracker commands, a private `SUBJECT_ORDER.md` helper, and a private `DO_NOT_SEND.md` guard; the private manifest records copy-file SHA-256 values and machine-readable outbound-boundary fields showing only the numbered copy files are buyer-sendable while manifest/checklist/README/index/subject-order/guard files are not. |
-| `python3 scripts/validation-apply-draft-update.py` | Dry-runs the exact generated tracker update by default, supports `--require-date` for stale-pack rejection, requires a matching copy-only send artifact before confirmed writes, echoes dry-run/`CONFIRM_SENT=1`/status/dashboard commands, and writes only with `--confirm-sent`. |
+| `python3 scripts/validation-contact-form-copy.py` | Writes shorter neutral-named contact-form `.txt` files for verified pending drafts after dry-run tracker verification; `--require-date` rejects date-mismatched packs; `--max-chars` bounds each outbound file; `--check-dir` verifies existing contact-form copy files, SHA-256 values, private README/checklist/index/DO_NOT_SEND metadata, and the `copy_contact_form_txt_contents_only` send boundary; manifest/checklist/README/index/guard files remain private and the CLI does not send or mutate tracker state. |
+| `python3 scripts/validation-apply-draft-update.py` | Dry-runs the exact generated tracker update by default, supports `--require-date` for stale-pack rejection, requires a matching copy-only send artifact before confirmed writes, accepts the standard send-copy artifact, batch manifest, or contact-form copy manifest, echoes dry-run/`CONFIRM_SENT=1`/status/dashboard commands, and writes only with `--confirm-sent`. |
 | `python3 scripts/validation-outreach-status.py` | Compares a message pack with the private tracker, supports `--require-date` for date-mismatched pack rejection, exposes `next_pending_target_label` plus dry-run/`CONFIRM_SENT=1` commands, and flags stale generated commands as `needs_attention`. |
 | `python3 scripts/validation-reply-triage.py` | No-write reply helper that accepts only a sanitized classification, never reply text; validates the target tracker, checks current target status, emits dry-run commands, and emits `CONFIRM_TARGET=1` commands only for `book_call` and `disqualify`. |
 | `python3 scripts/validation-target-update.py` | Updates one anonymized target only after schema, date, sensitive-text, and `--require-current-status` checks pass; confirmed completed writes require a matching sanitized validation-log interview; dry-run send-derived `intro_requested` / `outreach_sent` updates are allowed for generated-command verification, but confirmed send-derived writes are blocked so post-send writes must use `scripts/validation-apply-draft-update.py` with matching copy-only artifact verification; raw CLI writes only with `--confirm-target` for non-send target transitions, and Make wrappers for booked, disqualified, and completed targets write only with `CONFIRM_TARGET=1`. |
@@ -84,6 +85,13 @@ open those `.txt` files and copy only their contents when the dashboard reports
 match check also covers copy-file SHA-256 values, manifest operator notes,
 manifest outbound-boundary fields, the batch README body, the batch checklist
 body, the neutral copy-index body, subject-order body, and DO_NOT_SEND guard.
+`make validation-contact-form-copy DATE=YYYY-MM-DD` writes shorter neutral-named
+`.txt` files under `validation/private/contact-form-copy-YYYY-MM-DD/` for
+public contact forms that need compact copy. Use
+`make validation-contact-form-copy-check DATE=YYYY-MM-DD` before relying on an
+existing contact-form copy batch; only the numbered `.txt` file contents are
+outbound copy, and the manifest, checklist, README, index, and DO_NOT_SEND
+guard stay private.
 `make validation-team-update DATE=YYYY-MM-DD` is the shared-status wrapper for
 the dashboard's aggregate-only team renderer, including aggregate send-copy readiness
 and match state without target labels, commands, paths, or message bodies.

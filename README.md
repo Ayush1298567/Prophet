@@ -185,6 +185,8 @@ make validation-log-interview DATE=YYYY-MM-DD
 make validation-draft TARGET=target-dib-platform-004 DATE=YYYY-MM-DD
 make validation-draft-copy TARGET=target-dib-platform-004 DATE=YYYY-MM-DD
 make validation-send-copy-batch DATE=YYYY-MM-DD
+make validation-contact-form-copy DATE=YYYY-MM-DD
+make validation-contact-form-copy-check DATE=YYYY-MM-DD
 make validation-status DATE=YYYY-MM-DD
 make validation-reply-triage TARGET=target-dib-platform-001 REPLY=book_call DATE=YYYY-MM-DD
 make validation-dashboard DATE=YYYY-MM-DD
@@ -236,6 +238,13 @@ manifest operator notes, manifest outbound-boundary fields, copy-file SHA-256
 values, batch README body, batch checklist body with per-draft pre-send commands, neutral copy-index body,
 subject-order body, and DO_NOT_SEND guard; do not send the private manifest,
 checklist, copy index, subject-order helper, DO_NOT_SEND guard, or batch README.
+`make validation-contact-form-copy DATE=YYYY-MM-DD` writes shorter neutral
+`.txt` files under `validation/private/contact-form-copy-YYYY-MM-DD/` for
+public contact forms that need compact copy. Run
+`make validation-contact-form-copy-check DATE=YYYY-MM-DD` before relying on an
+existing contact-form copy directory. Only the numbered file contents are
+outbound copy; the manifest, checklist, index, README, and DO_NOT_SEND guard
+stay private.
 `make validation-pre-send-check TARGET=... DATE=YYYY-MM-DD` is the dry-run
 pre-send wrapper: it runs the dashboard, existing send-copy batch check, fresh
 weekly review, prune dry-run, and tracker-update dry run, and it refuses all
@@ -620,6 +629,11 @@ copy-file SHA-256 values, batch README body, batch checklist body with per-draft
 copy-index body, subject-order body, and DO_NOT_SEND guard. Do not attach the
 files. Use the private batch checklist to run each target's pre-send check
 immediately before that numbered copy file is sent.
+For public contact forms with tighter limits, run
+`make validation-contact-form-copy DATE=YYYY-MM-DD`, verify the directory with
+`make validation-contact-form-copy-check DATE=YYYY-MM-DD`, and copy only the
+numbered `.txt` file contents from
+`validation/private/contact-form-copy-YYYY-MM-DD/`.
 Before sending, use
 `make validation-apply-draft TARGET=target-dib-platform-001 DATE=YYYY-MM-DD`
 to dry-run the generated tracker update; then, after a confirmed send, rerun it

@@ -10,6 +10,8 @@ VALIDATION_NEXT_DRAFT_MD ?= $(VALIDATION_DIR)/today-next-draft.md
 VALIDATION_SEND_COPY_TXT ?= $(VALIDATION_DIR)/today-send-copy.txt
 VALIDATION_SEND_COPY_DIR ?= $(VALIDATION_DIR)/send-copy-$(VALIDATION_RUN_DATE)
 VALIDATION_SEND_COPY_BATCH_MANIFEST_JSON ?= $(VALIDATION_SEND_COPY_DIR)/manifest.json
+VALIDATION_CONTACT_FORM_COPY_DIR ?= $(VALIDATION_DIR)/contact-form-copy-$(VALIDATION_RUN_DATE)
+VALIDATION_CONTACT_FORM_COPY_MANIFEST_JSON ?= $(VALIDATION_CONTACT_FORM_COPY_DIR)/manifest.json
 VALIDATION_STATUS_JSON ?= $(VALIDATION_DIR)/today-outreach-status.json
 VALIDATION_STATUS_MD ?= $(VALIDATION_DIR)/today-outreach-status.md
 VALIDATION_TEAM_UPDATE_MD ?= $(VALIDATION_DIR)/today-team-update.md
@@ -28,7 +30,7 @@ CONFIRM_PRUNE_VALUE := $(strip $(CONFIRM_PRUNE))
 REPLACE_EXAMPLE_SEED_VALUE := $(strip $(REPLACE_EXAMPLE_SEED))
 REFRESH_README_VALUE := $(strip $(REFRESH_README))
 CONFIRM_SENT_ARG = $(if $(CONFIRM_SENT_VALUE),$(if $(filter-out 1,$(CONFIRM_SENT_VALUE)),$(error CONFIRM_SENT must be 1 when set),--confirm-sent),)
-CONFIRM_SENT_COPY_ARG = $(if $(CONFIRM_SENT_VALUE),--require-copy-artifact --send-copy $(VALIDATION_SEND_COPY_TXT) --send-copy-batch-manifest $(VALIDATION_SEND_COPY_BATCH_MANIFEST_JSON),)
+CONFIRM_SENT_COPY_ARG = $(if $(CONFIRM_SENT_VALUE),--require-copy-artifact --send-copy $(VALIDATION_SEND_COPY_TXT) --send-copy-batch-manifest $(VALIDATION_SEND_COPY_BATCH_MANIFEST_JSON) --contact-form-copy-manifest $(VALIDATION_CONTACT_FORM_COPY_MANIFEST_JSON),)
 CONFIRM_TARGET_ARG = $(if $(CONFIRM_TARGET_VALUE),$(if $(filter-out 1,$(CONFIRM_TARGET_VALUE)),$(error CONFIRM_TARGET must be 1 when set),--confirm-target),--dry-run)
 CONFIRM_LOG_ARG = $(if $(CONFIRM_LOG_VALUE),$(if $(filter-out 1,$(CONFIRM_LOG_VALUE)),$(error CONFIRM_LOG must be 1 when set),--confirm-log),)
 CONFIRM_PRUNE_ARG = $(if $(CONFIRM_PRUNE_VALUE),$(if $(filter-out 1,$(CONFIRM_PRUNE_VALUE)),$(error CONFIRM_PRUNE must be 1 when set),--confirm-prune),)
@@ -61,6 +63,8 @@ help:
 		'  make validation-send-copy     Render/write copy-only next draft text without tracker metadata; optional DATE=YYYY-MM-DD.' \
 		'  make validation-send-copy-batch Write copy-only text files for all verified pending drafts; optional DATE=YYYY-MM-DD.' \
 		'  make validation-send-copy-check Verify existing batch copy files are outbound-only; optional DATE=YYYY-MM-DD.' \
+		'  make validation-contact-form-copy Write shorter contact-form copy files for verified pending drafts; optional DATE=YYYY-MM-DD.' \
+		'  make validation-contact-form-copy-check Verify existing contact-form copy files are outbound-only; optional DATE=YYYY-MM-DD.' \
 		'  make validation-pre-send-check Run the dry-run pre-send gate; requires TARGET=target-label, optional DATE=YYYY-MM-DD.' \
 		'  make validation-pre-send-check-all Run dry-run pre-send gate for every pending batch draft; optional DATE=YYYY-MM-DD.' \
 		'  make validation-draft         Render one draft; requires TARGET=target-label, rejects packs not dated today unless DATE=YYYY-MM-DD.' \
@@ -272,6 +276,21 @@ validation-send-copy-batch:
 validation-send-copy-check:
 	@python3 scripts/validation-send-copy-batch.py \
 		--check-dir $(VALIDATION_SEND_COPY_DIR) \
+		$(REQUIRE_DATE_ARG)
+
+.PHONY: validation-contact-form-copy
+validation-contact-form-copy:
+	@python3 scripts/validation-contact-form-copy.py \
+		--message-pack $(VALIDATION_MESSAGE_PACK_JSON) \
+		--targets $(VALIDATION_TARGETS) \
+		$(REQUIRE_DATE_ARG) \
+		--out-dir $(VALIDATION_CONTACT_FORM_COPY_DIR) \
+		--manifest-out $(VALIDATION_CONTACT_FORM_COPY_MANIFEST_JSON)
+
+.PHONY: validation-contact-form-copy-check
+validation-contact-form-copy-check:
+	@python3 scripts/validation-contact-form-copy.py \
+		--check-dir $(VALIDATION_CONTACT_FORM_COPY_DIR) \
 		$(REQUIRE_DATE_ARG)
 
 .PHONY: validation-pre-send-check

@@ -14,6 +14,7 @@ VALIDATION_CLIS = [
     "scripts/validation-message-pack.py",
     "scripts/validation-next-draft.py",
     "scripts/validation-send-copy-batch.py",
+    "scripts/validation-contact-form-copy.py",
     "scripts/validation-apply-draft-update.py",
     "scripts/validation-outreach-status.py",
     "scripts/validation-reply-triage.py",
@@ -33,7 +34,7 @@ class CliSafetyMatrixDocsTests(unittest.TestCase):
     def test_validation_sprint_clis_are_listed(self) -> None:
         text = MATRIX.read_text(encoding="utf-8")
 
-        self.assertIn("Last updated: 2026-05-10", text)
+        self.assertIn("Last updated: 2026-05-11", text)
         self.assertIn("Covered Validation Sprint CLIs", text)
         for cli in VALIDATION_CLIS:
             with self.subTest(cli=cli):
@@ -74,6 +75,10 @@ class CliSafetyMatrixDocsTests(unittest.TestCase):
             "today-next-draft.md",
             "today-send-copy.txt",
             "send-copy-YYYY-MM-DD",
+            "contact-form-copy-YYYY-MM-DD",
+            "make validation-contact-form-copy",
+            "make validation-contact-form-copy-check",
+            "copy_contact_form_txt_contents_only",
             "send_copy_batch_state",
             "send_copy_batch_matches_current_pack",
             "send_copy_batch_readme_exists",

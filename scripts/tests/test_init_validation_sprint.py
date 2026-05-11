@@ -67,6 +67,18 @@ class InitValidationSprintTests(unittest.TestCase):
             )
             self.assertTrue(
                 any(
+                    command == "make validation-contact-form-copy DATE=2026-05-20"
+                    for command in summary["next_commands"]
+                )
+            )
+            self.assertTrue(
+                any(
+                    command == "make validation-contact-form-copy-check DATE=2026-05-20"
+                    for command in summary["next_commands"]
+                )
+            )
+            self.assertTrue(
+                any(
                     command == (
                         "make validation-draft-copy "
                         "TARGET=target-dib-platform-004 DATE=2026-05-20"
@@ -205,6 +217,14 @@ class InitValidationSprintTests(unittest.TestCase):
             )
             self.assertIn(
                 "make validation-send-copy-batch DATE=2026-05-20",
+                (private_dir / "README.md").read_text(encoding="utf-8"),
+            )
+            self.assertIn(
+                "make validation-contact-form-copy DATE=2026-05-20",
+                (private_dir / "README.md").read_text(encoding="utf-8"),
+            )
+            self.assertIn(
+                "validation/private/contact-form-copy-2026-05-20",
                 (private_dir / "README.md").read_text(encoding="utf-8"),
             )
             self.assertIn(

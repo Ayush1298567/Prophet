@@ -139,6 +139,8 @@ def _next_commands(dates: dict[str, str]) -> list[str]:
         f"make validation-send-copy DATE={dates['send']}",
         f"make validation-send-copy-batch DATE={dates['send']}",
         f"make validation-send-copy-check DATE={dates['send']}",
+        f"make validation-contact-form-copy DATE={dates['send']}",
+        f"make validation-contact-form-copy-check DATE={dates['send']}",
         f"make validation-draft-copy TARGET=target-dib-platform-004 DATE={dates['send']}",
         f"make validation-apply-draft TARGET=target-dib-platform-001 DATE={dates['send']}",
         "python3 scripts/validation-target-update.py --target-label target-dib-platform-001 --status outreach_sent --require-current-status identified --require-current-status intro_requested --last-touch "
@@ -251,9 +253,14 @@ Normal outreach order:
 6. Run `make validation-send-copy-check DATE={dates['send']}` to verify the
    existing numbered `.txt` files have neutral filenames, one `Subject:` line,
    matching SHA-256 values, and no target labels or tracker metadata.
-7. Run `make validation-apply-draft TARGET=target-dib-platform-001 DATE={dates['send']}`.
-8. Send the copy-only text outside the repo only after that dry-run is clean.
-9. Rerun the same dated Make command with `CONFIRM_SENT=1` only after the
+7. If a public contact form needs shorter copy, run
+   `make validation-contact-form-copy DATE={dates['send']}` and
+   `make validation-contact-form-copy-check DATE={dates['send']}`, then copy
+   only the numbered `.txt` file contents from
+   `validation/private/contact-form-copy-{dates['send']}/`.
+8. Run `make validation-apply-draft TARGET=target-dib-platform-001 DATE={dates['send']}`.
+9. Send the copy-only text outside the repo only after that dry-run is clean.
+10. Rerun the same dated Make command with `CONFIRM_SENT=1` only after the
    message is actually sent, the actual send is confirmed, and the anonymized
    tracker update is correct.
 10. Run `make validation-status DATE={dates['send']}`.

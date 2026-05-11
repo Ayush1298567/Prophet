@@ -128,7 +128,8 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help=(
             "Require a matching copy-only send artifact before writing. "
-            "Use with --send-copy and/or --send-copy-batch-manifest."
+            "Use with --send-copy, --send-copy-batch-manifest, "
+            "and/or --contact-form-copy-manifest."
         ),
     )
     parser.add_argument(
@@ -138,6 +139,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--send-copy-batch-manifest",
         help="Optional private send-copy batch manifest to verify for the selected target.",
+    )
+    parser.add_argument(
+        "--contact-form-copy-manifest",
+        help="Optional private contact-form copy manifest to verify for the selected target.",
     )
     parser.add_argument("--out", help="Optional target tracker output path.")
     args = parser.parse_args(argv)
@@ -155,7 +160,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.confirm_sent and not args.require_copy_artifact:
             raise ApplyDraftUpdateError(
                 "confirmed tracker writes require --require-copy-artifact "
-                "with --send-copy or --send-copy-batch-manifest"
+                "with --send-copy, --send-copy-batch-manifest, "
+                "or --contact-form-copy-manifest"
             )
         if args.require_copy_artifact:
             summary["copy_artifact_verification"] = _verify_copy_artifact(
@@ -166,6 +172,11 @@ def main(argv: list[str] | None = None) -> int:
                 send_copy_batch_manifest=(
                     Path(args.send_copy_batch_manifest)
                     if args.send_copy_batch_manifest
+                    else None
+                ),
+                contact_form_copy_manifest=(
+                    Path(args.contact_form_copy_manifest)
+                    if args.contact_form_copy_manifest
                     else None
                 ),
             )
@@ -204,6 +215,7 @@ def _verify_copy_artifact(
     generated_for: str,
     send_copy_path: Path | None,
     send_copy_batch_manifest: Path | None,
+    contact_form_copy_manifest: Path | None,
 ) -> dict[str, Any]:
     expected = _render_expected_send_text(pack, target_label)
     errors: list[str] = []
@@ -230,7 +242,21 @@ def _verify_copy_artifact(
         if batch_result.get("ok"):
             return batch_result
         errors.extend(batch_result["errors"])
-    if send_copy_path is None and send_copy_batch_manifest is None:
+    if contact_form_copy_manifest is not None:
+        contact_result = _verify_contact_form_copy_manifest(
+            pack,
+            contact_form_copy_manifest,
+            target_label=target_label,
+            generated_for=generated_for,
+        )
+        if contact_result.get("ok"):
+            return contact_result
+        errors.extend(contact_result["errors"])
+    if (
+        send_copy_path is None
+        and send_copy_batch_manifest is None
+        and contact_form_copy_manifest is None
+    ):
         errors.append("no copy-only send artifact path was provided")
     raise ApplyDraftUpdateError(
         "copy-only send artifact is not ready for confirmed tracker update: "
@@ -275,6 +301,62 @@ def _verify_copy_batch_manifest(
     return {
         "ok": True,
         "kind": "send_copy_batch",
+        "manifest_path": str(manifest_path),
+        "path": str(copy_path),
+        "target_label": target_label,
+    }
+
+
+def _verify_contact_form_copy_manifest(
+    pack: dict[str, Any],
+    manifest_path: Path,
+    *,
+    target_label: str,
+    generated_for: str,
+) -> dict[str, Any]:
+    errors: list[str] = []
+    if not manifest_path.exists():
+        return {"ok": False, "errors": [f"{manifest_path} is missing"]}
+    manifest = _load_json_object(manifest_path, "contact-form copy manifest")
+    if manifest.get("generated_for") != generated_for:
+        errors.append(
+            f"{manifest_path} generated_for {manifest.get('generated_for')} "
+            f"does not match {generated_for}"
+        )
+    max_chars = manifest.get("contact_form_max_chars", 650)
+    if not isinstance(max_chars, int):
+        errors.append(f"{manifest_path} contact_form_max_chars is invalid")
+        return {"ok": False, "errors": errors}
+    matching = [
+        item
+        for item in manifest.get("files", [])
+        if isinstance(item, dict) and item.get("target_label") == target_label
+    ]
+    if len(matching) != 1:
+        errors.append(f"{manifest_path} does not contain exactly one file for {target_label}")
+        return {"ok": False, "errors": errors}
+    copy_path = Path(str(matching[0].get("path", "")))
+    if not copy_path.exists():
+        errors.append(f"{copy_path} from {manifest_path} is missing")
+        return {"ok": False, "errors": errors}
+    contact_form_module = _load_module(
+        "validation-contact-form-copy.py",
+        "validation_contact_form_copy",
+    )
+    expected = contact_form_module.expected_contact_form_text(
+        pack,
+        target_label=target_label,
+        max_chars=max_chars,
+    )
+    actual = copy_path.read_text(encoding="utf-8")
+    if actual != expected:
+        errors.append(f"{copy_path} from {manifest_path} does not match {target_label}")
+        return {"ok": False, "errors": errors}
+    if errors:
+        return {"ok": False, "errors": errors}
+    return {
+        "ok": True,
+        "kind": "contact_form_copy",
         "manifest_path": str(manifest_path),
         "path": str(copy_path),
         "target_label": target_label,

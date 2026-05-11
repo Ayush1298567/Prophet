@@ -45,6 +45,7 @@ make validation-pack DATE=2026-05-11
 make validation-next-draft DATE=2026-05-11
 make validation-apply-draft TARGET=target-dib-platform-001 DATE=2026-05-11
 make validation-pre-send-check TARGET=target-dib-platform-001 DATE=2026-05-11
+make validation-contact-form-copy DATE=2026-05-11
 make validation-reply-triage TARGET=target-dib-platform-001 REPLY=book_call DATE=2026-05-11
 make validation-status DATE=2026-05-11
 make validation-dashboard DATE=2026-05-11
@@ -488,6 +489,32 @@ immediately before sending that numbered copy file.
 `.txt` files against the private manifest: neutral filenames, one `Subject:`
 line each, SHA-256 matches, no target labels, no tracker commands, and no
 private metadata.
+
+Render shorter contact-form copy when a public contact form needs compact text:
+
+```bash
+make validation-contact-form-copy DATE=2026-05-11
+make validation-contact-form-copy-check DATE=2026-05-11
+
+python3 scripts/validation-contact-form-copy.py \
+  --message-pack validation/private/today-message-pack.json \
+  --targets validation/private/validation-targets.json \
+  --require-date 2026-05-11 \
+  --out-dir validation/private/contact-form-copy-2026-05-11
+
+python3 scripts/validation-contact-form-copy.py \
+  --check-dir validation/private/contact-form-copy-2026-05-11 \
+  --require-date 2026-05-11
+```
+
+The contact-form copy directory uses the same private boundary as the regular
+send-copy batch. Only the numbered `.txt` file contents are outbound copy.
+`manifest.json`, `CHECKLIST.md`, `CONTACT_FORM_INDEX.md`, `DO_NOT_SEND.md`,
+and `README.md` are private operator metadata. Confirmed tracker updates can
+verify either the regular send-copy artifact, the regular batch manifest, or
+the contact-form copy manifest, but `CONFIRM_SENT=1` is still allowed only
+after the message was actually sent. The dated directory convention is
+`validation/private/contact-form-copy-YYYY-MM-DD/`.
 `make validation-pre-send-check TARGET=... DATE=YYYY-MM-DD` is the dry-run pre-send wrapper.
 It runs the dated dashboard, existing send-copy batch check,
 fresh private weekly review, prune dry-run, and tracker-update dry run for the
@@ -544,8 +571,8 @@ without reconstructing the next command by hand.
 and persona to match an anonymized target currently in `call_booked`.
 When `CONFIRM_SENT=1` is used through Make, or `--confirm-sent` is used
 directly, the apply helper also verifies a matching copy-only send artifact
-from `today-send-copy.txt` or the current send-copy batch manifest before
-writing the private tracker.
+from `today-send-copy.txt`, the current send-copy batch manifest, or the
+contact-form copy manifest before writing the private tracker.
 
 Verify outreach execution and update one anonymized target:
 
@@ -850,6 +877,7 @@ python3 scripts/validation-outreach-block.py --help
 python3 scripts/validation-message-pack.py --help
 python3 scripts/validation-next-draft.py --help
 python3 scripts/validation-send-copy-batch.py --help
+python3 scripts/validation-contact-form-copy.py --help
 python3 scripts/validation-pre-send-check-all.py --help
 python3 scripts/validation-apply-draft-update.py --help
 python3 scripts/validation-outreach-status.py --help

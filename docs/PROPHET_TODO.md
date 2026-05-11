@@ -76,6 +76,12 @@ operator board for the next buyer-pilot cycles.
   file per draft plus a private manifest with copy-file SHA-256 values and
   outbound-boundary fields, checklist, and README, after verifying generated dry-run commands still
   apply.
+- [x] Compact contact-form copy generator exists for public forms with tighter
+  text limits: `scripts/validation-contact-form-copy.py`; root
+  `make validation-contact-form-copy DATE=YYYY-MM-DD` writes shorter numbered
+  `.txt` files plus private manifest/checklist/index/README/DO_NOT_SEND
+  metadata, and `make validation-contact-form-copy-check DATE=YYYY-MM-DD`
+  verifies the existing directory before use.
 - [x] Next-draft helper renders the first verified pending private outreach
   draft and refuses stale target-state or date-mismatched packs:
   `scripts/validation-next-draft.py`; root `make validation-next-draft` wraps

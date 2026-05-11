@@ -82,6 +82,7 @@ Files:
 - `scripts/validation-next-action.py`
 - `scripts/validation-next-draft.py`
 - `scripts/validation-send-copy-batch.py`
+- `scripts/validation-contact-form-copy.py`
 - `scripts/validation-pre-send-check-all.py`
 - `scripts/validation-apply-draft-update.py`
 - `scripts/validation-outreach-status.py`
@@ -106,6 +107,7 @@ Files:
 - `scripts/tests/test_validation_message_pack.py`
 - `scripts/tests/test_validation_next_draft.py`
 - `scripts/tests/test_validation_send_copy_batch.py`
+- `scripts/tests/test_validation_contact_form_copy.py`
 - `scripts/tests/test_validation_pre_send_check_all.py`
 - `scripts/tests/test_validation_apply_draft_update.py`
 - `scripts/tests/test_validation_outreach_status.py`
@@ -149,6 +151,11 @@ Review focus:
   checklist, and README, only after generated dry-run commands still verify.
   Operators should copy file
   contents into outreach channels rather than attaching the files.
+- `make validation-contact-form-copy DATE=YYYY-MM-DD` should write shorter
+  neutral-named `.txt` files for public contact forms, plus private
+  manifest/checklist/index/README/DO_NOT_SEND metadata, and
+  `make validation-contact-form-copy-check DATE=YYYY-MM-DD` should verify the
+  existing directory before use.
 - The outreach status checker should verify pending generated dry-run commands
   without mutating private trackers, reject date-mismatched packs, and flag
   stale commands as `needs_attention`.
@@ -499,6 +506,11 @@ These files are generated for local operation and are intentionally ignored by
 - `validation/private/send-copy-2026-05-11/COPY_ONLY_INDEX.md`
 - `validation/private/send-copy-2026-05-11/SUBJECT_ORDER.md`
 - `validation/private/send-copy-2026-05-11/DO_NOT_SEND.md`
+- `validation/private/contact-form-copy-2026-05-11/`
+- `validation/private/contact-form-copy-2026-05-11/README.md`
+- `validation/private/contact-form-copy-2026-05-11/CHECKLIST.md`
+- `validation/private/contact-form-copy-2026-05-11/CONTACT_FORM_INDEX.md`
+- `validation/private/contact-form-copy-2026-05-11/DO_NOT_SEND.md`
 
 Do not commit private validation files. Export only aggregate counts or
 sanitized examples.
@@ -507,11 +519,12 @@ sanitized examples.
 
 Latest verification run for this inventory:
 
-- `python3 -m unittest discover -s scripts/tests -v`: 391 tests passed after
+- `python3 -m unittest discover -s scripts/tests -v`: 398 tests passed after
   the NIST/CMMC security packet docs guard, send-boundary dashboard, copy-only resume boundary, CLI-reference,
   validation-resume, goal-resume, validation-team-update, validation-weekly-review,
   validation-next-action handoff generation, weekly-review `review_date`,
   weekly-review target-backed build-gate coverage, outreach execution,
+  contact-form copy generation/checking, contact-form confirmed-write artifact verification,
   and date-mismatch coverage,
   raw apply-draft confirmed-write copy-artifact guard coverage,
   raw target-update direct `intro_requested` / `outreach_sent` confirmed-write rejection,
@@ -589,6 +602,12 @@ Latest verification run for this inventory:
   checklist, README, neutral `COPY_ONLY_INDEX.md` that omits target labels
   and tracker commands, private `SUBJECT_ORDER.md`, and private
   `DO_NOT_SEND.md`.
+- `make validation-contact-form-copy DATE=2026-05-11` writes shorter
+  neutral-named `.txt` files under
+  `validation/private/contact-form-copy-2026-05-11/` for public contact forms,
+  plus private manifest/checklist/index/README/DO_NOT_SEND metadata. The
+  confirmed-send apply helper can verify the contact-form manifest as a
+  matching copy artifact before a guarded tracker write.
 - `make validation-dashboard DATE=2026-05-11` verifies the generated batch
   directory through `send_copy_batch_state: ready`,
   `send_copy_batch_matches_current_pack: true`,
@@ -603,7 +622,8 @@ Latest verification run for this inventory:
   manifest operator notes, not only file existence.
 - Direct outbound copy checks found no target labels, validation commands,
   tracker commands, manifest/checklist references, or confirmation commands in
-  the 8 numbered `.txt` files or `validation/private/today-send-copy.txt`; each
+  the 8 numbered send-copy `.txt` files, the 8 numbered contact-form `.txt`
+  files, or `validation/private/today-send-copy.txt`; each
   outbound `.txt` file contains exactly one `Subject:` line.
 - `make validation-send-copy-check DATE=2026-05-11` verifies the existing
   send-copy batch without rewriting it, including neutral filenames, one
@@ -744,7 +764,7 @@ Latest verification run for this inventory:
 - `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py --diff`:
   passed over 0 paths in the clean committed worktree.
 - `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py --tracked --paths-only`:
-  passed over 359 tracked paths, including release-bound policy-hash coverage
+  passed over 361 tracked paths, including release-bound policy-hash coverage
   checks.
 - `python3 -m policy.lint --policy policy/prophet-pilot-policy.json`:
   passed and reported policy ID `prophet-pilot-fixture-localhost-v0.1` with

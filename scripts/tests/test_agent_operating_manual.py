@@ -19,6 +19,7 @@ class AgentOperatingManualTests(unittest.TestCase):
         self.assertIn("make validation-next-draft", text)
         self.assertIn("make validation-send-copy", text)
         self.assertIn("make validation-send-copy-batch", text)
+        self.assertIn("make validation-contact-form-copy", text)
         self.assertIn("make validation-pre-send-check", text)
         self.assertIn("make validation-draft-copy", text)
         self.assertIn("make validation-team-update", text)

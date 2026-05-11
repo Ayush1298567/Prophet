@@ -119,6 +119,8 @@ make validation-next-draft DATE=YYYY-MM-DD
 make validation-send-copy DATE=YYYY-MM-DD
 make validation-send-copy-batch DATE=YYYY-MM-DD
 make validation-send-copy-check DATE=YYYY-MM-DD
+make validation-contact-form-copy DATE=YYYY-MM-DD
+make validation-contact-form-copy-check DATE=YYYY-MM-DD
 make validation-pre-send-check TARGET=target-dib-platform-001 DATE=YYYY-MM-DD
 make validation-draft TARGET=target-dib-platform-004 DATE=YYYY-MM-DD
 make validation-draft-copy TARGET=target-dib-platform-004 DATE=YYYY-MM-DD
@@ -163,6 +165,13 @@ Use `make validation-send-copy-check DATE=YYYY-MM-DD` before using an existing
 batch directory; it verifies neutral numbered filenames, one `Subject:` line
 per file, copy-file SHA-256 matches, and no target labels or tracker metadata
 in the outbound `.txt` files.
+Use `make validation-contact-form-copy DATE=YYYY-MM-DD` when a public contact
+form needs shorter copy. It writes neutral numbered `.txt` files under
+`validation/private/contact-form-copy-YYYY-MM-DD/`; only the numbered file
+contents are outbound copy. Run
+`make validation-contact-form-copy-check DATE=YYYY-MM-DD` before relying on an
+existing compact-copy directory. The manifest, checklist, index, README, and
+DO_NOT_SEND guard are private operator metadata.
 Use `make validation-pre-send-check TARGET=... DATE=YYYY-MM-DD` immediately
 before sending. It runs the dashboard, batch check, fresh weekly review, prune
 dry-run, and tracker-update dry run, and it refuses all `CONFIRM_*` write

@@ -63,6 +63,7 @@ make goal-resume
 make validation-next-draft
 make validation-send-copy
 make validation-send-copy-batch
+make validation-contact-form-copy
 make validation-pre-send-check TARGET=target-dib-platform-001
 make validation-draft-copy TARGET=target-dib-platform-004
 ```
@@ -99,6 +100,7 @@ make goal-resume DATE=YYYY-MM-DD
 make validation-next-draft DATE=YYYY-MM-DD
 make validation-send-copy DATE=YYYY-MM-DD
 make validation-send-copy-batch DATE=YYYY-MM-DD
+make validation-contact-form-copy DATE=YYYY-MM-DD
 make validation-pre-send-check TARGET=target-dib-platform-001 DATE=YYYY-MM-DD
 make validation-draft-copy TARGET=target-dib-platform-004 DATE=YYYY-MM-DD
 ```
@@ -141,6 +143,12 @@ batch README. Use the private batch checklist to run each target's pre-send
 check immediately before sending that numbered copy file. For the next single
 send, the dashboard also reports
 `outreach_execution.next_pending_pre_send_check_command`.
+When a public contact form needs shorter text, run
+`make validation-contact-form-copy DATE=YYYY-MM-DD` and
+`make validation-contact-form-copy-check DATE=YYYY-MM-DD`, then copy only the
+numbered `.txt` file contents from
+`validation/private/contact-form-copy-YYYY-MM-DD/`. The manifest, checklist,
+index, README, and DO_NOT_SEND guard remain private operator metadata.
 
 The next operational loop is:
 
@@ -161,15 +169,20 @@ The next operational loop is:
    dashboard reports the batch state is ready and matches the current pack. Do
    not attach the files. Use the private checklist's pre-send command for each
    target immediately before that file is sent.
-7. Run `make validation-pre-send-check TARGET=<target-label>
+7. If a contact form needs compact copy, run `make
+   validation-contact-form-copy DATE=YYYY-MM-DD` and `make
+   validation-contact-form-copy-check DATE=YYYY-MM-DD`; copy only the numbered
+   `.txt` file contents.
+8. Run `make validation-pre-send-check TARGET=<target-label>
    DATE=YYYY-MM-DD` immediately before sending. It is dry-run only and refuses
    `CONFIRM_SENT`, `CONFIRM_TARGET`, `CONFIRM_LOG`, or `CONFIRM_PRUNE`.
-8. Send from `validation/private/today-send-copy.txt` only after that dry-run
+9. Send from `validation/private/today-send-copy.txt` or the checked compact
+   contact-form `.txt` contents only after that dry-run
    gate is clean and the dashboard reports `send_copy_state: ready` plus
    `send_copy_matches_next_pending: true`.
-9. Add `CONFIRM_SENT=1` only after the sent message and anonymized update are
+10. Add `CONFIRM_SENT=1` only after the sent message and anonymized update are
    correct.
-10. Rerun `make validation-status DATE=YYYY-MM-DD` and
+11. Rerun `make validation-status DATE=YYYY-MM-DD` and
    `make validation-dashboard DATE=YYYY-MM-DD`.
 
 Do not invent sent messages, buyer replies, calls, or pilot signals.
