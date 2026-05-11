@@ -18,9 +18,12 @@ It does not tag, deploy, or mark the product complete.
   (`6e7ac85 Add working product handoff generator`); the GitHub
   `main` CI run for that checkpoint completed successfully at
   <https://github.com/Ayush1298567/Prophet/actions/runs/25688231405>.
-  Future product/workflow commits after that checkpoint must rerun GitHub
-  `main` CI and the relevant local handoff gates before being treated as
-  current.
+  Audit-only commits after that checkpoint should not replace the
+  implementation checkpoint; use `git status`, GitHub `main` CI, and the
+  ignored private `validation/private/WORKING_PRODUCT_HANDOFF.md` for the
+  moving local head. Product or workflow commits after that checkpoint must
+  rerun GitHub `main` CI and the relevant local handoff gates before being
+  treated as current.
 
 Do not create production platform commits from this inventory until real
 validation reaches `build_next_slice`.
@@ -857,6 +860,9 @@ Latest verification run for this inventory:
   release-tag-preflight DATE=YYYY-MM-DD` failing closed on the two known
   release blockers after hygiene, and does not open production platform scope
   while validation remains `insufficient_data`.
+  Audit-only commits after this point update the review trail but do not change
+  the implementation checkpoint; verify the moving local head from `git status`,
+  GitHub `main` CI, and the ignored private working-product handoff.
 
 ## PR Handoff Draft
 
@@ -956,9 +962,11 @@ runtime output contents into the PR.
 - Latest implementation checkpoint is `6e7ac85`, and the GitHub `main` CI run
   for that checkpoint completed successfully:
   <https://github.com/Ayush1298567/Prophet/actions/runs/25688231405>.
-  Future product/workflow commits after that checkpoint must rerun GitHub
-  `main` CI and the relevant local handoff gates before being treated as
-  current.
+  Audit-only commits after that checkpoint should not replace the implementation
+  checkpoint; use `git status`, GitHub `main` CI, and
+  `validation/private/WORKING_PRODUCT_HANDOFF.md` for the moving local head.
+  Product or workflow commits after that checkpoint must rerun GitHub `main` CI
+  and the relevant local handoff gates before being treated as current.
 ```
 
 Before any new release tag or follow-up PR, rerun the relevant console

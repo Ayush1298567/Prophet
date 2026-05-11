@@ -132,8 +132,12 @@ class FinishInventoryDocsTests(unittest.TestCase):
         self.assertIn("http://127.0.0.1:5291/", audit)
         self.assertIn("http://127.0.0.1:8891/api/readiness", audit)
         self.assertNotIn("97cfcfb3236e071ff325985970123c89b984e11f", audit)
-        self.assertIn("Future product/workflow commits", audit)
+        self.assertIn("Product or workflow commits after this checkpoint", audit)
         self.assertIn("before being treated as current", audit)
+        self.assertIn("Audit-only commits after this checkpoint", audit)
+        self.assertIn("should not replace", audit)
+        self.assertIn("implementation checkpoint", audit)
+        self.assertIn("validation/private/WORKING_PRODUCT_HANDOFF.md", audit)
 
     def test_finish_inventory_names_latest_implementation_checkpoint(self) -> None:
         inventory = FINISH_INVENTORY.read_text(encoding="utf-8")
@@ -150,9 +154,13 @@ class FinishInventoryDocsTests(unittest.TestCase):
         self.assertNotIn("97cfcfb3236e071ff325985970123c89b984e11f", inventory)
         self.assertIn("does not open", inventory)
         self.assertIn("production platform scope", inventory)
-        self.assertIn("Future product/workflow commits", inventory)
+        self.assertIn("Product or workflow commits after that checkpoint", inventory)
         self.assertIn("before being treated as", inventory)
         self.assertIn("current.", inventory)
+        self.assertIn("Audit-only commits after that checkpoint", inventory)
+        self.assertIn("should not replace", inventory)
+        self.assertIn("implementation checkpoint", inventory)
+        self.assertIn("WORKING_PRODUCT_HANDOFF.md", inventory)
 
     def test_github_main_fresh_clone_baseline_smoke_is_recorded(self) -> None:
         audit = COMPLETION_AUDIT.read_text(encoding="utf-8")
