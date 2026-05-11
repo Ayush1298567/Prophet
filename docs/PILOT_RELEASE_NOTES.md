@@ -138,7 +138,7 @@ After the default smoke passes, the main reviewer artifacts are:
 - `make console-screenshot-check` passed against the generated screenshot
   manifest, verifying ignored runtime paths, PNG hashes, PNG dimensions, and
   the fixture-backed sharing boundary.
-- `python3 -m unittest discover -s scripts/tests -v` passed with 366 tests,
+- `python3 -m unittest discover -s scripts/tests -v` passed with 367 tests,
   including validation-gate, send-boundary, console-demo, documented
   exposure classification guide, pre-commit hook, and release-note guardrail
   coverage.
@@ -178,8 +178,13 @@ After the default smoke passes, the main reviewer artifacts are:
   `prophet-pilot-consolidation-2026-05-05` at PR head `6fe55f3` at
   verification time passed on macOS on 2026-05-11 with
   `./scripts/check-local-env.sh` and `./scripts/run-pilot-demo-smoke.sh`,
-  verifying 26 pilot hashes. Rerun this check before release tagging if an
-  exact release-tag fresh-clone proof is needed.
+  verifying 26 pilot hashes.
+- A true GitHub fresh clone of current `main` at
+  `91b91e630a418b83cb9c00ff959e47be5897ac6a` passed on macOS on
+  2026-05-11 with `./scripts/check-local-env.sh` and
+  `./scripts/run-pilot-demo-smoke.sh`, verifying 26 pilot hashes and reporting
+  no policy drift. This is the current-main true fresh-clone proof. Rerun this
+  check before release tagging if a later release tag moves beyond this commit.
 - The GitHub Actions `python` job runs on `ubuntu-latest` and now names the
   `Linux fresh-clone pilot smoke preflight` plus
   `Linux fresh-clone pilot smoke` steps, covering the Linux fresh-clone smoke
