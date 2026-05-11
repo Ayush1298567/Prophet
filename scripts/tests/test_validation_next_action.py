@@ -36,6 +36,8 @@ class ValidationNextActionTests(unittest.TestCase):
             "make validation-pre-send-check TARGET=target-dib-platform-001 DATE=2026-05-11",
             rendered,
         )
+        self.assertIn("If sending the full block, run the full-batch dry-run gate too", rendered)
+        self.assertIn("make validation-pre-send-check-all DATE=2026-05-11", rendered)
         self.assertIn("refuses all `CONFIRM_*` write", rendered)
         self.assertIn("make validation-dashboard DATE=2026-05-11", rendered)
         self.assertIn("make validation-send-copy-check DATE=2026-05-11", rendered)
