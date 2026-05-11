@@ -14,10 +14,10 @@ It does not tag, deploy, or mark the product complete.
 - Critical open readiness items: `26`.
 - Outreach status: 8 pending send/update items, 0 attention errors.
 - Latest implementation checkpoint is
-  `6982a31055c7fe3a949a318fe049a8c9b3b0b744`
-  (`6982a31 Surface contact-form copy readiness`); the GitHub
+  `934f7560f2c93ec4d77c5f496c2e9c5cd80d21ea`
+  (`934f756 Add contact-form checks to validation handoff`); the GitHub
   `main` CI run for that checkpoint completed successfully at
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25682224702>.
+  <https://github.com/Ayush1298567/Prophet/actions/runs/25682770173>.
   Future product/workflow commits after that checkpoint must rerun GitHub
   `main` CI and the relevant local handoff gates before being treated as
   current.
@@ -837,12 +837,12 @@ Latest verification run for this inventory:
 - `python3 scripts/production-readiness-scorecard.py`: readiness `33.3%`,
   26 critical open items.
 - Latest implementation checkpoint:
-  `6982a31055c7fe3a949a318fe049a8c9b3b0b744`
-  (`6982a31 Surface contact-form copy readiness`). GitHub `main`
+  `934f7560f2c93ec4d77c5f496c2e9c5cd80d21ea`
+  (`934f756 Add contact-form checks to validation handoff`). GitHub `main`
   CI completed successfully at
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25682224702>. This
-  checkpoint surfaces contact-form copy readiness in the dashboard and weekly
-  review, and does not open production platform scope while validation remains
+  <https://github.com/Ayush1298567/Prophet/actions/runs/25682770173>. This
+  checkpoint adds contact-form copy checks to the ignored validation handoff,
+  and does not open production platform scope while validation remains
   `insufficient_data`.
 
 ## PR Handoff Draft
@@ -892,7 +892,7 @@ runtime output contents into the PR.
   `afad749`; checkpoint `9592e73` passed GitHub `main` CI, local script
   tests, release hygiene, contact-form-copy checking, default-port live console
   checks, and the root pilot demo smoke; and latest implementation checkpoint
-  `6982a31` passed GitHub `main` CI, `python3 -m unittest discover -s
+  `934f756` passed GitHub `main` CI, `python3 -m unittest discover -s
   scripts/tests -v`, `make release-hygiene`, the dated validation dashboard,
   full-batch pre-send checking, and single-target pre-send checking.
 - `python3 -m unittest discover -s scripts/tests -v` passed with 401 tests.
@@ -928,9 +928,9 @@ runtime output contents into the PR.
   documentation-only commits; rerun it before release tagging if a later release
   tag moves beyond this commit.
   Linux fresh-clone smoke is covered by the Ubuntu CI pilot smoke steps.
-- Latest implementation checkpoint is `6982a31`, and the GitHub `main` CI run
+- Latest implementation checkpoint is `934f756`, and the GitHub `main` CI run
   for that checkpoint completed successfully:
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25682224702>.
+  <https://github.com/Ayush1298567/Prophet/actions/runs/25682770173>.
   Future product/workflow commits after that checkpoint must rerun GitHub
   `main` CI and the relevant local handoff gates before being treated as
   current.
