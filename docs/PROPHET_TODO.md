@@ -409,7 +409,9 @@ operator board for the next buyer-pilot cycles.
 ### P2: Next Technical Depth
 
 - [ ] Package `sandbox_runner` as a reproducible container.
-- [ ] Add no-egress notes, resource limits, and container hash provenance.
+- [x] Add no-egress notes, resource limits, and container hash provenance
+  acceptance target without claiming implementation:
+  `docs/SANDBOX_CONTAINER_TARGET.md`.
 - [x] Add a second sandbox profile for a different defensive class.
 - [ ] Add CycloneDX and SPDX SBOM fixtures and parsers.
 - [x] Add production architecture, threat model, production execution plan, and
