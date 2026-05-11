@@ -32,6 +32,10 @@ class ValidationNextActionTests(unittest.TestCase):
 
         self.assertIn("make validation-dashboard DATE=2026-05-11", rendered)
         self.assertIn("make validation-send-copy-check DATE=2026-05-11", rendered)
+        self.assertIn("copy_files_outbound_safe: true", rendered)
+        self.assertIn("readme_matches_manifest: true", rendered)
+        self.assertIn("checklist_matches_manifest: true", rendered)
+        self.assertIn("copy_index_matches_manifest: true", rendered)
         self.assertIn("make validation-prune-private DATE=2026-05-11", rendered)
         self.assertIn(
             "make validation-apply-draft TARGET=target-dib-platform-001 DATE=2026-05-11",
