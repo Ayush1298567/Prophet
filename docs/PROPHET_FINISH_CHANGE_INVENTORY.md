@@ -460,7 +460,7 @@ sanitized examples.
 
 Latest verification run for this inventory:
 
-- `python3 -m unittest discover -s scripts/tests -v`: 359 tests passed after
+- `python3 -m unittest discover -s scripts/tests -v`: 360 tests passed after
   the send-boundary dashboard, copy-only resume boundary, CLI-reference,
   validation-resume, goal-resume, validation-team-update, validation-weekly-review,
   validation-next-action handoff generation, weekly-review `review_date`,
@@ -492,6 +492,7 @@ Latest verification run for this inventory:
   single-send outbound-copy leak rejection, copy-only send-batch coverage,
   send-copy batch checklist coverage,
   send-copy batch outbound-copy leak rejection,
+  send-copy metadata staleness rejection,
   send-copy batch dashboard ready/stale/hash/boundary coverage,
   confirmed-send copy-artifact guard coverage,
   no-write reply triage command coverage,
@@ -551,8 +552,9 @@ Latest verification run for this inventory:
   outbound `.txt` file contains exactly one `Subject:` line.
 - `make validation-send-copy-check DATE=2026-05-11` verifies the existing
   send-copy batch without rewriting it, including neutral filenames, one
-  `Subject:` line per file, copy-file SHA-256 matches, and no target labels or
-  tracker metadata in numbered `.txt` files.
+  `Subject:` line per file, copy-file SHA-256 matches, no target labels or
+  tracker metadata in numbered `.txt` files, and exact README/checklist/copy
+  index match against the current manifest-derived send order.
 - `docs/PROPHET_COMPLETION_AUDIT.md` now lists the batch directory as a current
   copy-only send option and keeps the batch manifest with copy-file SHA-256
   values and outbound-boundary fields below the outbound boundary as private

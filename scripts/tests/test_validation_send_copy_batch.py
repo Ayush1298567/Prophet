@@ -238,6 +238,12 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
                 summary["send_boundary"],
                 "copy_numbered_txt_contents_only",
             )
+            self.assertTrue(summary["readme_exists"])
+            self.assertTrue(summary["readme_matches_manifest"])
+            self.assertTrue(summary["checklist_exists"])
+            self.assertTrue(summary["checklist_matches_manifest"])
+            self.assertTrue(summary["copy_index_exists"])
+            self.assertTrue(summary["copy_index_matches_manifest"])
             self.assertTrue(all(file["subject_count"] == 1 for file in summary["checked_files"]))
 
     def test_cli_check_dir_validates_existing_batch_without_writing(self) -> None:
@@ -274,6 +280,33 @@ class ValidationSendCopyBatchTests(unittest.TestCase):
             summary = json.loads(completed.stdout)
             self.assertEqual(summary["copy_file_count"], 8)
             self.assertTrue(summary["copy_files_outbound_safe"])
+            self.assertTrue(summary["readme_matches_manifest"])
+            self.assertTrue(summary["checklist_matches_manifest"])
+            self.assertTrue(summary["copy_index_matches_manifest"])
+
+    def test_check_send_copy_directory_rejects_stale_metadata(self) -> None:
+        targets, pack = _targets_and_pack()
+        with tempfile.TemporaryDirectory() as tmp:
+            out_dir = Path(tmp) / "send-copy"
+            manifest = send_copy_batch.write_send_copy_batch(
+                pack,
+                targets,
+                out_dir=out_dir,
+                require_date="2026-05-10",
+            )
+            manifest_path = out_dir / "manifest.json"
+            manifest["manifest_path"] = str(manifest_path)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            (out_dir / "COPY_ONLY_INDEX.md").write_text("stale\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(
+                send_copy_batch.SendCopyBatchError,
+                "metadata file is stale",
+            ):
+                send_copy_batch.check_send_copy_directory(
+                    out_dir,
+                    require_date="2026-05-10",
+                )
 
     def test_check_send_copy_directory_rejects_tracker_metadata_leak(self) -> None:
         targets, pack = _targets_and_pack()

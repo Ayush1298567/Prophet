@@ -213,6 +213,42 @@ def check_send_copy_directory(
     manifest_names = sorted(Path(str(file["path"])).name for file in files)
     if actual_names != manifest_names:
         raise SendCopyBatchError("send-copy directory file list does not match manifest")
+    readme_path = _metadata_path(
+        manifest.get("readme_path"),
+        out_dir=out_dir,
+        expected_name="README.md",
+    )
+    checklist_path = _metadata_path(
+        manifest.get("checklist_path"),
+        out_dir=out_dir,
+        expected_name="CHECKLIST.md",
+    )
+    copy_index_path = _metadata_path(
+        manifest.get("copy_index_path"),
+        out_dir=out_dir,
+        expected_name="COPY_ONLY_INDEX.md",
+    )
+    _assert_metadata_body(
+        readme_path,
+        _render_operator_readme(
+            generated_for=generated_for,
+            copy_file_count=len(files),
+        ),
+    )
+    _assert_metadata_body(
+        checklist_path,
+        _render_operator_checklist(
+            generated_for=generated_for,
+            files=files,
+        ),
+    )
+    _assert_metadata_body(
+        copy_index_path,
+        _render_copy_only_index(
+            generated_for=generated_for,
+            files=files,
+        ),
+    )
     return {
         "schema_version": "prophet_validation_send_copy_batch_check.v0.1",
         "generated_for": generated_for,
@@ -221,6 +257,12 @@ def check_send_copy_directory(
         "copy_files_outbound_safe": True,
         "operator_metadata_outbound_safe": False,
         "send_boundary": "copy_numbered_txt_contents_only",
+        "readme_exists": True,
+        "readme_matches_manifest": True,
+        "checklist_exists": True,
+        "checklist_matches_manifest": True,
+        "copy_index_exists": True,
+        "copy_index_matches_manifest": True,
         "checked_files": checked_files,
     }
 
@@ -449,6 +491,29 @@ def _validate_copy_text(
             raise SendCopyBatchError(f"copy-only send text contains {label}")
     if re.search(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", rendered):
         raise SendCopyBatchError("copy-only send text contains IP-like text")
+
+
+def _metadata_path(raw_path: object, *, out_dir: Path, expected_name: str) -> Path:
+    path = Path(str(raw_path or expected_name))
+    if not path.is_absolute():
+        path = out_dir / path.name
+    if path.parent.resolve() != out_dir.resolve():
+        raise SendCopyBatchError(
+            f"send-copy metadata must stay inside send-copy directory: {path}"
+        )
+    if path.name != expected_name:
+        raise SendCopyBatchError(
+            f"send-copy metadata path must be {expected_name}: {path.name}"
+        )
+    if not path.is_file():
+        raise SendCopyBatchError(f"send-copy metadata file is missing: {expected_name}")
+    return path
+
+
+def _assert_metadata_body(path: Path, expected: str) -> None:
+    actual = path.read_text(encoding="utf-8")
+    if actual != expected:
+        raise SendCopyBatchError(f"send-copy metadata file is stale: {path.name}")
 
 
 def _load_json_object(path: Path, label: str) -> dict[str, Any]:
