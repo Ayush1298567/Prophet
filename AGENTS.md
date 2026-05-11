@@ -55,6 +55,7 @@ make validation-dashboard
 make validation-team-update
 make validation-team-update-save
 make validation-weekly-review
+make validation-prune-private
 make validation-status
 make validation-resume
 make goal-resume
@@ -71,7 +72,10 @@ local team handoff to `validation/private/today-team-update.md` without target
 labels, commands, message bodies, or private validation paths.
 `make validation-weekly-review DATE=YYYY-MM-DD` writes a read-only private
 weekly report for stale artifact/pruning review without deleting files or
-mutating trackers/logs.
+mutating trackers/logs. `make validation-prune-private DATE=YYYY-MM-DD` reads
+that weekly report and prints a dry-run cleanup plan for generated ignored private artifacts.
+It protects trackers/logs/templates/README files and removes files only when
+`CONFIRM_PRUNE=1` is supplied after operator review.
 
 For a recovered outreach day, include the date:
 
@@ -81,6 +85,7 @@ make validation-dashboard DATE=YYYY-MM-DD
 make validation-team-update DATE=YYYY-MM-DD
 make validation-team-update-save DATE=YYYY-MM-DD
 make validation-weekly-review DATE=YYYY-MM-DD
+make validation-prune-private DATE=YYYY-MM-DD
 make validation-status DATE=YYYY-MM-DD
 make validation-resume DATE=YYYY-MM-DD
 make goal-resume DATE=YYYY-MM-DD
@@ -214,6 +219,7 @@ make validation-status
 make validation-dashboard
 make validation-team-update-save
 make validation-weekly-review
+make validation-prune-private
 ```
 
 Only export aggregate counts or sanitized examples from private validation.
