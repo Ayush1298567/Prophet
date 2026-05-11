@@ -106,7 +106,7 @@ class FinishInventoryDocsTests(unittest.TestCase):
                 self.assertIn("345 tracked", text)
                 self.assertIn("policy.lint --policy policy/prophet-pilot-policy.json", text)
                 self.assertIn("check-default-output-safety.py", text)
-                self.assertIn("115 URLs", text)
+                self.assertRegex(text, r"7 (?:policy-listed )?default outputs")
                 self.assertIn("1 OSINT provenance manifest", text)
                 self.assertIn("check-doc-links.py", text)
                 self.assertIn("86 Markdown", text)

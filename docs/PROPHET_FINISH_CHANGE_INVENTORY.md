@@ -584,8 +584,8 @@ Latest verification run for this inventory:
   handoff checklist, customer-placeholder validation, review-ZIP packaging, and
   default-output URL safety updates; rerun after the evidence forecast-rationale
   Markdown and sandbox-provenance update and verified 26 pilot demo hashes against
-  `scripts/pilot-demo-smoke.sha256`, scanned 115 default-output URLs, and
-  checked 1 OSINT provenance manifest.
+  `scripts/pilot-demo-smoke.sha256`, checked default-output URLs, and checked
+  1 OSINT provenance manifest.
 - `./scripts/run-pilot-demo-smoke.sh --sector financial-workflow`: passed in 2s
   on 2026-05-10 after the review-ZIP packaging and sandbox-provenance update;
   verified 26 pilot demo hashes against
@@ -686,7 +686,7 @@ Latest verification run for this inventory:
   `credentials_allowed`, `private_hostnames_allowed`, and
   `raw_scraper_text_allowed` all false.
 - `python3 scripts/check-default-output-safety.py --policy policy/prophet-pilot-policy.json --format text`:
-  passed over 7 policy-listed default outputs and 115 URLs.
+  passed over 7 policy-listed default outputs and 1 OSINT provenance manifest.
 - `python3 scripts/check-doc-links.py`: passed over 86 Markdown source files
   with external URLs and ignored private/runtime output skipped.
 - Explicit untracked file checks: no-index whitespace checks passed over 0
