@@ -225,8 +225,8 @@ raw OSINT warehouse.
   `make validation-send-copy-check DATE=2026-05-11`, and
   `make validation-apply-draft TARGET=target-dib-platform-001 DATE=2026-05-11`
   before sending copy-only text, and to use `CONFIRM_SENT=1` only after a real
-  confirmed send. The regenerated handoff records the local git head for the
-  restored session.
+  confirmed send. The regenerated handoff records the local git head, worktree
+  state, and best-effort GitHub CI status for the restored session.
 - Production readiness: `33.3%`
 - Critical open production-readiness items: `26`
 - GitHub state: PR `#5` is merged to `main` at

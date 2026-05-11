@@ -682,7 +682,8 @@ update to `validation/private/today-team-update.md`.
 Use `make validation-next-action-save DATE=YYYY-MM-DD` to regenerate the
 ignored private `validation/private/NEXT_ACTION.md` operator handoff from the
 current dashboard, including the send boundary, current next target, and local
-git head, without touching tracker/log state.
+git head/worktree state plus best-effort GitHub CI status, without touching
+tracker/log state.
 Make confirmation variables are exact write guards: only `CONFIRM_SENT=1`,
 `CONFIRM_TARGET=1`, and `CONFIRM_LOG=1` can write. Values such as `0`, `false`,
 `yes`, or `1 0` fail closed.

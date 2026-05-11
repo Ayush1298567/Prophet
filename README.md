@@ -251,7 +251,8 @@ send-boundary summary and `--format team` for the aggregate update.
 `make validation-next-action-save` wraps
 `scripts/validation-next-action.py` and writes a regenerated private
 `validation/private/NEXT_ACTION.md` handoff from the current dashboard so a
-restored session does not depend on stale PR/head or send-boundary notes.
+restored session does not depend on stale PR/head, worktree, CI, or
+send-boundary notes.
 `make validation-weekly-review` writes a read-only private weekly review under
 `validation/private/`; it reports the validation gate, message-pack age, stale
 private artifacts, and pruning candidates, but does not delete files, send
