@@ -72,6 +72,7 @@ Files:
 - `scripts/validation-targets-scorecard.py`
 - `scripts/validation-outreach-block.py`
 - `scripts/validation-message-pack.py`
+- `scripts/validation-next-action.py`
 - `scripts/validation-next-draft.py`
 - `scripts/validation-send-copy-batch.py`
 - `scripts/validation-apply-draft-update.py`
@@ -90,6 +91,7 @@ Files:
 - `scripts/tests/test_init_validation_sprint.py`
 - `scripts/tests/test_validation_prepare_interview.py`
 - `scripts/tests/test_validation_sprint_dashboard.py`
+- `scripts/tests/test_validation_next_action.py`
 - `scripts/tests/test_validation_targets_scorecard.py`
 - `scripts/tests/test_make_validation_targets.py`
 - `scripts/tests/test_validation_outreach_block.py`
@@ -458,11 +460,12 @@ sanitized examples.
 
 Latest verification run for this inventory:
 
-- `python3 -m unittest discover -s scripts/tests -v`: 355 tests passed after
+- `python3 -m unittest discover -s scripts/tests -v`: 359 tests passed after
   the send-boundary dashboard, copy-only resume boundary, CLI-reference,
   validation-resume, goal-resume, validation-team-update, validation-weekly-review,
-  weekly-review `review_date`, weekly-review target-backed build-gate coverage,
-  outreach execution, and date-mismatch coverage,
+  validation-next-action handoff generation, weekly-review `review_date`,
+  weekly-review target-backed build-gate coverage, outreach execution,
+  and date-mismatch coverage,
   raw apply-draft confirmed-write copy-artifact guard coverage,
   raw target-update direct `intro_requested` / `outreach_sent` confirmed-write rejection,
   raw target-update completed-call validation-log guard coverage,

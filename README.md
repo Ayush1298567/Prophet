@@ -188,6 +188,7 @@ make validation-reply-triage TARGET=target-dib-platform-001 REPLY=book_call DATE
 make validation-dashboard DATE=YYYY-MM-DD
 make validation-team-update DATE=YYYY-MM-DD
 make validation-team-update-save DATE=YYYY-MM-DD
+make validation-next-action-save DATE=YYYY-MM-DD
 make validation-weekly-review DATE=YYYY-MM-DD
 make validation-prune-private DATE=YYYY-MM-DD
 make validation-resume DATE=YYYY-MM-DD
@@ -245,6 +246,10 @@ writes the same aggregate-only update to
 `validation/private/today-team-update.md` for local handoff. The raw dashboard
 also supports `--format text` for a concise
 send-boundary summary and `--format team` for the aggregate update.
+`make validation-next-action-save` wraps
+`scripts/validation-next-action.py` and writes a regenerated private
+`validation/private/NEXT_ACTION.md` handoff from the current dashboard so a
+restored session does not depend on stale PR/head or send-boundary notes.
 `make validation-weekly-review` writes a read-only private weekly review under
 `validation/private/`; it reports the validation gate, message-pack age, stale
 private artifacts, and pruning candidates, but does not delete files, send

@@ -15,6 +15,7 @@ VALIDATION_STATUS_MD ?= $(VALIDATION_DIR)/today-outreach-status.md
 VALIDATION_TEAM_UPDATE_MD ?= $(VALIDATION_DIR)/today-team-update.md
 VALIDATION_WEEKLY_REVIEW_JSON ?= $(VALIDATION_DIR)/today-weekly-review.json
 VALIDATION_WEEKLY_REVIEW_MD ?= $(VALIDATION_DIR)/today-weekly-review.md
+VALIDATION_NEXT_ACTION_MD ?= $(VALIDATION_DIR)/NEXT_ACTION.md
 VALIDATION_INTERVIEW_JSON ?= $(if $(INTERVIEW),$(INTERVIEW),$(VALIDATION_DIR)/customer-validation-interview-next.json)
 VALIDATION_RUN_DATE ?= $(if $(DATE),$(DATE),$(shell date +%F))
 DATE_ARG := $(if $(DATE),--date $(DATE),)
@@ -71,6 +72,7 @@ help:
 		'  make validation-dashboard     Run dashboard; rejects packs not dated today unless DATE=YYYY-MM-DD.' \
 		'  make validation-team-update  Print sanitized aggregate-only validation update; optional DATE=YYYY-MM-DD.' \
 		'  make validation-team-update-save Write sanitized aggregate-only update under validation/private/; optional DATE=YYYY-MM-DD.' \
+		'  make validation-next-action-save Write regenerated private NEXT_ACTION.md handoff; optional DATE=YYYY-MM-DD.' \
 		'  make validation-weekly-review Write read-only private weekly review report; optional DATE=YYYY-MM-DD.' \
 		'  make validation-prune-private Dry-run pruning of generated ignored private artifacts; optional DATE=YYYY-MM-DD, CONFIRM_PRUNE=1 after review.' \
 		'  make validation-resume        Run dashboard and print existing next draft when present; optional DATE=YYYY-MM-DD.' \
@@ -403,6 +405,17 @@ validation-team-update-save:
 	mv "$$tmp" "$(VALIDATION_TEAM_UPDATE_MD)"; \
 	trap - EXIT; \
 	printf 'Wrote sanitized aggregate-only team update to %s\n' '$(VALIDATION_TEAM_UPDATE_MD)'
+
+.PHONY: validation-next-action-save
+validation-next-action-save:
+	@python3 scripts/validation-next-action.py \
+		--log $(VALIDATION_LOG) \
+		--targets $(VALIDATION_TARGETS) \
+		--message-pack $(VALIDATION_MESSAGE_PACK_JSON) \
+		--date $(VALIDATION_RUN_DATE) \
+		--out $(VALIDATION_NEXT_ACTION_MD) \
+		> /dev/null
+	@printf 'Wrote regenerated private next-action handoff to %s\n' '$(VALIDATION_NEXT_ACTION_MD)'
 
 .PHONY: validation-weekly-review
 validation-weekly-review:

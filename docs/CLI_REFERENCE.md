@@ -630,6 +630,7 @@ python3 scripts/validation-sprint-dashboard.py \
 make validation-dashboard DATE=2026-05-11
 make validation-team-update DATE=2026-05-11
 make validation-team-update-save DATE=2026-05-11
+make validation-next-action-save DATE=2026-05-11
 make validation-weekly-review DATE=2026-05-11
 make validation-resume DATE=2026-05-11
 make goal-resume DATE=2026-05-11
@@ -674,6 +675,10 @@ or text. It reports gate-counted buyer evidence first; if the log is still the
 example seed, raw seed counts are labeled as ignored placeholders. Use
 `make validation-team-update-save DATE=YYYY-MM-DD` to write that aggregate-only
 update to `validation/private/today-team-update.md`.
+Use `make validation-next-action-save DATE=YYYY-MM-DD` to regenerate the
+ignored private `validation/private/NEXT_ACTION.md` operator handoff from the
+current dashboard, including the send boundary, current next target, and local
+git head, without touching tracker/log state.
 Make confirmation variables are exact write guards: only `CONFIRM_SENT=1`,
 `CONFIRM_TARGET=1`, and `CONFIRM_LOG=1` can write. Values such as `0`, `false`,
 `yes`, or `1 0` fail closed.
@@ -816,6 +821,7 @@ python3 scripts/customer-validation-log-add.py --help
 python3 scripts/customer-validation-scorecard.py --help
 python3 scripts/validation-targets-scorecard.py --help
 python3 scripts/validation-sprint-dashboard.py --help
+python3 scripts/validation-next-action.py --help
 python3 scripts/validation-weekly-review.py --help
 python3 scripts/validation-prune-private.py --help
 python3 scripts/check-release-safety.py --help

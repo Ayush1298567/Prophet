@@ -54,6 +54,7 @@ git status --short --branch --untracked-files=all
 make validation-dashboard
 make validation-team-update
 make validation-team-update-save
+make validation-next-action-save
 make validation-weekly-review
 make validation-prune-private
 make validation-status
@@ -70,6 +71,9 @@ make validation-draft-copy TARGET=target-dib-platform-004
 `make validation-team-update-save DATE=YYYY-MM-DD` writes the aggregate-only
 local team handoff to `validation/private/today-team-update.md` without target
 labels, commands, message bodies, or private validation paths.
+`make validation-next-action-save DATE=YYYY-MM-DD` regenerates the ignored
+private `validation/private/NEXT_ACTION.md` handoff from the current dashboard
+so restored sessions do not carry stale PR/head or send-boundary state.
 `make validation-weekly-review DATE=YYYY-MM-DD` writes a read-only private
 weekly report for stale artifact/pruning review without deleting files or
 mutating trackers/logs. `make validation-prune-private DATE=YYYY-MM-DD` reads
@@ -84,6 +88,7 @@ make validation-pack DATE=YYYY-MM-DD
 make validation-dashboard DATE=YYYY-MM-DD
 make validation-team-update DATE=YYYY-MM-DD
 make validation-team-update-save DATE=YYYY-MM-DD
+make validation-next-action-save DATE=YYYY-MM-DD
 make validation-weekly-review DATE=YYYY-MM-DD
 make validation-prune-private DATE=YYYY-MM-DD
 make validation-status DATE=YYYY-MM-DD

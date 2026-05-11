@@ -60,6 +60,8 @@ class MakeValidationTargetsTests(unittest.TestCase):
         self.assertIn("make validation-team-update", completed.stdout)
         self.assertIn("make validation-team-update-save", completed.stdout)
         self.assertIn("sanitized aggregate-only validation update", completed.stdout)
+        self.assertIn("make validation-next-action-save", completed.stdout)
+        self.assertIn("regenerated private NEXT_ACTION.md handoff", completed.stdout)
         self.assertIn("make validation-weekly-review", completed.stdout)
         self.assertIn("read-only private weekly review report", completed.stdout)
         self.assertIn("make validation-prune-private", completed.stdout)
