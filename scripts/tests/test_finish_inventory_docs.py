@@ -103,13 +103,13 @@ class FinishInventoryDocsTests(unittest.TestCase):
         for text in (audit, inventory):
             with self.subTest(document=("audit" if text == audit else "inventory")):
                 self.assertIn("check-release-safety.py --tracked --paths-only", text)
-                self.assertIn("342 tracked", text)
+                self.assertIn("344 tracked", text)
                 self.assertIn("policy.lint --policy policy/prophet-pilot-policy.json", text)
                 self.assertIn("check-default-output-safety.py", text)
                 self.assertIn("117 URLs", text)
                 self.assertIn("1 OSINT provenance manifest", text)
                 self.assertIn("check-doc-links.py", text)
-                self.assertIn("85 Markdown", text)
+                self.assertIn("86 Markdown", text)
 
     def test_inventory_lists_copy_only_private_send_artifact(self) -> None:
         inventory = FINISH_INVENTORY.read_text(encoding="utf-8")
@@ -157,6 +157,7 @@ class FinishInventoryDocsTests(unittest.TestCase):
             "scripts/tests/test_finish_inventory_docs.py",
             "scripts/tests/test_goal_recovery_docs.py",
             "scripts/tests/test_product_validation_plan_docs.py",
+            "scripts/tests/test_exposure_classification_guide_docs.py",
         ]
 
         for test_path in required_tests:

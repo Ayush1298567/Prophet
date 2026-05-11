@@ -23,6 +23,10 @@ The importer also accepts the earlier fixture delimiter style
 `name@version_family:package_type|name@version_family:package_type` for
 backward compatibility with checked-in tests.
 
+Choose `exposure_class` values using
+`docs/EXPOSURE_CLASSIFICATION_GUIDE.md`. The class should describe a safe
+product-family or workflow-family decision, not a targetable customer system.
+
 ## Import Command
 
 ```bash

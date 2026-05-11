@@ -40,7 +40,9 @@ Files:
 - `docs/OUTREACH_PLAYBOOK.md`
 - `docs/VALIDATION_DAILY_BRIEF.md`
 - `docs/VALIDATION_SPRINT_CHECKLIST.md`
+- `docs/EXPOSURE_CLASSIFICATION_GUIDE.md`
 - `scripts/tests/test_product_validation_plan_docs.py`
+- `scripts/tests/test_exposure_classification_guide_docs.py`
 
 Review focus:
 
@@ -449,7 +451,7 @@ sanitized examples.
 
 Latest verification run for this inventory:
 
-- `python3 -m unittest discover -s scripts/tests -v`: 345 tests passed after
+- `python3 -m unittest discover -s scripts/tests -v`: 348 tests passed after
   the send-boundary dashboard, copy-only resume boundary, CLI-reference,
   validation-resume, goal-resume, validation-team-update, validation-weekly-review,
   weekly-review `review_date`, weekly-review target-backed build-gate coverage,
@@ -465,8 +467,9 @@ Latest verification run for this inventory:
   release-checklist validation-gate and pre-commit hook guard,
   overnight-loop validation-gate guard, overnight historical-doc guard,
   default-output URL safety, raw-to-sanitized boundary
-  docs, customer-safe fixture-generation docs, source-governance policy review,
-  and OSINT provenance manifest check updates, including goal-recovery docs,
+  docs, customer-safe fixture-generation docs, exposure-classification guide
+  docs, source-governance policy review, and OSINT provenance manifest check
+  updates, including goal-recovery docs,
   policy-bound console button enablement coverage,
   coverage, current-resume-source coverage, validation operator recovery docs
   coverage, weekly-review guardrail/report coverage, operational TODO
@@ -664,7 +667,7 @@ Latest verification run for this inventory:
 - `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py --diff`:
   passed over 0 paths in the clean committed worktree.
 - `PYTHONPATH=.:cyber-side:world-side python3 scripts/check-release-safety.py --tracked --paths-only`:
-  passed over 342 tracked paths, including release-bound policy-hash coverage
+  passed over 344 tracked paths, including release-bound policy-hash coverage
   checks.
 - `python3 -m policy.lint --policy policy/prophet-pilot-policy.json`:
   passed and reported policy ID `prophet-pilot-fixture-localhost-v0.1` with
@@ -673,7 +676,7 @@ Latest verification run for this inventory:
   `raw_scraper_text_allowed` all false.
 - `python3 scripts/check-default-output-safety.py --policy policy/prophet-pilot-policy.json --format text`:
   passed over 7 policy-listed default outputs and 117 URLs.
-- `python3 scripts/check-doc-links.py`: passed over 85 Markdown source files
+- `python3 scripts/check-doc-links.py`: passed over 86 Markdown source files
   with external URLs and ignored private/runtime output skipped.
 - Explicit untracked file checks: no-index whitespace checks passed over 0
   untracked non-ignored files, and release hygiene reported no untracked

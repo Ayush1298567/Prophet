@@ -275,7 +275,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
 - [ ] Add package ecosystem mapping.
 - [ ] Add SBOM component deduplication.
 - [ ] Add customer asset grouping by business function.
-- [ ] Add exposure classification guide.
+- [x] Add exposure classification guide.
 - [ ] Add "unknown owner" safe fallback behavior.
 - [ ] Add import preview before writing runtime outputs.
 - [x] Add import manifest with raw input hash and sanitized output hash.

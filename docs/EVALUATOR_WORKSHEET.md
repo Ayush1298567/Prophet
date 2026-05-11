@@ -34,6 +34,9 @@ or informal claims.
 
 ## Buyer Fit
 
+Use `docs/EXPOSURE_CLASSIFICATION_GUIDE.md` if the evaluator needs help turning
+a buyer workflow into a safe exposure-class label.
+
 | Question | Notes |
 |---|---|
 | Which exposure class would the customer want modeled first? | |

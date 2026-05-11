@@ -47,6 +47,9 @@ for a defense-tech customer.
   kinds, validation mode, and evidence retention.
 - Evidence retention and access-control requirements.
 
+Use `docs/EXPOSURE_CLASSIFICATION_GUIDE.md` to choose exposure-class labels
+that are useful for prioritization without naming live systems.
+
 For the customer-safe post-demo package and success criteria template, use
 `docs/BUYER_FOLLOW_UP_PACKAGE.md`.
 
