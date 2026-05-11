@@ -18,6 +18,21 @@ The testable wedge is:
 > prioritization: what to harden first, why now, what sources support it, and
 > what reviewable SOC/platform handoff comes next.
 
+## Market-Informed Hypothesis
+
+The market already has strong systems for vulnerability discovery, exposure
+management, exploitability scoring, SIEM analytics, and ticket routing. The
+buyer pain to validate is narrower:
+
+> "Our tools tell us many things are risky. Under KEV/BOD/CMMC/customer
+> pressure, we still need to produce a trusted evidence packet explaining why
+> one exposure class moves first and what SOC/platform teams should review."
+
+This hypothesis is only worth building around if buyers say the evidence
+workflow is painful despite their current scanner, exposure-management, SIEM,
+SBOM, and ticketing stack. If an incumbent product already gives them a
+trusted, audit-ready "why this first" package, Prophet should narrow or pivot.
+
 ## Validation Goal
 
 Within 30-45 days, prove or disprove that DIB/federal-adjacent security teams
@@ -29,6 +44,8 @@ Do not count compliments. Count behavior:
 - They give time after seeing the demo.
 - They describe a recent painful prioritization event.
 - They show or describe their current workflow.
+- Their `workflow_pain_theme` clusters around the same narrow pain, not scattered
+  curiosity.
 - They offer sample asset/SBOM or process artifacts.
 - They introduce another stakeholder.
 - They agree to a paid or sponsored pilot.
@@ -40,6 +57,8 @@ Do not count compliments. Count behavior:
 - 15 qualified discovery conversations are completed.
 - At least 8 score `high_pain`.
 - At least 5 describe the same narrow workflow pain.
+- The scorecard's `repeated_workflow_pain_count` is at least 5 for one
+  controlled `workflow_pain_theme`.
 - At least 3 agree to a design-partner pilot discussion.
 - At least 1 agrees to pay, sponsor, or procurement-sponsor a pilot.
 - The repeated pain is about evidence, prioritization, or leadership/SOC handoff,
@@ -48,6 +67,8 @@ Do not count compliments. Count behavior:
 ### Pause Or Pivot If
 
 - Buyers say their scanner/exposure-management platform already solves it.
+- Buyers can show an existing report that leadership, auditors, SOC, and
+  platform owners already trust for the same decision.
 - They like the demo but cannot name a recent painful incident.
 - They want live exploitation or autonomous remediation as the core value.
 - They refuse to provide even sanitized workflow artifacts.
@@ -105,6 +126,8 @@ Exit gate:
 - Ask about recent prioritization pain before showing Prophet.
 - Do not pitch until the buyer explains current workflow.
 - Score each call with `scripts/customer-validation-scorecard.py`.
+- Assign one controlled `workflow_pain_theme` per qualified call so repeated
+  pain can be measured.
 - Revise pitch based on buyer language.
 
 Exit gate:
@@ -118,6 +141,8 @@ Exit gate:
 - Run demo only for qualified buyers.
 - Show the 3-minute smoke and evidence bundle.
 - Ask what would need to be true for a paid pilot.
+- Send `docs/BUYER_FOLLOW_UP_PACKAGE.md` only after the buyer confirms a real
+  workflow and stakeholder.
 - Offer a narrow design partner pilot.
 - Capture objections.
 
@@ -218,8 +243,27 @@ python3 scripts/validation-targets-scorecard.py --targets path/to/private-target
 Use the combined daily dashboard with:
 
 ```bash
-python3 scripts/validation-sprint-dashboard.py
+make validation-dashboard DATE=YYYY-MM-DD
 ```
+
+When a private message pack exists, the dashboard includes
+`outreach_execution` so the daily view shows pending send/update count,
+dry-run verified/failed/skipped counts, and stale-command attention items.
+The customer scorecard also includes `gaps_to_verdicts`, which makes the
+remaining counts to `pilot_pull_detected` and `build_next_slice` explicit.
+When `example_seed_log` is true, seed/example counts are not treated as
+effective validation evidence and do not reduce those gaps.
+The dashboard also reports `target_backed_validation`; production build scope
+stays closed unless the interviews counted toward `build_next_slice` match
+anonymized target labels whose tracker status is `call_booked` or `completed`
+and whose segment/persona metadata matches the tracker.
+The explicit `--allow-untracked-interview` bypass can preserve out-of-band
+learning, but it cannot open the production build gate by itself.
+Use `REPLACE_EXAMPLE_SEED=1` with the first real sanitized private interview to
+remove the initialized example seed instead of manually editing the log. That
+replacement must use a booked anonymized target through the Make wrapper or
+`--require-target-status call_booked`; do not use the raw
+`--allow-untracked-interview` bypass for seed replacement.
 
 The scorecard returns a verdict:
 
@@ -229,10 +273,16 @@ The scorecard returns a verdict:
 - `pilot_pull_detected`
 - `build_next_slice`
 
+Only `build_next_slice` opens the production build gate.
+`pilot_pull_detected` is a design-partner conversion signal, not permission to
+add production platform scope.
+The dashboard requires both the customer scorecard and `target_backed_validation`
+to reach `build_next_slice` before `allowed_to_build_next_slice` becomes true.
+
 ## Next Build Only After Pull
 
-If validation passes, build the smallest production slice required by the
-design partner:
+If the private validation dashboard reaches `build_next_slice`, build the
+smallest production slice required by the committed design partner:
 
 1. Durable evidence store.
 2. Tenant/RBAC API around evidence and policy.

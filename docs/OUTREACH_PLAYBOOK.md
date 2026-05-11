@@ -145,6 +145,130 @@ customer telemetry.
 Does that match what would be useful, or did I misunderstand the pain?
 ```
 
+For qualified buyers, send the structured follow-up in
+`docs/BUYER_FOLLOW_UP_PACKAGE.md`. Do not send the package as a cold deck or to
+buyers who asked for live/offensive capability.
+
+To generate daily first-touch, follow-up, backfill, and referral drafts from
+the private tracker, render the outreach block JSON first, then render the
+operator-facing message pack:
+
+```bash
+python3 scripts/validation-outreach-block.py --date YYYY-MM-DD --format json \
+  --out validation/private/today-outreach-block.json
+python3 scripts/validation-outreach-block.py --date YYYY-MM-DD --format markdown \
+  --out validation/private/today-outreach-block.md
+python3 scripts/validation-message-pack.py \
+  --block validation/private/today-outreach-block.json \
+  --require-date YYYY-MM-DD \
+  --format json \
+  --out validation/private/today-message-pack.json
+python3 scripts/validation-message-pack.py \
+  --block validation/private/today-outreach-block.json \
+  --require-date YYYY-MM-DD \
+  --format markdown \
+  --out validation/private/today-message-pack.md
+```
+
+The generated drafts are private operator aids. They contain target labels and
+message bodies only, not real names, emails, URLs, hostnames, IPs, screenshots,
+or customer artifacts. Each draft includes a dry-run tracker update command for
+audit detail and safer Make commands for normal execution.
+Generated tracker commands include `--require-current-status` guards so stale
+commands fail instead of moving an already-advanced target backward.
+Run `make validation-apply-draft TARGET=... DATE=YYYY-MM-DD` before sending or
+writing; it dry-runs the exact generated update and rejects stale packs. Add
+`CONFIRM_SENT=1` only after a confirmed send. The Make wrapper also requires a
+matching copy-only send artifact from `make validation-send-copy` or
+`make validation-send-copy-batch` before it writes the tracker.
+The Make wrapper requires exactly `CONFIRM_SENT=1`; any other non-empty
+confirmation value fails closed.
+Drafts are source-aware: `warm_intro_needed` targets ask for an intro, while
+`cold_outreach` targets use direct discovery copy.
+For normal send-by-send execution, run
+`make validation-next-draft DATE=YYYY-MM-DD`; it renders the first pending draft
+whose generated dry-run tracker command still verifies, rejects date-mismatched
+packs, and writes `validation/private/today-next-draft.md`.
+When you want a copy-only artifact for the sending channel, run
+`make validation-send-copy DATE=YYYY-MM-DD`; it writes
+`validation/private/today-send-copy.txt` without target labels, tracker
+commands, or status metadata.
+When sending from the rendered draft, replace only the recipient name and
+channel-specific greeting. Do not add private customer details or new claims.
+To render a specific draft, use
+`make validation-draft TARGET=target-dib-platform-004 DATE=YYYY-MM-DD`; it
+rejects packs that do not match the requested outreach date.
+
+To check which drafted asks are still pending after outreach, run:
+
+```bash
+make validation-status DATE=YYYY-MM-DD
+```
+
+Manual equivalent:
+
+```bash
+python3 scripts/validation-outreach-status.py \
+  --verify-dry-run-commands \
+  --require-date YYYY-MM-DD \
+  --format json \
+  --out validation/private/today-outreach-status.json
+python3 scripts/validation-outreach-status.py \
+  --verify-dry-run-commands \
+  --require-date YYYY-MM-DD \
+  --format markdown \
+  --out validation/private/today-outreach-status.md
+```
+
+The verifier checks pending generated tracker commands against the current
+private tracker without writing and rejects date-mismatched packs when
+`--require-date` is supplied. Treat `needs_attention` as a stale-command
+warning and regenerate the pack or inspect the target before sending. In the
+dashboard, also treat nonzero `dry_run_failed_count` as a stop signal before
+sending more drafts from that pack.
+
+When someone replies, triage the reply before touching the tracker:
+
+- `book_call`: They describe relevant workflow pain, ask for a discovery call,
+  or offer to route you to the workflow owner. Use `call_booked`.
+- `disqualify`: They ask for live testing, offensive validation, exploit
+  capability, raw target review, production pushes, or they are clearly outside
+  the ICP. Use `disqualified`.
+- `keep_pending`: They give a noncommittal answer, ask for a deck without a
+  workflow, or say to follow up later. Keep the target in its current sent or
+  follow-up status and update only the follow-up plan when a real date exists.
+- `manual_review`: The reply contains private customer details, unclear scope,
+  procurement/legal conditions, or a security-review ask. Do not paste the
+  reply into the tracker; summarize only the safe action after review.
+
+Use the no-write helper to turn the sanitized classification into the next safe
+command:
+
+```bash
+make validation-reply-triage TARGET=target-dib-platform-001 REPLY=book_call DATE=YYYY-MM-DD
+
+python3 scripts/validation-reply-triage.py \
+  --target-label target-dib-platform-001 \
+  --classification book_call \
+  --date YYYY-MM-DD \
+  --format markdown
+```
+
+Update only the anonymized target tracker:
+
+- `call_booked`: run
+  `make validation-book-call TARGET=target-dib-platform-001 DATE=YYYY-MM-DD`.
+  Add `CONFIRM_TARGET=1` only after the dry-run summary is correct.
+- `disqualified`: run
+  `make validation-disqualify-target TARGET=target-dib-platform-001 DATE=YYYY-MM-DD`.
+  Add `CONFIRM_TARGET=1` only after confirming the disqualification is safe and
+  sanitized.
+- `completed`: after the sanitized interview log is updated, run
+  `make validation-complete-call TARGET=target-dib-platform-001 DATE=YYYY-MM-DD`.
+  Add `CONFIRM_TARGET=1` only after the dry-run summary is correct.
+- Never paste reply text, names, emails, phone numbers, URLs, hostnames, IPs,
+  screenshots, or customer artifacts into the tracker.
+
 ## Referral Ask
 
 ```text
@@ -162,6 +286,9 @@ For 30 days:
 
 - 5 targeted asks per day.
 - 2 follow-ups per day.
+- If fewer than 2 follow-ups are due, use the outreach block's
+  `Follow-Up Gap Backfill` section as extra first-touch asks and set real
+  follow-up dates after sending.
 - 3 discovery calls per week minimum.
 - 1 design partner ask per qualified high-pain call.
 

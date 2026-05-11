@@ -41,6 +41,10 @@ Push if answers are vague:
 - "Which one is the source of truth?"
 - "Where does scanner output stop being enough?"
 - "Do you already use EPSS, KEV, threat intel, or exposure-management scoring?"
+- "When CISA KEV, BOD, CMMC, or a government customer creates urgency, what
+  evidence must be attached to the decision?"
+- "Which part is still manual: asset/SBOM context, source justification,
+  leadership briefing, SOC handoff, ticket writing, or audit trail?"
 - "What do you trust?"
 - "What do you ignore?"
 - "What gets copied into tickets or leadership briefings manually?"
@@ -140,10 +144,16 @@ Capture:
 - Anonymized account label.
 - Segment.
 - Persona.
+- Qualified/not-qualified call flag.
 - Current workflow.
 - Recent painful event.
 - Existing tools.
+- Status quo gap.
 - Desired output.
+- Controlled `workflow_pain_theme`.
+- Six score fields: `pain_score`, `urgency_score`,
+  `status_quo_weakness_score`, `buyer_access_score`,
+  `data_feasibility_score`, and `pilot_pull_score`.
 - Budget signal.
 - Pilot signal.
 - Objections.
