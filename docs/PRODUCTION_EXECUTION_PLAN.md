@@ -99,8 +99,9 @@ The machine-readable source of truth is
 ### Week 1: Release And Architecture Lock
 
 - Run the product validation sprint in `docs/PRODUCT_VALIDATION_PLAN.md`.
-- Undraft or supersede PR #5.
-- Merge the pilot package and tag the fixture/hash set.
+- Keep PR #5 ready for internal buyer-pilot review.
+- Merge the pilot package and tag the fixture/hash set only after the
+  historical secret-history owner decision and final release checks are clear.
 - Run fresh-clone smoke on macOS and Linux.
 - Publish release notes with generated artifact hashes.
 - Keep `scripts/production-readiness-scorecard.py` green in CI.
