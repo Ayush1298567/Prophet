@@ -14,8 +14,9 @@ It does not tag, deploy, or mark the product complete.
 - Critical open readiness items: `29`.
 - Outreach status: 8 pending send/update items, 0 attention errors.
 - GitHub PR `#5` exists for branch `prophet-pilot-consolidation-2026-05-05`
-  and the finish-pass commits have been pushed. PR checks are green on the
-  pushed head; recheck before review, undraft, or merge.
+  and the finish-pass commits have been pushed. PR `#5` is ready for internal
+  buyer-pilot review, checks are green on the pushed head, and merge/release
+  decisions still require a fresh check.
 
 Do not create production platform commits from this inventory until real
 validation reaches `build_next_slice`.
@@ -394,8 +395,8 @@ Review focus:
   `ubuntu-latest` and now names the Linux fresh-clone pilot smoke steps. Because
   documentation commits change the PR head, rely on the PR verification notes
   for the latest exact-head run and rerun true macOS fresh-clone smoke before
-  review, undraft, or merge. PR checks are green on the pushed head, but must be
-  rechecked before review, undraft, or merge.
+  merge or release decisions. PR checks are green on the pushed head, but must be
+  rechecked before merge or release decisions.
 - `make worktree-smoke` should remain a local pre-commit release-hygiene check:
   it may clone HEAD to `/tmp`, overlay non-ignored dirty files, and run the safe
   root smoke, but must not copy `validation/private/`, stage, commit, push, tag,
@@ -804,11 +805,11 @@ runtime output contents into the PR.
 - Release tag remains blocked until the historical secret-history finding has
   an owner decision. True GitHub fresh-clone smoke passed on macOS; because
   documentation commits change the PR head, rely on the PR verification notes
-  for the latest exact-head run and rerun it before review, undraft, or merge.
+  for the latest exact-head run and rerun it before merge or release decisions.
   Linux fresh-clone smoke is covered by the Ubuntu CI pilot smoke steps.
 - PR `#5` has the finish-pass commits pushed and checks are green on the
-  current pushed head; verify `gh pr checks 5` again before review, undraft, or
-  merge.
+  current pushed head, and is ready for internal buyer-pilot review; verify
+  `gh pr checks 5` again before merge or release decisions.
 ```
 
 Before any commit or PR, rerun the relevant console acceptance, pilot smoke,

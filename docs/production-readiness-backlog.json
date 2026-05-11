@@ -1,6 +1,6 @@
 {
   "schema_version": "prophet_production_readiness_backlog.v0.1",
-  "updated_at": "2026-05-10",
+  "updated_at": "2026-05-11",
   "target_definition": "Controlled production means Prophet can run as a secure, deployable, policy-bound defense evidence product with approved customer data, tenant isolation, durable storage, operator identity, real integration handoffs, observability, and a security review packet.",
   "status_scale": {
     "done": "Implemented, documented, tested, and backed by repo evidence.",
@@ -35,14 +35,14 @@
         },
         {
           "id": "M0-02",
-          "title": "Undraft, merge, and tag the buyer pilot branch",
+          "title": "Merge and tag the buyer pilot branch",
           "status": "blocked",
           "priority": "P0",
           "owner": "founder",
           "target_version": "v0.3",
           "risk_tags": ["release", "buyer"],
           "acceptance_gates": ["A tag such as pilot-v0.1 points to the reviewed commit and links to release notes."],
-          "blocker": "Public pilot tag is blocked until the historical LOG4SHELL_INSTRUCTIONS.md secret-history finding has an owner decision and PR #5 is intentionally undrafted or merged."
+          "blocker": "PR #5 is ready for internal buyer-pilot review, but public pilot merge/tag remains blocked until the historical LOG4SHELL_INSTRUCTIONS.md secret-history finding has an owner decision."
         },
         {
           "id": "M0-03",

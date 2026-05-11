@@ -167,7 +167,7 @@ After the default smoke passes, the main reviewer artifacts are:
   `./scripts/check-local-env.sh` and `./scripts/run-pilot-demo-smoke.sh`,
   verifying 26 pilot hashes. Because documentation commits change the PR head,
   rely on the PR verification notes for the latest exact-head run and rerun this
-  check before review, undraft, or merge.
+  check before merge or release decisions.
 - The GitHub Actions `python` job runs on `ubuntu-latest` and now names the
   `Linux fresh-clone pilot smoke preflight` plus
   `Linux fresh-clone pilot smoke` steps, covering the Linux fresh-clone smoke
@@ -186,8 +186,8 @@ After the default smoke passes, the main reviewer artifacts are:
 
 - No git release tag has been created for this fixture/hash set; public tagging
   is blocked until the historical secret-history finding has an owner decision.
-- PR `#5` remains a draft; checks are green on the pushed commit set, but
-  recheck before review, undraft, or merge.
+- PR `#5` is ready for internal buyer-pilot review; checks are green on the
+  pushed commit set, but recheck before merge or release decisions.
 - Customer validation remains `insufficient_data`; production platform build
   remains gated.
 - Production readiness remains below controlled-production requirements.
