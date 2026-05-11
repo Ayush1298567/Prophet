@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 REVIEW = ROOT / "docs" / "SECRET_HISTORY_REVIEW.md"
 SCRIPT = ROOT / "scripts" / "check-secrets-archaeology.sh"
+RELEASE_TAG_PREFLIGHT = ROOT / "scripts" / "check-release-tag-preflight.sh"
 OPERATIONAL_TODO = ROOT / "docs" / "PROPHET_TODO.md"
 MASTER_TODO = ROOT / "docs" / "PROPHET_MASTER_TODO.md"
 
@@ -74,6 +75,20 @@ class SecretHistoryReviewDocsTests(unittest.TestCase):
                 self.assertIn("public release review", text)
                 self.assertIn("blocked until the owner decision", text)
                 self.assertIn("docs/SECRET_HISTORY_REVIEW.md", text)
+
+    def test_release_tag_preflight_requires_full_history_before_build_gate(self) -> None:
+        script = RELEASE_TAG_PREFLIGHT.read_text(encoding="utf-8")
+
+        full_history_check = "./scripts/check-secrets-archaeology.sh"
+        build_gate_check = "scripts/validation-sprint-dashboard.py"
+
+        self.assertIn(full_history_check, script)
+        self.assertIn(build_gate_check, script)
+        self.assertNotIn("check-secrets-archaeology.sh --current-only", script)
+        self.assertLess(script.index(full_history_check), script.index(build_gate_check))
+        self.assertIn("full secrets archaeology", script)
+        self.assertIn("build_next_slice", script)
+        self.assertIn("does not stage, commit, push, tag", script)
 
 
 if __name__ == "__main__":
