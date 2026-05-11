@@ -61,6 +61,7 @@ class SoftwareSupplyChainPacketDocsTests(unittest.TestCase):
         self.assertIn("make supply-chain-sbom DATE=YYYY-MM-DD", todo)
         self.assertIn("[x] Add software supply-chain risk register.", master_todo)
         self.assertIn("[x] Add SBOM for Prophet itself.", master_todo)
+        self.assertIn("[x] Add dependency pinning and update cadence.", master_todo)
 
 
 if __name__ == "__main__":

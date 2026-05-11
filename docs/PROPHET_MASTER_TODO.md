@@ -367,7 +367,7 @@ non-live unless a future customer policy explicitly authorizes a narrower mode.
   password-like content that needs cleanup, rotation, or explicit exception;
   public release review stays blocked until the owner decision is recorded.
   See `docs/SECRET_HISTORY_REVIEW.md`.
-- [ ] Add dependency pinning and update cadence.
+- [x] Add dependency pinning and update cadence.
 - [x] Add software supply-chain risk register.
 - [x] Add SBOM for Prophet itself.
 - [ ] Add SLSA-style provenance target for release artifacts.
