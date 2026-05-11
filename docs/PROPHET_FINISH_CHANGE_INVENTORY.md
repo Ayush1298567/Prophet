@@ -13,19 +13,19 @@ It does not tag, deploy, or mark the product complete.
 - Production readiness: `37.8%`.
 - Critical open readiness items: `24`.
 - Outreach status: 8 pending send/update items, 0 attention errors.
-- Current verified `main` head is
-  `eaafaacd8d27edca35cf89491a7116a4a848471b`
-  (`eaafaac Document send batch readiness handoff`); the GitHub
-  `main` CI run for that head completed successfully at
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25690746584>.
-  The implementation checkpoint
+- Moving-head verification is intentionally not pinned in this committed
+  inventory because the audit commit changes HEAD. Run `git rev-parse HEAD`,
+  `git status --short --branch --untracked-files=all`, `gh run list --repo
+  Ayush1298567/Prophet --branch main --limit 1`, and refresh
+  `validation/private/WORKING_PRODUCT_HANDOFF.md` for the current head. The
+  implementation checkpoint
   `6e7ac8592dbcba868e9cbab6389ed2cb07c13837`
   (`6e7ac85 Add working product handoff generator`) remains the historical
   working-product implementation baseline. Use `git status`, GitHub `main` CI,
   and the ignored private `validation/private/WORKING_PRODUCT_HANDOFF.md` for
-  the moving local head. Product or workflow commits after `eaafaac` must rerun
-  GitHub `main` CI and the relevant local handoff gates before being treated as
-  current.
+  the moving local head. Product or workflow commits after this inventory must
+  rerun GitHub `main` CI and the relevant local handoff gates before being
+  treated as current.
 
 Do not create production platform commits from this inventory until real
 validation reaches `build_next_slice`.
@@ -862,15 +862,13 @@ Latest verification run for this inventory:
   release-tag-preflight DATE=YYYY-MM-DD` failing closed on the two known
   release blockers after hygiene, and does not open production platform scope
   while validation remains `insufficient_data`.
-- Current verified `main` head:
-  `eaafaacd8d27edca35cf89491a7116a4a848471b`
-  (`eaafaac Document send batch readiness handoff`). GitHub `main`
-  CI completed successfully at
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25690746584>. This
-  head documents the full send-batch readiness handoff in root operator docs,
-  keeps production platform scope closed, and passed the scripts suite, full
-  pilot-ready gate, running-console live check, and explicit release-safety scan
-  over regenerated ignored private handoffs.
+- Moving-head verification source: use the latest `git rev-parse HEAD`,
+  `git status --short --branch --untracked-files=all`, GitHub `main` CI,
+  `make pilot-ready-check-full DATE=2026-05-11`,
+  `PROPHET_CONTROL_PORT=8891 PROPHET_CONSOLE_PORT=5291 make
+  console-live-check`, and the ignored private
+  `validation/private/WORKING_PRODUCT_HANDOFF.md`. Do not treat a hard-coded
+  moving-head hash in committed docs as current after another commit lands.
 
 ## PR Handoff Draft
 
@@ -928,16 +926,15 @@ runtime output contents into the PR.
   GitHub `main` CI, `python3 -m unittest discover -s scripts/tests -v`, `make
   release-hygiene`, `make pilot-ready-check-full DATE=2026-05-11`, `make
   supply-chain-sbom DATE=2026-05-11`, and `make supply-chain-sbom-check
-  DATE=2026-05-11`; implementation checkpoint `6e7ac85` passed
+  DATE=2026-05-11`; and implementation checkpoint `6e7ac85` passed
   GitHub `main` CI, `python3 -m unittest discover -s scripts/tests -v`, `make
   release-hygiene`, `PROPHET_CONTROL_PORT=8891 PROPHET_CONSOLE_PORT=5291 make
   console-live-check`, `make validation-working-product-handoff-save
   DATE=2026-05-11`, and `make validation-pre-send-check
-  TARGET=target-dib-platform-001 DATE=2026-05-11`; and current verified head
-  `eaafaac` passed GitHub `main` CI, `python3 -m unittest discover -s
-  scripts/tests -v`, `make pilot-ready-check-full DATE=2026-05-11`, and
-  `PROPHET_CONTROL_PORT=8891 PROPHET_CONSOLE_PORT=5291 make
-  console-live-check`.
+  TARGET=target-dib-platform-001 DATE=2026-05-11`. For the moving current head,
+  rerun GitHub `main` CI, `python3 -m unittest discover -s scripts/tests -v`,
+  `make pilot-ready-check-full DATE=2026-05-11`, and
+  `PROPHET_CONTROL_PORT=8891 PROPHET_CONSOLE_PORT=5291 make console-live-check`.
 - `python3 -m unittest discover -s scripts/tests -v` passed with 416 tests.
 - `make release-hygiene` passed.
 - `make console-live-check` passed against the running local demo.
@@ -971,13 +968,11 @@ runtime output contents into the PR.
   documentation-only commits; rerun it before release tagging if a later release
   tag moves beyond this commit.
   Linux fresh-clone smoke is covered by the Ubuntu CI pilot smoke steps.
-- Current verified head is `eaafaac`, and the GitHub `main` CI run for that head
-  completed successfully:
-  <https://github.com/Ayush1298567/Prophet/actions/runs/25690746584>.
-  The implementation checkpoint remains `6e7ac85`; use `git status`, GitHub
-  `main` CI, and `validation/private/WORKING_PRODUCT_HANDOFF.md` for the moving
-  local head. Product or workflow commits after `eaafaac` must rerun GitHub
-  `main` CI and the relevant local handoff gates before being treated as current.
+- The implementation checkpoint remains `6e7ac85`; use `git rev-parse HEAD`,
+  `git status`, GitHub `main` CI, and
+  `validation/private/WORKING_PRODUCT_HANDOFF.md` for the moving local head.
+  Product or workflow commits after this inventory must rerun GitHub `main` CI
+  and the relevant local handoff gates before being treated as current.
 ```
 
 Before any new release tag or follow-up PR, rerun the relevant console
