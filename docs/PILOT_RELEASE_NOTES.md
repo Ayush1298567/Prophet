@@ -125,7 +125,7 @@ After the default smoke passes, the main reviewer artifacts are:
 - `make console-screenshot-check` passed against the generated screenshot
   manifest, verifying ignored runtime paths, PNG hashes, PNG dimensions, and
   the fixture-backed sharing boundary.
-- `python3 -m unittest discover -s scripts/tests -v` passed with 341 tests,
+- `python3 -m unittest discover -s scripts/tests -v` passed with 342 tests,
   including validation-gate, send-boundary, console-demo, documented
   pre-commit hook, and release-note guardrail coverage.
 - `make python-tests` passed on 2026-05-11 across the scripts, cyber-side,
@@ -165,6 +165,10 @@ After the default smoke passes, the main reviewer artifacts are:
   on 2026-05-11 with `./scripts/check-local-env.sh` and
   `./scripts/run-pilot-demo-smoke.sh`, verifying 26 pilot hashes.
   Rerun this check before review, undraft, or merge if another commit is pushed.
+- The GitHub Actions `python` job runs on `ubuntu-latest` and now names the
+  `Linux fresh-clone pilot smoke preflight` plus
+  `Linux fresh-clone pilot smoke` steps, covering the Linux fresh-clone smoke
+  gate for pushed PR heads.
 - `make worktree-smoke` is now the repeatable local wrapper for that pre-commit
   worktree-overlay check. It clones HEAD to `/tmp`, overlays non-ignored dirty
   files, excludes ignored private validation files, and runs the safe root
@@ -180,7 +184,6 @@ After the default smoke passes, the main reviewer artifacts are:
 - No git release tag has been created for this fixture/hash set.
 - PR `#5` remains a draft; checks are green on the pushed commit set, but
   recheck before review, undraft, or merge.
-- Linux fresh-clone smoke is still open.
 - Customer validation remains `insufficient_data`; production platform build
   remains gated.
 - Production readiness remains below controlled-production requirements.

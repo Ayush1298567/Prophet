@@ -10,8 +10,8 @@ It does not tag, deploy, or mark the product complete.
 
 - Customer validation verdict: `insufficient_data`.
 - Production build gate: closed.
-- Production readiness: `24.4%`.
-- Critical open readiness items: `30`.
+- Production readiness: `26.7%`.
+- Critical open readiness items: `29`.
 - Outreach status: 8 pending send/update items, 0 attention errors.
 - GitHub PR `#5` exists for branch `prophet-pilot-consolidation-2026-05-05`
   and the finish-pass commits have been pushed. PR checks are green on the
@@ -383,11 +383,12 @@ Review focus:
 - The pilot smoke should scan policy-listed default outputs for live-target URL
   fields while allowing public source citations, and should verify
   policy-listed OSINT snapshot provenance manifests.
-- Pilot release tag and Linux fresh-clone smoke remain open. A true GitHub
-  fresh clone of the PR branch at commit `1fc69be` passed on macOS with 26
-  verified pilot hashes. Rerun true fresh-clone smoke if another commit is
-  pushed. PR checks are green on the pushed head, but must be rechecked before
-  review, undraft, or merge.
+- Pilot release tag remains open. A true GitHub fresh clone of the PR branch at
+  commit `1fc69be` passed on macOS with 26 verified pilot hashes. The GitHub
+  Actions `python` job runs on `ubuntu-latest` and now names the Linux
+  fresh-clone pilot smoke steps. Rerun true macOS fresh-clone smoke if another
+  commit is pushed. PR checks are green on the pushed head, but must be
+  rechecked before review, undraft, or merge.
 - `make worktree-smoke` should remain a local pre-commit release-hygiene check:
   it may clone HEAD to `/tmp`, overlay non-ignored dirty files, and run the safe
   root smoke, but must not copy `validation/private/`, stage, commit, push, tag,
@@ -443,7 +444,7 @@ sanitized examples.
 
 Latest verification run for this inventory:
 
-- `python3 -m unittest discover -s scripts/tests -v`: 341 tests passed after
+- `python3 -m unittest discover -s scripts/tests -v`: 342 tests passed after
   the send-boundary dashboard, copy-only resume boundary, CLI-reference,
   validation-resume, goal-resume, validation-team-update, validation-weekly-review,
   weekly-review `review_date`, weekly-review target-backed build-gate coverage,
@@ -717,8 +718,8 @@ Latest verification run for this inventory:
   rewrites only that ignored private README without overwriting private
   tracker/log files; `make validation-init DATE=YYYY-MM-DD REFRESH_README=1`
   wraps the same safe refresh path.
-- `python3 scripts/production-readiness-scorecard.py`: readiness `24.4%`,
-  30 critical open items.
+- `python3 scripts/production-readiness-scorecard.py`: readiness `26.7%`,
+  29 critical open items.
 
 ## PR Handoff Draft
 
@@ -788,12 +789,13 @@ runtime output contents into the PR.
 ## Known Blockers
 
 - Real buyer demand remains unproven.
-- Production readiness remains 24.4% with 30 critical open items.
+- Production readiness remains 26.7% with 29 critical open items.
 - Full git-history secret archaeology remains unresolved; rotate/clean/except
   the historical `LOG4SHELL_INSTRUCTIONS.md` finding before public release.
-- Release tag and Linux fresh-clone smoke remain open. True GitHub fresh-clone
-  smoke passed on macOS for commit `1fc69be`; rerun it if another commit is
-  pushed before review, undraft, or merge.
+- Release tag remains open. True GitHub fresh-clone smoke passed on macOS for
+  commit `1fc69be`; rerun it if another commit is pushed before review,
+  undraft, or merge. Linux fresh-clone smoke is covered by the Ubuntu CI pilot
+  smoke steps.
 - PR `#5` has the finish-pass commits pushed and checks are green on the
   current pushed head; verify `gh pr checks 5` again before review, undraft, or
   merge.

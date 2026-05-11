@@ -79,7 +79,9 @@ jobs:
         run: PYTHONPATH=.:cyber-side:world-side python3 -m unittest discover -s evidence/tests -v
       - name: Integration export tests
         run: PYTHONPATH=.:cyber-side:world-side python3 -m unittest discover -s integrations/tests -v
-      - name: Pilot demo smoke
+      - name: Linux fresh-clone pilot smoke preflight
+        run: ./scripts/check-local-env.sh
+      - name: Linux fresh-clone pilot smoke
         run: ./scripts/run-pilot-demo-smoke.sh
       - name: Prediction portfolio fixture validation
         run: |

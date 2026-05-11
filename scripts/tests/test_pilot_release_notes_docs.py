@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RELEASE_NOTES = ROOT / "docs" / "PILOT_RELEASE_NOTES.md"
 CHANGELOG = ROOT / "CHANGELOG.md"
+CI_WORKFLOW = ROOT / ".github" / "workflows" / "ci.yml"
 
 
 class PilotReleaseNotesDocsTests(unittest.TestCase):
@@ -19,7 +20,7 @@ class PilotReleaseNotesDocsTests(unittest.TestCase):
         self.assertIn("http://127.0.0.1:8787/api/readiness", text)
         self.assertIn("make pilot-ready-check-full DATE=2026-05-11", text)
         self.assertIn("Playwright console smoke tests", text)
-        self.assertIn("341 tests", text)
+        self.assertIn("342 tests", text)
         self.assertIn("0 paths in the clean committed worktree", text)
         self.assertIn("0 untracked non-ignored files", text)
         self.assertIn("117 URLs", text)
@@ -31,6 +32,7 @@ class PilotReleaseNotesDocsTests(unittest.TestCase):
         self.assertIn("make console-live-check", text)
         self.assertIn("make console-screenshot-check", text)
         self.assertIn("0 non-ignored dirty files", text)
+        self.assertIn("Linux fresh-clone pilot smoke", text)
         self.assertIn("Customer validation remains `insufficient_data`", text)
         self.assertIn("production platform build", text)
         self.assertNotIn("331 tests", text)
@@ -60,6 +62,18 @@ class PilotReleaseNotesDocsTests(unittest.TestCase):
         self.assertIn("autonomous remediation", text)
         self.assertIn("rejects non-localhost UI hosts", text)
 
+    def test_linux_fresh_clone_smoke_is_ci_backed(self) -> None:
+        notes = RELEASE_NOTES.read_text(encoding="utf-8")
+        workflow = CI_WORKFLOW.read_text(encoding="utf-8")
+
+        self.assertIn("runs on `ubuntu-latest`", notes)
+        self.assertIn("Linux fresh-clone pilot smoke preflight", notes)
+        self.assertIn("Linux fresh-clone pilot smoke", notes)
+        self.assertIn("name: Linux fresh-clone pilot smoke preflight", workflow)
+        self.assertIn("run: ./scripts/check-local-env.sh", workflow)
+        self.assertIn("name: Linux fresh-clone pilot smoke", workflow)
+        self.assertIn("run: ./scripts/run-pilot-demo-smoke.sh", workflow)
+
     def test_changelog_names_current_gate_and_review_guardrails(self) -> None:
         text = CHANGELOG.read_text(encoding="utf-8")
 
@@ -70,7 +84,9 @@ class PilotReleaseNotesDocsTests(unittest.TestCase):
         self.assertIn("private-artifact boundary", text)
         self.assertIn("`insufficient_data`", text)
         self.assertIn("`build_next_slice`", text)
+        self.assertIn("Linux fresh-clone smoke is covered", text)
         self.assertNotIn("make pilot-ready-check-full DATE=2026-05-10", text)
+        self.assertNotIn("Linux fresh-clone smoke, and final commit split remain open", text)
 
 
 if __name__ == "__main__":

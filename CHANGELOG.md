@@ -41,7 +41,8 @@ Known blockers:
   `insufficient_data`.
 - Production platform work remains closed until real private validation reaches
   `build_next_slice`.
-- Release tag, Linux fresh-clone smoke, and final commit split remain open.
+- Release tag, historical secret-history decision, and real buyer validation
+  remain open. Linux fresh-clone smoke is covered by the Ubuntu CI pilot smoke.
 
 Verification references:
 

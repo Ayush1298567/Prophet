@@ -57,12 +57,13 @@
         {
           "id": "M0-04",
           "title": "Run fresh-clone smoke on Linux",
-          "status": "planned",
+          "status": "done",
           "priority": "P0",
           "owner": "founder",
           "target_version": "v0.3",
           "risk_tags": ["release", "buyer", "docs"],
-          "acceptance_gates": ["A clean Linux clone completes the 3-minute evaluator path with matching hashes."]
+          "acceptance_gates": ["A clean Linux clone completes the 3-minute evaluator path with matching hashes."],
+          "evidence_paths": [".github/workflows/ci.yml", "docs/PILOT_RELEASE_NOTES.md", "scripts/pilot-demo-smoke.sha256"]
         },
         {
           "id": "M0-05",
