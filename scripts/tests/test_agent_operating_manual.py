@@ -31,6 +31,8 @@ class AgentOperatingManualTests(unittest.TestCase):
         self.assertIn("today-outreach-status.json", text)
         self.assertIn("today-team-update.md", text)
         self.assertIn("NEXT_ACTION.md", text)
+        self.assertIn("worktree", text)
+        self.assertIn("GitHub CI", text)
         self.assertIn("aggregate-only", text)
         self.assertIn("outreach_execution.next_draft_exists", text)
         self.assertIn("outreach_execution.next_draft_state", text)
