@@ -357,6 +357,7 @@ Files:
 - `scripts/tests/test_finish_inventory_docs.py`
 - `scripts/tests/test_overnight_loop_prompt.py`
 - `scripts/tests/test_pilot_release_notes_docs.py`
+- `scripts/tests/test_production_readiness_scorecard.py`
 - `scripts/tests/test_pull_request_template_docs.py`
 - `scripts/tests/test_release_checklist_docs.py`
 - `scripts/tests/test_secret_history_review_docs.py`
@@ -365,6 +366,8 @@ Review focus:
 
 - Production implementation remains gated on `build_next_slice`.
 - Readiness status should reflect evidence-backed completed items only.
+- Public release review should stay blocked on the historical secret-history
+  owner decision until `docs/SECRET_HISTORY_REVIEW.md` has an approved path.
 - The release checklist should force the validation dashboard/build-gate
   decision before any internal alpha or customer-pilot build.
 - The PR template should force the same validation/build-gate decision, keep
@@ -445,7 +448,7 @@ sanitized examples.
 
 Latest verification run for this inventory:
 
-- `python3 -m unittest discover -s scripts/tests -v`: 343 tests passed after
+- `python3 -m unittest discover -s scripts/tests -v`: 344 tests passed after
   the send-boundary dashboard, copy-only resume boundary, CLI-reference,
   validation-resume, goal-resume, validation-team-update, validation-weekly-review,
   weekly-review `review_date`, weekly-review target-backed build-gate coverage,

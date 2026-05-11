@@ -60,6 +60,19 @@ class ProductionReadinessScorecardTests(unittest.TestCase):
 
         self.assertTrue(any("blocker is required" in error for error in errors))
 
+    def test_public_release_review_is_blocked_on_secret_history_decision(self) -> None:
+        backlog = scorecard.load_json(BACKLOG)
+        item = next(
+            work_item
+            for milestone in backlog["milestones"]
+            for work_item in milestone["work_items"]
+            if work_item["id"] == "M8-03"
+        )
+
+        self.assertEqual(item["status"], "blocked")
+        self.assertIn("LOG4SHELL_INSTRUCTIONS.md", item["blocker"])
+        self.assertIn("docs/SECRET_HISTORY_REVIEW.md", item["blocker"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -581,12 +581,13 @@
         {
           "id": "M8-03",
           "title": "Run secrets archaeology and public release review",
-          "status": "planned",
+          "status": "blocked",
           "priority": "P0",
           "owner": "security",
           "target_version": "v1.0",
           "risk_tags": ["security", "release"],
-          "acceptance_gates": ["Repository history, current tree, CI logs, and runtime samples are reviewed before public release."]
+          "acceptance_gates": ["Repository history, current tree, CI logs, and runtime samples are reviewed before public release."],
+          "blocker": "Full git-history secret archaeology is blocked on an owner decision for the historical LOG4SHELL_INSTRUCTIONS.md finding recorded in docs/SECRET_HISTORY_REVIEW.md."
         },
         {
           "id": "M8-04",
