@@ -60,6 +60,10 @@ class ReleaseChecklistDocsTests(unittest.TestCase):
         self.assertIn("make secrets-archaeology", text)
         self.assertIn("LOG4SHELL_INSTRUCTIONS.md", text)
         self.assertIn("docs/SECRET_HISTORY_REVIEW.md", text)
+        self.assertIn("without pasting the matched line or", text)
+        self.assertIn("rotate/revoke", text)
+        self.assertIn("false-positive exception", text)
+        self.assertIn("ownership is unknown", text)
         self.assertIn("validation verdict", text)
         self.assertIn("build-gate state", text)
 

@@ -97,6 +97,11 @@ git config core.hooksPath .githooks
   `make secrets-archaeology` has unresolved git-history findings.
 - [ ] Resolve the historical `LOG4SHELL_INSTRUCTIONS.md` finding through
   `docs/SECRET_HISTORY_REVIEW.md` before tagging the public fixture/hash set.
+- [ ] Record the owner/reviewer decision without pasting the matched line or
+  value into GitHub, docs, release notes, or agent prompts.
+- [ ] The decision must choose one release path: rotate/revoke plus history
+  rewrite or clean-repo release; explicit false-positive exception with
+  rationale; or block public release when ownership is unknown.
 - [ ] Recheck PR status, release hygiene, validation dashboard, and the
   smoke-hash evidence immediately before creating a tag.
 - [ ] The tag message must name the release notes path, policy hash, smoke hash
